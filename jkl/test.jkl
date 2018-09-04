@@ -1,0 +1,990 @@
+#This file is created by Jed version 0.94 beta
+#Jed is (C) by Alexei Novikov
+
+SECTION: JK
+
+SECTION: COPYRIGHT
+................................
+................@...@...@...@...
+.............@...@..@..@...@....
+................@.@.@.@.@.@.....
+@@@@@@@@......@...........@.....
+@@@@@@@@....@@......@@@....@....
+@@.....@.....@......@@@.....@@..
+@@.@@@@@......@.....@@@......@@.
+@@@@@@@@.......@....@@.....@@...
+@@@@@@@@.........@@@@@@@@@@.....
+@@@@@@@@..........@@@@@@........
+@@.....@..........@@@@@.........
+@@.@@@@@.........@@@@@@.........
+@@.....@.........@@@@@@.........
+@@@@@@@@.........@@@@@@.........
+@@@@@@@@.........@@@@@@@........
+@@@...@@.........@@@@@@@........
+@@.@@@.@.........@.....@........
+@@..@..@........@.......@.......
+@@@@@@@@........@.......@.......
+@@@@@@@@.......@........@.......
+@@..@@@@.......@........@.......
+@@@@..@@......@.........@.......
+@@@@.@.@......@.........@.......
+@@....@@........................
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@@@@@@@@@@@@@.@@@@@@@@@@@@@@@@@@
+@@.@@..@@@@@..@@@@@@@@@@.@@@@@@@
+@@.@.@.@@@@.@.@@@.@..@@...@@@..@
+@@..@@@@@@....@@@..@@@@@.@@@@.@@
+@@@@@@@@...@@.@@@.@@@@@..@@...@@
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@.copyright.(c).1997.lucasarts.@
+@@@@@@..entertainment.co..@@@@@@
+
+SECTION: HEADER
+Version 1
+World Gravity 4
+Ceiling Sky Z 15
+Horizon Distance 100
+Horizon Pixels per Rev 768
+Horizon Sky Offset 0 0
+Ceiling Sky Offset 0 0
+MipMap Distances 1 2 3 4
+LOD Distances .3 .6 .9 1.2
+Perspective distance 2
+Gouraud distance 2
+
+SECTION: SOUNDS
+World sounds 134
+activate01.wav
+activate04.wav
+BactaPu1.wav
+BactaUse01.WAV
+BCChargeUp.wav
+BCFire01.wav
+BCFire02.wav
+bodyfall03.wav
+concuss1.wav
+concuss5.wav
+CRPickup01.WAV
+deactivate03.wav
+deactivate04.wav
+df_bry_ready.wav
+df_rif_ready.wav
+expl_06.wav
+expl_07.wav
+expl_09.wav
+ForceAbsorb02.WAV
+ForceBlind01.WAV
+ForceDestruct01.wav
+ForceDestruct02.wav
+ForceDSight01.WAV
+ForceDSight02.WAV
+ForceGrip01.WAV
+ForceHealing01.WAV
+ForceJump01.wav
+ForceJump02.wav
+ForceLitning02.wav
+ForcePersuas01.WAV
+ForcePersuas02.WAV
+ForceProtect01.wav
+ForceProtect02.wav
+ForcePull01.WAV
+ForceSee01.WAV
+ForceSee02.WAV
+ForceSpeed01.WAV
+ForceSpeed02.WAV
+ForceThrow01.WAV
+fsout1.wav
+fswtr1l.wav
+fswtr2l.wav
+fswtr2r.wav
+i00ky106.wav
+i00ky71t.wav
+i00ky86z.wav
+jumpbasic01.wav
+jumpDirt01.wav
+jumpMetalDry01.wav
+KbodyHit01.wav
+KShieldHit01.wav
+kwalk01.wav
+kwalk02.wav
+KWaterDeath1.wav
+kylerun01.wav
+kylerun02.wav
+kylgnb.wav
+kylgtla.wav
+kylgtlb.wav
+kylgtlc.wav
+kylgtsa.wav
+kylgtsb.wav
+kylgtsc.wav
+kyljpa.wav
+kyljpd.wav
+kylyld.wav
+landbasic01.wav
+landDirt01.wav
+landhard01.wav
+landmetaldry01.wav
+LtSaberBodyHit01.wav
+LtSaberHit01.WAV
+LtSaberHit02.WAV
+LtSaberHit03.WAV
+LtSaberHit05.wav
+LtSaberHit06.wav
+LtSaberHit07.wav
+LtSaberHit12.WAV
+LtSaberHit14.WAV
+LtSaberHit15.wav
+LtSaberLp01.WAV
+LtSaberOff01.WAV
+LtSaberOn01.WAV
+LtSaberSwing01.WAV
+LtSaberSwing02.WAV
+LtSaberSwing03.WAV
+LtSaberSwing04.WAV
+LtSaberSwing05.WAV
+LtSaberSwing06.WAV
+LtSaberSwing07.WAV
+LtSaberSwing08.WAV
+LtSaberSwingDbl01.WAV
+pistol-1.wav
+pistout1.wav
+ploop01.wav
+powerpu1.wav
+Punch03.wav
+PutWeaponAway01.wav
+RailChargeArm01.WAV
+RailChargeAttach.WAV
+RailChargeEmpty01.WAV
+RailChargeFire01.WAV
+RailChargeFly01.WAV
+repeat-1.wav
+ReptrRico01.wav
+ricochet01.wav
+ricochet02.wav
+ricochet03.wav
+rpeatrlp.wav
+rundirt01.wav
+rundirt02.wav
+runmetaldry01.wav
+runmetaldry02.wav
+SChargeCountdown02.wav
+SChargePlace01.WAV
+ShotHit01.wav
+ShotHit02.wav
+splash1.wav
+stroke1.wav
+stroke2.wav
+SwingFist01.wav
+SwingFist04.wav
+thermal1.wav
+ThermalThrow01.wav
+ThermClick01.wav
+ThermClick02.wav
+ThermLoop01.wav
+thrmlpu2.wav
+trprout.wav
+trprsht2.wav
+walkdirt01.wav
+walkdirt02.wav
+walkmetaldry01.wav
+walkmetaldry02.wav
+end
+
+SECTION: MATERIALS
+World materials 155
+0: 00explosion.mat 1 1
+1: 00gsmoke.mat 1 1
+2: 00ramp1.mat 1 1
+3: 00ramp2.mat 1 1
+4: 00ramp4.mat 1 1
+5: 00teleport.mat 1 1
+6: 00twinkle.mat 1 1
+7: BOW0SIDE.MAT 1 1
+8: BOW0TOP.MAT 1 1
+9: BOW1SIDE.MAT 1 1
+10: BOWPBALL.MAT 1 1
+11: BOWPBAR1.MAT 1 1
+12: BOWPBAR2.MAT 1 1
+13: BOWPGRIP.MAT 1 1
+14: BOWPPRT1.MAT 1 1
+15: BOWPPRT2.MAT 1 1
+16: BOWPSCP1.MAT 1 1
+17: BOWPSCP2.MAT 1 1
+18: BOWPSIDE.MAT 1 1
+19: BOWPSTK1.MAT 1 1
+20: BOWPSTK2.MAT 1 1
+21: BOWPTOP.MAT 1 1
+22: bowx.mat 1 1
+23: BPCK1.MAT 1 1
+24: BPCK2.MAT 1 1
+25: BPCK3.MAT 1 1
+26: BPCK4.MAT 1 1
+27: BRY0SIDE.MAT 1 1
+28: BRY0TOP.MAT 1 1
+29: BRY1TOP.MAT 1 1
+30: BRYPBLFT.MAT 1 1
+31: BRYPBLSD.MAT 1 1
+32: BRYPBLTP.MAT 1 1
+33: BRYPCLBK.MAT 1 1
+34: BRYPCLSD.MAT 1 1
+35: BRYPCLTP.MAT 1 1
+36: BRYPGRIP.MAT 1 1
+37: BRYPPORT.MAT 1 1
+38: BRYPPRFT.MAT 1 1
+39: BRYPSIDE.MAT 1 1
+40: BRYVFSD.MAT 1 1
+41: BRYVFTP.MAT 1 1
+42: BRYVGNBK.MAT 1 1
+43: BRYVGNTP.MAT 1 1
+44: BRYVGSGF.MAT 1 1
+45: BRYVGSGT.MAT 1 1
+46: BRYVRSD.MAT 1 1
+47: bryx.mat 1 1
+48: bubble.mat 1 1
+49: con0side.mat 1 1
+50: con0top.mat 1 1
+51: CONPCLIP.MAT 1 1
+52: CONPFRNT.MAT 1 1
+53: CONPSIDE.MAT 1 1
+54: CONPTOP.MAT 1 1
+55: CONVBRL1.MAT 1 1
+56: CONVBRL2.MAT 1 1
+57: CONVBRL3.MAT 1 1
+58: CONVBUTP.MAT 1 1
+59: CONVBUTT.MAT 1 1
+60: CONVCLBK.MAT 1 1
+61: CONVCLIP.MAT 1 1
+62: CONVGRIL.MAT 1 1
+63: CONVGRIP.MAT 1 1
+64: CONVTOP.MAT 1 1
+65: conx.mat 1 1
+66: debrisx.mat 1 1
+67: destruct8.mat 1 1
+68: DET.MAT 1 1
+69: det0metl.mat 1 1
+70: det0side.mat 1 1
+71: detx.mat 1 1
+72: dflt.mat 1 1
+73: dstructparts.mat 1 1
+74: dusty.mat 1 1
+75: forceDstruct.mat 1 1
+76: HDBACK.MAT 1 1
+77: HDBOTTOM.MAT 1 1
+78: HDFTIP.MAT 1 1
+79: HDGRIP.MAT 1 1
+80: HDINSID1.MAT 1 1
+81: HDSDTHUM.MAT 1 1
+82: HND-WRT.MAT 1 1
+83: kybodyb.mat 1 1
+84: kybodyf2.mat 1 1
+85: kybutt.mat 1 1
+86: kyface3.mat 1 1
+87: kyfaceb.mat 1 1
+88: kyfacesd.mat 1 1
+89: kyfacetp.mat 1 1
+90: kyfoot.mat 1 1
+91: kyforarm.mat 1 1
+92: KYHAND.MAT 1 1
+93: KYHANDF.MAT 1 1
+94: kyhip.mat 1 1
+95: kyleg.mat 1 1
+96: kyneck.mat 1 1
+97: KYRARM.MAT 1 1
+98: KYSABER.MAT 1 1
+99: kyshotop.mat 1 1
+100: kyshpad.mat 1 1
+101: kysole.mat 1 1
+102: kythigh.mat 1 1
+103: LIGT3.MAT 1 1
+104: RLD0CLMP.MAT 1 1
+105: RLDVBDSD.MAT 1 1
+106: RLDVBDTP.MAT 1 1
+107: RLDVBRL1.MAT 1 1
+108: RLDVBRL2.MAT 1 1
+109: RLDVBRL3.MAT 1 1
+110: rldvbutt.mat 1 1
+111: RLDVCHM1.MAT 1 1
+112: RLDVCHM2.MAT 1 1
+113: RLDVCHM3.MAT 1 1
+114: RLDVCLP2.MAT 1 1
+115: RLDVPRJF.MAT 1 1
+116: RLDVPRJS.MAT 1 1
+117: rldvsgt.mat 1 1
+118: rldx.mat 1 1
+119: RPT0TOP.MAT 1 1
+120: RPTPBUT1.MAT 1 1
+121: RPTPBUT2.MAT 1 1
+122: RPTPGRIL.MAT 1 1
+123: RPTPSIDE.MAT 1 1
+124: RPTPTOP.MAT 1 1
+125: RPTPUNDR.MAT 1 1
+126: RPTVBACK.MAT 1 1
+127: rptx.mat 1 1
+128: seq0mbck.mat 1 1
+129: SEQ0MTP1.MAT 1 1
+130: seq0mtp3.mat 1 1
+131: seq0side.mat 1 1
+132: seq0top.mat 1 1
+133: SEQVMTP2.MAT 1 1
+134: seqvsd.mat 1 1
+135: seqvsid2.mat 1 1
+136: seqvtop2.mat 1 1
+137: seqx2.mat 1 1
+138: SHRP.MAT 1 1
+139: sparky.mat 1 1
+140: SplashX.mat 1 1
+141: Splooshx.mat 1 1
+142: STR0SIDE.MAT 1 1
+143: STR0TOP.MAT 1 1
+144: STRPGRIP.MAT 1 1
+145: strpport.mat 1 1
+146: strpsitf.mat 1 1
+147: STRVBRL4.MAT 1 1
+148: strvbutt.mat 1 1
+149: STRVCLP.MAT 1 1
+150: strvsid1.mat 1 1
+151: strvsid2.mat 1 1
+152: strvsitb.mat 1 1
+153: strvsite.mat 1 1
+154: strvtop2.mat 1 1
+end
+
+SECTION: GEORESOURCE
+World Colormaps 1
+0: dflt.cmp
+
+World vertices 26
+#num:	vertex:
+0: -1 1 0
+1: 1 1 0
+2: -1 1 1
+3: 1 1 1
+4: -1 .2 0
+5: 1 .2 0
+6: 1 .2 1
+7: -1 .2 1
+8: 1 -.2 0
+9: -1 -.2 0
+10: -1 -.2 1
+11: 1 -.2 1
+12: -1 -1 1
+13: 1 -1 1
+14: 1 -1 0
+15: -1 -1 0
+16: 1 .2 .2
+17: -1 .2 .2
+18: -1 .8 0
+19: -2 .8 0
+20: -2 .8 1
+21: -1 .8 1
+22: -2 .2 0
+23: -2 .2 1
+24: -2 -.2 1
+25: -2 -.2 0
+
+World texture vertices 36
+#num:	u:	v:
+0: 0 0
+1: -320 0
+2: -320 -640
+3: 0 -640
+4: -256 0
+5: -256 -640
+6: -640 0
+7: -640 -256
+8: 0 -256
+9: 0 -384
+10: -320 -384
+11: -320 -256
+12: 640 0
+13: 640 -320
+14: 0 -320
+15: -640 -384
+16: -640 -640
+17: -384 0
+18: -384 -640
+19: -64 -256
+20: -64 -384
+21: 0 256
+22: 640 256
+23: 640 320
+24: 0 320
+25: 320 0
+26: 320 320
+27: 320 128
+28: 0 128
+29: 320 192
+30: 0 192
+31: 128 0
+32: 128 320
+33: 192 0
+34: 192 320
+35: 320 -320
+
+World adjoins 8
+#num:	flags:	mirror:	dist:
+0: 0x7 4 .4
+1: 0x7 2 .4
+2: 0x7 1 .24
+3: 0x7 6 1
+4: 0x7 0 .16
+5: 0x7 7 .3
+6: 0x7 3 .5
+7: 0x7 5 .2
+
+World surfaces 30
+#num:   mat:     surfflags:	faceflags:	geo:	light:	tex:	adjoin:	extralight:	nverts:	vertices:			intensities:
+0:	72	0x4	0x4	4	3	1	-1	0	4 1,0 3,1 2,2 0,3 5 5 5 5
+1:	72	0x5	0x4	4	3	1	-1	0	4 0,0 4,4 5,5 1,3 5 5 5 5
+2:	72	0x4	0x4	4	3	1	-1	0	4 2,0 3,6 6,7 7,8 5 5 5 5
+3:	72	0x4	0x4	4	3	1	-1	0	4 5,9 6,10 3,2 1,3 5 5 5 5
+4:	72	0x4	0x4	4	3	1	-1	0	4 4,8 0,0 2,1 7,11 5 5 5 5
+5:	72	0x0	0x0	0	3	1	0	0	4 5,0 4,12 7,13 6,14 5 5 5 5
+6:	72	0x4	0x4	4	3	1	-1	0	4 9,9 10,10 12,2 15,3 5 5 5 5
+7:	72	0x4	0x4	4	3	1	-1	0	4 15,0 12,1 13,2 14,3 5 5 5 5
+8:	72	0x4	0x4	4	3	1	-1	0	4 8,8 14,0 13,1 11,11 5 5 5 5
+9:	72	0x4	0x4	4	3	1	-1	0	4 11,15 13,16 12,3 10,9 5 5 5 5
+10:	72	0x5	0x4	4	3	1	-1	0	4 9,17 15,6 14,16 8,18 5 5 5 5
+11:	72	0x0	0x0	0	3	1	1	0	4 11,0 10,12 9,13 8,14 5 5 5 5
+12:	72	0x0	0x0	0	3	1	2	0	4 8,0 9,12 10,13 11,14 5 5 5 5
+13:	72	0x0	0x0	0	3	1	3	0	5 9,9 4,8 17,19 7,11 10,10 5 5 5 5 5
+14:	72	0x4	0x4	4	3	1	-1	0	5 16,20 5,9 8,8 11,11 6,10 5 5 5 5 5
+15:	72	0x4	0x4	4	3	1	-1	0	4 6,7 11,15 10,9 7,8 5 5 5 5
+16:	72	0x5	0x4	4	3	1	-1	0	4 4,4 9,17 8,18 5,5 5 5 5 5
+17:	72	0x0	0x0	0	3	1	4	0	6 16,21 6,0 7,12 17,22 4,23 5,24 5 5 5 5 5 5
+18:	72	0x4	0x4	4	3	1	-1	0	4 19,0 18,25 21,26 20,24 5 5 5 5
+19:	72	0x5	0x4	4	3	1	-1	0	4 4,27 18,26 19,24 22,28 5 5 5 5
+20:	72	0x4	0x4	4	3	1	-1	0	4 20,0 21,25 7,29 23,30 5 5 5 5
+21:	72	0x4	0x4	4	3	1	-1	0	4 22,31 19,25 20,26 23,32 5 5 5 5
+22:	72	0x4	0x4	4	3	1	-1	0	4 18,0 4,33 7,34 21,24 5 5 5 5
+23:	72	0x0	0x0	0	3	1	5	0	4 4,0 22,25 23,35 7,14 5 5 5 5
+24:	72	0x0	0x0	0	3	1	6	0	4 4,33 9,25 10,26 7,34 5 5 5 5
+25:	72	0x4	0x4	4	3	1	-1	0	4 9,0 25,25 24,26 10,24 5 5 5 5
+26:	72	0x4	0x4	4	3	1	-1	0	4 25,0 22,31 23,32 24,24 5 5 5 5
+27:	72	0x4	0x4	4	3	1	-1	0	4 7,29 10,26 24,24 23,30 5 5 5 5
+28:	72	0x5	0x4	4	3	1	-1	0	4 25,0 9,25 4,27 22,28 5 5 5 5
+29:	72	0x0	0x0	0	3	1	7	0	4 7,0 23,25 22,35 4,14 5 5 5 5
+
+#--- Surface normals ---
+0: 0 -1 0
+1: 0 0 1
+2: 0 0 -1
+3: -1 0 0
+4: 1 0 0
+5: 0 1 0
+6: 1 0 0
+7: 0 1 0
+8: -1 0 0
+9: 0 0 -1
+10: 0 0 1
+11: 0 -1 0
+12: 0 1 0
+13: 1 0 0
+14: -1 0 0
+15: 0 0 -1
+16: 0 0 1
+17: 0 -1 0
+18: 0 -1 0
+19: 0 0 1
+20: 0 0 -1
+21: 1 0 0
+22: -1 0 0
+23: 0 1 0
+24: -1 0 0
+25: 0 1 0
+26: 1 0 0
+27: 0 0 -1
+28: 0 0 1
+29: 0 -1 0
+
+Section: SECTORS
+
+World sectors 5
+
+SECTOR 0
+FLAGS 0x1000
+AMBIENT LIGHT 5
+EXTRA LIGHT 0
+COLORMAP 0
+TINT 0 0 0
+BOUNDBOX -1 .2 0 1 1 1
+COLLIDEBOX -.96 .216 .02 .96 .96 .98
+CENTER 0 .6 .5
+RADIUS 1.187434
+VERTICES 8
+0: 0
+1: 1
+2: 2
+3: 3
+4: 4
+5: 5
+6: 6
+7: 7
+SURFACES 0 6
+
+SECTOR 1
+FLAGS 0x1000
+AMBIENT LIGHT 5
+EXTRA LIGHT 0
+COLORMAP 0
+TINT 0 0 0
+BOUNDBOX -1 -1 0 1 -.2 1
+COLLIDEBOX -.96 -.984 .02 .96 -.24 .98
+CENTER 0 -.6 .5
+RADIUS 1.187434
+VERTICES 8
+0: 8
+1: 9
+2: 10
+3: 11
+4: 12
+5: 13
+6: 14
+7: 15
+SURFACES 6 6
+
+SECTOR 2
+FLAGS 0x1000
+AMBIENT LIGHT 5
+EXTRA LIGHT 0
+COLORMAP 0
+TINT 0 0 0
+BOUNDBOX -1 -.2 0 1 .2 1
+COLLIDEBOX -.96 -.1904 .0176 .96 .16 .9776
+CENTER 0 .04 .44
+RADIUS 1.170982
+VERTICES 10
+0: 5
+1: 4
+2: 7
+3: 6
+4: 10
+5: 11
+6: 8
+7: 9
+8: 16
+9: 17
+SURFACES 12 6
+
+SECTOR 3
+FLAGS 0x1000
+AMBIENT LIGHT 5
+EXTRA LIGHT 0
+COLORMAP 0
+TINT 0 0 0
+BOUNDBOX -2 .2 0 -1 .8 1
+COLLIDEBOX -1.98 .212 .02 -1.02 .78 .98
+CENTER -1.5 .5 .5
+RADIUS .768115
+VERTICES 8
+0: 18
+1: 19
+2: 20
+3: 21
+4: 4
+5: 22
+6: 7
+7: 23
+SURFACES 18 6
+
+SECTOR 4
+FLAGS 0x1000
+AMBIENT LIGHT 5
+EXTRA LIGHT 0
+COLORMAP 0
+TINT 0 0 0
+BOUNDBOX -2 -.2 0 -1 .2 1
+COLLIDEBOX -1.98 -.192 .02 -1.02 .18 .98
+CENTER -1.5 0 .5
+RADIUS .734847
+VERTICES 8
+0: 4
+1: 22
+2: 23
+3: 7
+4: 24
+5: 10
+6: 9
+7: 25
+SURFACES 24 6
+
+Section: AICLASS
+World AIClasses 0
+end
+
+Section: MODELS
+World models 44
+0: bow0.3do
+1: bow1.3do
+2: BowG.3do
+3: bowp.3do
+4: BowV.3do
+5: bpck.3do
+6: bry0.3do
+7: bryg.3do
+8: bryp.3do
+9: bryv.3do
+10: con0.3do
+11: cong.3do
+12: conp.3do
+13: conv.3do
+14: det0.3do
+15: detg.3do
+16: detp_1.3do
+17: detv.3do
+18: fistg.3do
+19: fistv.3do
+20: ky.3do
+21: ligt2.3do
+22: rld0.3do
+23: rldg.3do
+24: rldp.3do
+25: rldv.3do
+26: rpt0.3do
+27: rptg.3do
+28: rptp.3do
+29: rptv.3do
+30: sabg.3do
+31: sabv.3do
+32: seq0.3do
+33: seqg.3do
+34: seqp_1.3do
+35: seqv.3do
+36: shrp_1.3do
+37: shrp_2.3do
+38: shrp_3.3do
+39: shrp_4.3do
+40: str0.3do
+41: strg.3do
+42: strp.3do
+43: strv.3do
+end
+
+Section: SPRITES
+World sprites 17
+0: bowx.spr
+1: bowx2.spr
+2: bryx.spr
+3: bubble.spr
+4: bubble2.spr
+5: bubble3.spr
+6: conx.spr
+7: debrisx.spr
+8: destruct8.spr
+9: detx.spr
+10: forcedstruct_150.spr
+11: rldx.spr
+12: rptx.spr
+13: seqx2.spr
+14: splash.spr
+15: splooshx.spr
+16: twinkle.spr
+end
+
+Section: KEYFRAMES
+World keyframes 124
+0: BowVdis.key
+1: BowVmnt.key
+2: BowVpst1.key
+3: bryvdis.key
+4: bryvmnt.key
+5: bryvpst1.key
+6: ConVdis.key
+7: ConVmnt.key
+8: ConVpst1.key
+9: detvdis.key
+10: detvmnt.key
+11: detvpre1.key
+12: detvpst1.key
+13: FistVdis.key
+14: FistVl.key
+15: FistVmnt.key
+16: FistVr.key
+17: kybackp0.key
+18: kybackp1.key
+19: KYblock.key
+20: KYblock0.key
+21: KYblock1.key
+22: KYblock2.key
+23: KYcharge.key
+24: kychoke0.key
+25: kycrchbk.key
+26: kycrchgn.key
+27: kydestr0.key
+28: kydrawft.key
+29: kydrawgn.key
+30: kydrawsb.key
+31: kydrop.key
+32: kyexdth0.key
+33: kyfall.key
+34: kyfire.key
+35: kyfirebg.key
+36: kyftdeth.key
+37: kygndth0.key
+38: kygrip0.key
+39: kyhit0.key
+40: kyhlstr.key
+41: kyidle0.key
+42: kyidle0b.key
+43: kyidle1.key
+44: kyidle1b.key
+45: kyidle2.key
+46: kyidle2b.key
+47: kyjump.key
+48: kyjumpf.key
+49: kyland.key
+50: kyltblt0.key
+51: kypnchl0.key
+52: kypnchr0.key
+53: KYreadyl.key
+54: KYreadyr.key
+55: kyrthro0.key
+56: kyrthro1.key
+57: kyrun0.key
+58: kyrun1.key
+59: kyrun2.key
+60: KYsabrb1.key
+61: KYsabrb2.key
+62: KYsabrf1.key
+63: KYsabrf2.key
+64: KYsabrl1.key
+65: KYsabrr1.key
+66: kysbback.key
+67: kysbdeth.key
+68: kysbdraw.key
+69: kysbfire.key
+70: kysbforc.key
+71: kysbhit.key
+72: kysbhlst.key
+73: kysbpnch.key
+74: kysbsabr.key
+75: kysbswim.key
+76: kysbthr1.key
+77: kysbthr2.key
+78: kysbtred.key
+79: KYsnap1.key
+80: KYsnap2.key
+81: kystand0.key
+82: kystand1.key
+83: kystand2.key
+84: kystrafl.key
+85: kystrafr.key
+86: kyswdeth.key
+87: kyturnl.key
+88: kyturnr.key
+89: kyusef0.key
+90: kyusew0.key
+91: kywalkF.key
+92: kywalkG.key
+93: kywalkS.key
+94: rld0anim.key
+95: RldVdis.key
+96: RldVmnt.key
+97: RldVpst1.key
+98: RptVdis.key
+99: RptVmnt.key
+100: RptVpst1.key
+101: SabVb1.key
+102: SabVb2.key
+103: SabVblk.key
+104: SabVblk0.key
+105: SabVblk1.key
+106: SabVblk2.key
+107: SabVch.key
+108: SabVdis.key
+109: SabVf1.key
+110: SabVf2.key
+111: SabVhold.key
+112: SabVl1.key
+113: SabVmnt.key
+114: SabVr1.key
+115: SabVrdy.key
+116: SabVsnp1.key
+117: SabVsnp2.key
+118: SeqVdis.key
+119: SeqVmnt.key
+120: SeqVpst1.key
+121: StrVdis.key
+122: StrVmnt.key
+123: StrVpst1.key
+end
+
+Section: ANIMCLASS
+World puppets 2
+0: ky.pup
+1: ra.pup
+end
+
+Section: Soundclass
+World soundclasses 23
+0: bow.snd
+1: bry.snd
+2: conc.snd
+3: det.snd
+4: exp_bowhit.snd
+5: exp_conc.snd
+6: exp_dest.snd
+7: exp_det.snd
+8: exp_fleshy.snd
+9: exp_laserhit.snd
+10: exp_med.snd
+11: exp_punch.snd
+12: exp_raildet.snd
+13: exp_rpthit.snd
+14: exp_saber_blood.snd
+15: exp_saber_saber.snd
+16: exp_saber_wall.snd
+17: exp_small.snd
+18: ky.snd
+19: rail.snd
+20: rep.snd
+21: seq.snd
+22: stlaser.snd
+end
+
+Section: cogscripts
+World scripts 13
+0: 00_desttrail.cog
+1: 00_smoketrail.cog
+2: class_sequencer.cog
+3: kyle.cog
+4: pow_backpack.cog
+5: pow_bryar.cog
+6: pow_concrifle.cog
+7: pow_crossbow.cog
+8: pow_railgun.cog
+9: pow_repeater.cog
+10: pow_single_sequencer.cog
+11: pow_single_thermal.cog
+12: pow_strifle.cog
+end
+
+Section: cogs
+
+World cogs 13
+#Num	Script          Symbol values
+end
+
+Section: TEMPLATES
+
+World templates 104
+#Name:           Based On:        Params:
+bubble            none               orient=(0.000000/0.000000/0.000000) type=cog move=physics thingflags=0x10000000 timer=3.000000 sprite=bubble.spr mass=0.050000 physflags=0x200 vel=(0.000000/0.000000/0.300000)
++whitecloud       none               orient=(0.000000/0.000000/0.000000) type=particle timer=0.200000 typeflags=0x3f material=00gsmoke.mat range=0.020000 rate=128.000000 maxthrust=30.000000 elementsize=0.007000 count=128
++watersplash      none               orient=(0.000000/0.000000/0.000000) type=explosion timer=0.500000 sprite=splash.spr typeflags=0x1 damageclass=0x4
++twinkle          none               orient=(0.000000/0.000000/0.000000) type=explosion thingflags=0x1 timer=0.500000 sprite=twinkle.spr typeflags=0x11
++telesparks       none               orient=(0.000000/0.000000/0.000000) type=particle timer=0.120000 typeflags=0x3f material=00teleport.mat range=0.030000 rate=256.000000 maxthrust=80.000000 elementsize=0.002000 count=256
++sspks_wall       none               orient=(0.000000/0.000000/0.000000) type=particle move=physics timer=0.100000 mass=0.050000 physflags=0x400201 vel=(0.000000/0.000000/0.150000) typeflags=0x2b material=00ramp1.mat range=0.030000 rate=4.000000 maxthrust=8.000000 elementsize=0.003000 count=48
++sspks_saber      none               orient=(0.000000/0.000000/0.000000) type=particle move=physics timer=0.300000 mass=0.050000 physflags=0x400200 vel=(0.000000/0.000000/0.100000) typeflags=0x27 material=00teleport.mat range=0.020000 rate=32.000000 maxthrust=8.000000 elementsize=0.003000 count=32
++sspks_blood      none               orient=(0.000000/0.000000/0.000000) type=particle move=physics timer=0.200000 mass=0.100000 physflags=0x400201 vel=(0.000000/0.000000/0.200000) typeflags=0x2b material=00ramp2.mat range=0.040000 rate=4.000000 maxthrust=9.000000 elementsize=0.005000 count=24
++smoke            none               orient=(0.000000/0.000000/0.000000) type=particle move=physics timer=0.800000 physflags=0x20000 vel=(0.000000/0.000000/0.120000) angvel=(0.000000/90.000000/0.000000) typeflags=0x3e material=00gsmoke.mat range=0.030000 elementsize=0.005000 count=8
++rpt_sparks       none               orient=(0.000000/0.000000/0.000000) type=particle move=physics timer=0.700000 mass=0.100000 physflags=0x400201 vel=(0.000000/0.000000/0.200000) typeflags=0x27 material=sparky.mat range=0.040000 rate=24.000000 maxthrust=7.000000 elementsize=0.005000 count=24
++lightninghit     none               orient=(0.000000/0.000000/0.000000) type=particle move=physics timer=0.200000 typeflags=0x2b material=00ramp4.mat range=0.020000 rate=16.000000 maxthrust=8.000000 elementsize=0.003000 count=16
++heavysmoke       +smoke             timer=1.600000 range=0.100000 rate=32.000000 count=64
++force_shield     none               orient=(0.000000/0.000000/0.000000) type=cog move=physics timer=61.000003 particle=sphere.par angvel=(60.000000/60.000000/60.000000)
++force_ltpeice    none               orient=(0.000000/0.000000/0.000000) type=weapon move=physics timer=0.250000 model3d=ligt2.3do size=0.005000 movesize=0.005000 physflags=0x200 maxrotvel=360.000000 angvel=(0.000000/0.000000/360.000000)
++force_heal       none               orient=(0.000000/0.000000/0.000000) type=particle move=physics timer=2.000000 angvel=(90.000000/90.000000/90.000000) typeflags=0x3f material=00teleport.mat range=0.300000 rate=128.000000 maxthrust=0.010000 elementsize=0.003000 count=128
++dustcloud        +whitecloud        timer=0.120000 material=dusty.mat range=0.015000 rate=256.000000 maxthrust=80.000000 elementsize=0.010000
++dest_trail       +smoke             vel=(0.000000/0.000000/0.000000) material=dstructparts.mat
++conccloud        +dustcloud         rate=512.000000 maxthrust=100.000000 count=256 minsize=0.012000 pitchrange=5.000000
++concblast2p      +dustcloud         orient=(90.000000/0.000000/0.000000) range=0.001500 rate=128.000000 elementsize=0.005000 count=64 minsize=0.001200 pitchrange=5.000000
+_weapon           none               orient=(0.000000/0.000000/0.000000) type=weapon collide=1 move=physics thingflags=0x20000000 timer=10.000000 mass=5.000000 physflags=0x200 maxrotvel=90.000000 damageclass=0x2 typeflags=0x1
+_powerup          none               orient=(0.000000/0.000000/0.000000) type=item collide=1 move=physics size=0.100000 movesize=0.010000 surfdrag=3.000000 airdrag=1.000000 mass=10.000000 height=0.050000 physflags=0x400000 angvel=(0.000000/90.000000/0.000000) typeflags=0x1 respawn=30.000000
+_explosion        none               orient=(0.000000/0.000000/0.000000) type=explosion typeflags=0x1 damageclass=0x4
+_droppowerup      _powerup           timer=30.000001 height=0.011000 physflags=0x41 typeflags=0x0
+_actor            none               orient=(0.000000/0.000000/0.000000) type=actor collide=1 move=physics thingflags=0x20000000 mass=150.000000 physflags=0x4a4f maxrotvel=200.000000 maxvel=1.000000 health=40.00 maxhealth=40.00 maxrotthrust=180.00 jumpspeed=1.50 eyeoffset=(0.000000/0.000000/0.037000) minheadpitch=-80.00 maxheadpitch=80.00 lightoffset=(0.000000/0.070000/0.040000) lightintensity=0.80
+walkplayer        _actor             type=player thingflags=0x20000401 light=0.200000 model3d=ky.3do size=0.065000 movesize=0.065000 puppet=ky.pup soundclass=ky.snd cog=kyle.cog surfdrag=3.000000 airdrag=0.500000 staticdrag=0.300000 health=100.00 maxhealth=100.00 maxthrust=2.00 typeflags=0x1 error=0.50 fov=0.71 chance=1.00
+strifle           _powerup           thingflags=0x400 model3d=strp.3do cog=pow_strifle.cog
+singleseqcharge   _powerup           thingflags=0x400 model3d=seqp_1.3do cog=pow_single_sequencer.cog
+singledetonator   _powerup           thingflags=0x400 model3d=detp_1.3do cog=pow_single_thermal.cog
+repeatergun       _powerup           thingflags=0x400 model3d=rptp.3do cog=pow_repeater.cog
+railgun           _powerup           thingflags=0x400 model3d=rldp.3do cog=pow_railgun.cog respawn=60.000000
+crossbow          _powerup           thingflags=0x400 model3d=bowp.3do cog=pow_crossbow.cog
+concrifle         _powerup           thingflags=0x400 model3d=conp.3do cog=pow_concrifle.cog respawn=60.000000
+bubble3           bubble             sprite=bubble3.spr vel=(0.000000/0.000000/0.600000)
+bubble2           bubble             sprite=bubble2.spr vel=(0.000000/0.000000/0.450000)
+bryarpistol       _powerup           thingflags=0x400 model3d=bryp.3do cog=pow_bryar.cog
++watersplash2     +watersplash       sprite=splooshx.spr
++ssparks_wall     _explosion         thingflags=0x1 light=0.300000 timer=0.800000 soundclass=exp_saber_wall.snd creatething=+sspks_wall typeflags=0x112 blasttime=0.700000 maxlight=0.500000 flashrgb=(80/90/80)
++ssparks_saber    _explosion         thingflags=0x1 light=0.800000 timer=0.800000 soundclass=exp_saber_saber.snd creatething=+sspks_saber typeflags=0x112 blasttime=0.700000 maxlight=1.000000 flashrgb=(150/160/150)
++ssparks_blood    _explosion         thingflags=0x1 light=0.100000 timer=0.800000 soundclass=exp_saber_blood.snd creatething=+sspks_blood typeflags=0x12 blasttime=0.700000 maxlight=0.300000
++smflash          _explosion         thingflags=0x1 light=0.400000 timer=0.100000 typeflags=0x0
++rptfleshhit      _explosion         thingflags=0x1 light=0.100000 timer=0.800000 soundclass=exp_fleshy.snd creatething=+rpt_sparks typeflags=0x12 blasttime=0.700000 maxlight=0.300000
++punchcloud       +dustcloud         timer=0.150000 material=00gsmoke.mat range=0.006000 rate=64.000000 maxthrust=4.000000 elementsize=0.004000 count=16
++punch_exp        _explosion         timer=0.001000 soundclass=exp_punch.snd creatething=+punchcloud typeflags=0x0
++punch            _weapon            size=0.001000 movesize=0.001000 mass=50.000000 explode=+punch_exp fleshhit=+punch_exp damage=20.000000 damageclass=0x1 typeflags=0x200d range=0.150000 force=50.000000
++lgflash          _explosion         thingflags=0x1 light=0.300000 timer=0.400000 typeflags=0x12 blasttime=0.200000 maxlight=1.000000
++laserhit         _explosion         thingflags=0x1 light=0.200000 timer=0.500000 sprite=bryx.spr soundclass=exp_laserhit.snd typeflags=0x33 blasttime=0.300000 maxlight=0.400000
++laserfleshhit    +laserhit          soundclass=exp_fleshy.snd
++fpstrifle        strifle            collide=0 timer=4.000000 typeflags=0x0 respawn=0.000000
++fpseqcharge      singleseqcharge    collide=0 timer=4.000000 typeflags=0x0 respawn=0.000000
++fprepeatergun    repeatergun        collide=0 timer=4.000000 typeflags=0x0 respawn=0.000000
++fprailgun        railgun            collide=0 timer=4.000000 typeflags=0x0 respawn=0.000000
++fpdetonator      singledetonator    collide=0 timer=4.000000 typeflags=0x0 respawn=0.000000
++fpcrossbow       crossbow           collide=0 timer=4.000000 typeflags=0x0 respawn=0.000000
++fpconcrifle      concrifle          collide=0 timer=4.000000 typeflags=0x0 respawn=0.000000
++fpbryarpistol    bryarpistol        collide=0 timer=4.000000 typeflags=0x0 respawn=0.000000
++force_lightning  _weapon            thingflags=0x1 light=0.100000 timer=0.100000 size=0.005000 movesize=0.005000 vel=(0.000000/1.000000/0.000000) angvel=(0.000000/0.000000/360.000000) explode=+lightninghit fleshhit=+lightninghit trailthing=+force_ltpeice elementsize=0.075000 trailrandangle=30.000000 damage=13.000000 damageclass=0x8 typeflags=0x1840d range=1.500000
++force_blind      +dustcloud         material=00teleport.mat range=0.050000 rate=32.000000 elementsize=0.003000 minsize=0.020000 pitchrange=1.000000 yawrange=1.000000
++firecloud        +dustcloud         material=00explosion.mat range=0.050000 rate=64.000000 maxthrust=40.000000 count=64
++dest_cloud       +firecloud         material=dstructparts.mat
++crossbowhit2     _explosion         thingflags=0x1 light=0.200000 timer=0.500000 sprite=bowx.spr typeflags=0x33 blasttime=0.300000 maxlight=0.400000
++crossbowhit      +laserhit          sprite=bowx2.spr soundclass=exp_bowhit.snd
++crossbowbolt     _weapon            thingflags=0x20000001 light=0.500000 model3d=bow0.3do size=0.005000 movesize=0.005000 soundclass=bow.snd creatething=+lgflash vel=(0.000000/5.000000/0.000000) angvel=(0.000000/0.000000/120.000000) explode=+crossbowhit fleshhit=+crossbowhit damage=60.000000 mindamage=20.000000 damageclass=0x4 typeflags=0x20440d rate=10.000000
++concblast3p      +concblast2p       typeflags=0x2b material=00ramp4.mat maxthrust=100.000000
++concblast2       _weapon            size=0.005000 movesize=0.005000 fleshhit=+concblast3p trailthing=+concblast2p elementsize=0.300000 damage=80.000000 mindamage=20.000000 typeflags=0xa00d range=5.000000 rate=1.000000
++conc_exp         _explosion         thingflags=0x1 light=0.300000 timer=1.000000 sprite=conx.spr soundclass=exp_conc.snd creatething=+conccloud typeflags=0x17 damage=80.000000 blasttime=1.000000 force=200.000000 maxlight=0.800000 range=0.800000
++bryarbolt        _weapon            thingflags=0x20000001 light=0.400000 model3d=bry0.3do size=0.001000 movesize=0.001000 soundclass=bry.snd creatething=+smflash maxrotvel=0.000000 vel=(0.000000/4.000000/0.000000) explode=+laserhit fleshhit=+laserfleshhit damage=30.000000 mindamage=10.000000 typeflags=0x20440d rate=15.000000
++backpack         _droppowerup       thingflags=0x400 model3d=bpck.3do cog=pow_backpack.cog height=0.036337 typeflags=0x4
++stlaser          +bryarbolt         model3d=str0.3do soundclass=stlaser.snd vel=(0.000000/6.000000/0.000000) rate=10.000000
++repeaterhit      +laserhit          sprite=rptx.spr soundclass=exp_rpthit.snd
++repeaterball     _weapon            thingflags=0x20000001 light=0.300000 model3d=rpt0.3do size=0.005000 movesize=0.005000 soundclass=rep.snd creatething=+smflash vel=(0.000000/6.000000/0.000000) explode=+repeaterhit fleshhit=+rptfleshhit damage=20.000000 mindamage=5.000000 typeflags=0x440d rate=20.000000
++grenade_exp      _explosion         thingflags=0x1 light=0.200000 timer=0.800000 sprite=detx.spr soundclass=exp_det.snd creatething=+firecloud typeflags=0x17 damage=75.000000 blasttime=0.700000 force=100.000000 maxlight=0.800000 range=0.450000
++force_dest4      _explosion         thingflags=0x1 light=0.400000 timer=1.000000 sprite=destruct8.spr soundclass=exp_dest.snd creatething=+dest_cloud typeflags=0x53 damage=60.000000 damageclass=0x8 blasttime=0.600000 force=400.000000 maxlight=0.800000 range=2.000000
++force_dest3      _explosion         thingflags=0x1 light=0.300000 timer=0.800000 sprite=destruct8.spr soundclass=exp_dest.snd creatething=+dest_cloud typeflags=0x53 damage=45.000000 damageclass=0x8 blasttime=0.500000 force=300.000000 maxlight=0.700000 range=1.500000
++force_dest2      _explosion         thingflags=0x1 light=0.200000 timer=0.600000 sprite=destruct8.spr soundclass=exp_dest.snd creatething=+dest_cloud typeflags=0x53 damage=30.000000 damageclass=0x8 blasttime=0.400000 force=200.000000 maxlight=0.600000 range=1.000000
++force_dest1      _explosion         thingflags=0x1 light=0.100000 timer=0.400000 sprite=destruct8.spr soundclass=exp_dest.snd creatething=+dest_cloud typeflags=0x53 damage=15.000000 damageclass=0x8 blasttime=0.300000 force=100.000000 maxlight=0.500000 range=0.500000
++force_dest_p1    _weapon            thingflags=0x20000401 light=0.400000 sprite=forcedstruct_150.spr cog=00_desttrail.cog vel=(0.000000/7.000000/0.000000) explode=+force_dest1 fleshhit=+force_dest1 damage=20.000000 typeflags=0xd
++firecloud3       +firecloud         maxthrust=20.000000 count=32
++firecloud2       +firecloud         elementsize=0.012500
++debris_exp       _explosion         timer=1.000000 sprite=debrisx.spr soundclass=exp_small.snd creatething=+firecloud3 typeflags=0x7 blasttime=0.500000
++crossbowbolt3    +crossbowbolt      typeflags=0x28440d
++crossbowbolt2    +crossbowbolt      model3d=bow1.3do soundclass=none creatething=none explode=+crossbowhit2 fleshhit=+crossbowhit2 damage=40.000000 typeflags=0x440d
++concbullet       _weapon            thingflags=0x20000001 model3d=con0.3do size=0.005000 movesize=0.005000 soundclass=conc.snd creatething=+lgflash vel=(0.000000/7.000000/0.000000) explode=+conc_exp fleshhit=+conc_exp damage=20.000000 typeflags=0x20000d
+_debris           none               orient=(0.000000/0.000000/0.000000) type=weapon collide=1 move=physics timer=1.100000 airdrag=3.000000 physflags=0x201 vel=(0.000000/4.000000/0.000000) angvel=(5.000000/10.000000/0.000000) explode=+debris_exp damage=5.000000 damageclass=0x1 typeflags=0xc
+shrapnel_4        _debris            model3d=shrp_4.3do size=0.026000 movesize=0.026000
+shrapnel_3        _debris            model3d=shrp_3.3do size=0.028000 movesize=0.028000
+shrapnel_2        _debris            model3d=shrp_2.3do size=0.040000 movesize=0.040000
+shrapnel_1        _debris            model3d=shrp_1.3do size=0.045000 movesize=0.045000
++raildet_exp      _explosion         thingflags=0x1 light=0.200000 timer=0.500000 sprite=rldx.spr soundclass=exp_raildet.snd typeflags=0x17 damage=110.000000 blasttime=0.700000 force=300.000000 maxlight=0.800000 range=0.500000 debris=shrapnel_1 debris=shrapnel_2 debris=shrapnel_3 debris=shrapnel_4
++grenade2         _weapon            timer=3.000000 model3d=det0.3do size=0.014895 movesize=0.014895 soundclass=det.snd surfdrag=3.000000 airdrag=0.800000 mass=1.000000 physflags=0x225 vel=(0.000000/2.000000/1.500000) angvel=(90.000000/45.000000/90.000000) buoyancy=0.250000 explode=+grenade_exp fleshhit=+grenade_exp damageclass=0x4 typeflags=0x40309
++grenade1         +grenade2          timer=10.000000 typeflags=0x4030d
++force_dest_p4    +force_dest_p1     explode=+force_dest4 fleshhit=+force_dest4
++force_dest_p3    +force_dest_p1     explode=+force_dest3 fleshhit=+force_dest3
++force_dest_p2    +force_dest_p1     explode=+force_dest2 fleshhit=+force_dest2
+_debris2          _debris            explode=+smflash
+shrapnel2_4       _debris2           model3d=shrp_4.3do size=0.026000 movesize=0.026000
+shrapnel2_3       _debris2           model3d=shrp_3.3do size=0.028000 movesize=0.028000
+shrapnel2_2       _debris2           model3d=shrp_2.3do size=0.040000 movesize=0.040000
+shrapnel2_1       _debris2           model3d=shrp_1.3do size=0.045000 movesize=0.045000
++sequencer_exp    _explosion         thingflags=0x1 light=0.200000 timer=0.800000 sprite=seqx2.spr soundclass=exp_med.snd creatething=+firecloud2 typeflags=0x17 damage=100.000000 blasttime=0.700000 force=300.000000 maxlight=0.800000 range=0.600000 debris=shrapnel2_1 debris=shrapnel2_2 debris=shrapnel2_3 debris=shrapnel2_4
++seqchrg          +grenade2          timer=1.000000 model3d=seq0.3do size=0.010000 movesize=0.010000 soundclass=seq.snd surfdrag=5.000000 airdrag=1.000000 physflags=0x29d vel=(0.000000/0.100000/0.000000) angvel=(0.000000/0.000000/0.000000) buoyancy=0.150000 explode=+sequencer_exp fleshhit=+sequencer_exp typeflags=0x40380
++raildet2         +grenade1          thingflags=0x20000400 timer=2.500000 model3d=rld0.3do size=0.003000 movesize=0.003000 puppet=ra.pup soundclass=rail.snd creatething=+lgflash cog=00_smoketrail.cog airdrag=0.000000 height=0.003000 physflags=0x200 vel=(0.000000/2.500000/0.000000) angvel=(0.000000/0.000000/90.000000) explode=+raildet_exp fleshhit=+raildet_exp damage=5.000000 typeflags=0x240b81
++raildet_exp2     +raildet_exp       debris=shrapnel_1 debris=shrapnel_2 debris=shrapnel_3 debris=shrapnel_4
++raildet          +raildet2          timer=10.000000 explode=+raildet_exp2 fleshhit=+raildet_exp2 damage=20.000000 typeflags=0x24020d
++seqchrg2         +seqchrg           thingflags=0x20000400 timer=60.000003 cog=class_sequencer.cog
+end
+
+Section: Things
+World things 201
+#num template:       name:         	X:		Y:		Z:		Pitch:		Yaw:		Roll:		Sector:
+0: walkplayer walkplayer 0 0 .1 0 0 0 -1
+end
+
+Section: Lights
+Editor lights 1
+
+#num:	type:	X:		Y:		Z:		intensity:	range:
+0: 0 0 0 .5 10 2
+end
+

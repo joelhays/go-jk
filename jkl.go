@@ -2,7 +2,6 @@ package main
 
 import (
 	"bufio"
-	"fmt"
 	"io/ioutil"
 	"log"
 	"regexp"
@@ -24,6 +23,7 @@ type vertex struct {
 type surface struct {
 	VertexIds []int64
 	Normal    vertex
+	Geo       int64
 }
 
 // ReadJKL will read a .jkl file and return a struct containing all necessary information
@@ -34,29 +34,21 @@ func ReadJKL(filePath string) jkl {
 	}
 	data := string(bytes)
 
-	fmt.Println("got data", len(data))
-
 	jklResult := jkl{}
 
 	parseVertices(data, &jklResult)
-	// for _, vertex := range jklResult.Vertices {
-	// 	fmt.Println(vertex.X, vertex.Y, vertex.Z)
-	// }
 
 	parseSurfaces(data, &jklResult)
-	// for _, surface := range jklResult.Surfaces {
-	// 	fmt.Println(surface.VertexIds)
-	// }
 
 	return jklResult
 }
 
-func parseSection(data string, regex string, callback func(components []string)) {
+func parseSection(data string, regex string, componentRegex string, callback func(components []string)) {
 	sectionRegex := regexp.MustCompile(regex)
 	sectionMatch := sectionRegex.FindAllString(data, -1)
 	scanner := bufio.NewScanner(strings.NewReader(sectionMatch[0]))
 	for scanner.Scan() {
-		match, _ := regexp.MatchString("\\d+:.*", scanner.Text())
+		match, _ := regexp.MatchString(componentRegex, scanner.Text())
 		if match != true {
 			continue
 		}
@@ -68,7 +60,7 @@ func parseSection(data string, regex string, callback func(components []string))
 }
 
 func parseVertices(data string, jklResult *jkl) {
-	parseSection(data, `(?s)\#----- Vertices Subsection -----.*\#-- Texture Verts Subsection ---`,
+	parseSection(data, `(?s)World vertices.*World texture vertices`, "\\d+:.*",
 		func(components []string) {
 			x, _ := strconv.ParseFloat(components[1], 64)
 			y, _ := strconv.ParseFloat(components[2], 64)
@@ -79,12 +71,15 @@ func parseVertices(data string, jklResult *jkl) {
 }
 
 func parseSurfaces(data string, jklResult *jkl) {
-	parseSection(data, `(?s)\#----- Surfaces Subsection -----.*\#--- Surface normals ---`,
+	parseSection(data, `(?s)World surfaces.*\#--- Surface normals ---`, "\\d+:.*",
 		func(components []string) {
 			numVertexIds, _ := strconv.ParseInt(components[9], 10, 32)
 			vertexIds := components[10 : 10+numVertexIds]
 
 			surface := surface{}
+
+			geoFlag, _ := strconv.ParseInt(components[4], 10, 32)
+			surface.Geo = geoFlag
 
 			for _, vertexIDPair := range vertexIds {
 				splitVertexIDPair := strings.Split(vertexIDPair, ",")
@@ -95,7 +90,7 @@ func parseSurfaces(data string, jklResult *jkl) {
 			jklResult.Surfaces = append(jklResult.Surfaces, surface)
 		})
 
-	parseSection(data, `(?s)\#--- Surface normals ---.*\#\#\#\#\#\# Sector information \#\#\#\#\#\#`,
+	parseSection(data, `(?s)\#--- Surface normals ---.*Section: SECTORS`, "\\d+:.*",
 		func(components []string) {
 			// fmt.Println(components)
 

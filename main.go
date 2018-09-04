@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"runtime"
 
@@ -11,12 +12,17 @@ import (
 )
 
 const (
-	width  = 500
-	height = 500
+	width  = 800
+	height = 600
 )
 
 var jklData jkl
 var centroid [3]float32
+
+var camera Camera
+var previousTime float64
+
+var lightPos = mgl32.Vec3{1.2, 1.0, 2.0}
 
 func main() {
 	runtime.LockOSThread()
@@ -25,8 +31,12 @@ func main() {
 	defer glfw.Terminate()
 	program := initOpenGL()
 
-	// jklData = ReadJKL("./01narshadda.jkl")
-	jklData = ReadJKL("./m_boss15.jkl")
+	// jklData = ReadJKL("./jkl/01narshadda.jkl")
+	jklData = ReadJKL("./jkl/m_boss15.jkl")
+	// jklData = ReadJKL("./jkl/test.jkl")
+
+	fmt.Println(jklData)
+
 	var points []float32
 	for _, surface := range jklData.Surfaces {
 		for _, id := range surface.VertexIds {
@@ -50,6 +60,8 @@ func main() {
 	centroid[1] /= float32(len(jklData.Vertices))
 	centroid[2] /= float32(len(jklData.Vertices))
 
+	camera = NewCamera(mgl32.Vec3{5, 5, 0}, mgl32.Vec3{0, 0, 1}, 0, -90)
+
 	// vao := makeVao(triangle)
 	// vao := makeVao(cube)
 	vao := makeVao(points)
@@ -59,20 +71,24 @@ func main() {
 }
 
 func draw(vao uint32, window *glfw.Window, program uint32) {
+	deltaTime := glfw.GetTime() - previousTime
+	previousTime = glfw.GetTime()
+
+	DoMovement(deltaTime)
+
 	gl.Clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT)
 
 	gl.UseProgram(program)
 
 	// vertex shader uniforms
 
-	projection := mgl32.Perspective(mgl32.DegToRad(45.0), float32(width)/height, 0.1, 1000.0)
+	projection := mgl32.Perspective(mgl32.DegToRad(float32(camera.Zoom)), float32(width)/height, 0.1, 1000.0)
 	projectionUniform := gl.GetUniformLocation(program, gl.Str("projection\x00"))
 	gl.UniformMatrix4fv(projectionUniform, 1, false, &projection[0])
 
-	// centroid = [3]float32{0, 0, 0}
-	camera := mgl32.LookAtV(mgl32.Vec3{3, 3, centroid[2]}, mgl32.Vec3{centroid[0], centroid[1], centroid[2]}, mgl32.Vec3{0, 0, 1})
+	cameraView := camera.GetViewMatrix()
 	cameraUniform := gl.GetUniformLocation(program, gl.Str("view\x00"))
-	gl.UniformMatrix4fv(cameraUniform, 1, false, &camera[0])
+	gl.UniformMatrix4fv(cameraUniform, 1, false, &cameraView[0])
 
 	model := mgl32.Ident4()
 	modelUniform := gl.GetUniformLocation(program, gl.Str("model\x00"))
@@ -88,24 +104,30 @@ func draw(vao uint32, window *glfw.Window, program uint32) {
 	lightColorUniform := gl.GetUniformLocation(program, gl.Str("lightColor\x00"))
 	gl.Uniform3fv(lightColorUniform, 1, &lightColor[0])
 
-	lightPos := mgl32.Vec3{300, 300, centroid[2]}
 	lightPosUniform := gl.GetUniformLocation(program, gl.Str("lightPos\x00"))
-	gl.Uniform3fv(lightPosUniform, 1, &lightPos[0])
+	// gl.Uniform3fv(lightPosUniform, 1, &lightPos[0])
+	gl.Uniform3fv(lightPosUniform, 1, &camera.Position[0])
 
-	viewPos := mgl32.Vec3{300, 300, centroid[2]}
+	viewPos := camera.Position
 	viewPosUniform := gl.GetUniformLocation(program, gl.Str("viewPos\x00"))
 	gl.Uniform3fv(viewPosUniform, 1, &viewPos[0])
 
 	gl.BindVertexArray(vao)
 
 	var offset int32
+
 	for _, surface := range jklData.Surfaces {
 		numVerts := int32(len(surface.VertexIds))
-		gl.DrawArrays(gl.TRIANGLE_FAN, offset, int32(len(surface.VertexIds)))
-		// gl.DrawArrays(gl.LINE_LOOP, offset, int32(len(surface.VertexIds)))
+
+		if surface.Geo != 0 {
+			gl.DrawArrays(gl.TRIANGLE_FAN, offset, int32(len(surface.VertexIds)))
+			// gl.DrawArrays(gl.LINE_LOOP, offset, int32(len(surface.VertexIds)))
+		}
+
 		offset = offset + numVerts
 	}
 	// gl.DrawArrays(gl.TRIANGLES, 0, int32(len(triangle)/3))
+	// gl.DrawArrays(gl.TRIANGLES, 0, int32(len(cube)/6))
 
 	glfw.PollEvents()
 	window.SwapBuffers()
@@ -128,6 +150,10 @@ func initGlfw() *glfw.Window {
 	}
 	window.MakeContextCurrent()
 
+	window.SetInputMode(glfw.CursorMode, glfw.CursorDisabled)
+	window.SetKeyCallback(KeyCallback)
+	window.SetCursorPosCallback(MouseCallback)
+
 	return window
 }
 
@@ -140,7 +166,7 @@ func initOpenGL() uint32 {
 	log.Println("OpenGL version", version)
 
 	gl.Enable(gl.DEPTH_TEST)
-	gl.CullFace(gl.BACK)
+	gl.Enable(gl.CULL_FACE)
 
 	vertexShaderSource := readShader("./shaders/vertex.glsl")
 	vertexShader, err := compileShader(vertexShaderSource, gl.VERTEX_SHADER)
@@ -179,4 +205,23 @@ func makeVao(points []float32) uint32 {
 	gl.VertexAttribPointer(1, 3, gl.FLOAT, false, 6*4, gl.PtrOffset(3*4))
 
 	return vao
+}
+
+func DoMovement(deltaTime float64) {
+
+	if keyW, keyUp := keys[glfw.KeyW], keys[glfw.KeyUp]; keyW || keyUp {
+		camera.ProcessKeyboard(CAMERA_FORWARD, deltaTime)
+	}
+
+	if keyS, keyDown := keys[glfw.KeyS], keys[glfw.KeyDown]; keyS || keyDown {
+		camera.ProcessKeyboard(CAMERA_BACKWARD, deltaTime)
+	}
+
+	if keyA, keyLeft := keys[glfw.KeyA], keys[glfw.KeyLeft]; keyA || keyLeft {
+		camera.ProcessKeyboard(CAMERA_LEFT, deltaTime)
+	}
+
+	if keyD, keyRight := keys[glfw.KeyD], keys[glfw.KeyRight]; keyD || keyRight {
+		camera.ProcessKeyboard(CAMERA_RIGHT, deltaTime)
+	}
 }
