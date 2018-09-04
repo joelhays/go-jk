@@ -9,7 +9,8 @@ import (
 	"strings"
 )
 
-type jkl struct {
+// Jkl contains the information extracted from the Jedi Knight Level (.jkl) file
+type Jkl struct {
 	Vertices []vertex
 	Surfaces []surface
 }
@@ -27,14 +28,14 @@ type surface struct {
 }
 
 // ReadJKL will read a .jkl file and return a struct containing all necessary information
-func ReadJKL(filePath string) jkl {
+func ReadJKL(filePath string) Jkl {
 	bytes, err := ioutil.ReadFile(filePath)
 	if err != nil {
 		log.Fatal(err)
 	}
 	data := string(bytes)
 
-	jklResult := jkl{}
+	jklResult := Jkl{}
 
 	parseVertices(data, &jklResult)
 
@@ -59,7 +60,7 @@ func parseSection(data string, regex string, componentRegex string, callback fun
 	}
 }
 
-func parseVertices(data string, jklResult *jkl) {
+func parseVertices(data string, jklResult *Jkl) {
 	parseSection(data, `(?s)World vertices.*World texture vertices`, "\\d+:.*",
 		func(components []string) {
 			x, _ := strconv.ParseFloat(components[1], 64)
@@ -70,7 +71,7 @@ func parseVertices(data string, jklResult *jkl) {
 		})
 }
 
-func parseSurfaces(data string, jklResult *jkl) {
+func parseSurfaces(data string, jklResult *Jkl) {
 	parseSection(data, `(?s)World surfaces.*\#--- Surface normals ---`, "\\d+:.*",
 		func(components []string) {
 			numVertexIds, _ := strconv.ParseInt(components[9], 10, 32)

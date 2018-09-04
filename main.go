@@ -16,7 +16,7 @@ const (
 	height = 600
 )
 
-var jklData jkl
+var jklData Jkl
 var centroid [3]float32
 
 var camera Camera
@@ -74,7 +74,7 @@ func draw(vao uint32, window *glfw.Window, program uint32) {
 	deltaTime := glfw.GetTime() - previousTime
 	previousTime = glfw.GetTime()
 
-	DoMovement(deltaTime)
+	doMovement(deltaTime)
 
 	gl.Clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT)
 
@@ -207,7 +207,7 @@ func makeVao(points []float32) uint32 {
 	return vao
 }
 
-func DoMovement(deltaTime float64) {
+func doMovement(deltaTime float64) {
 
 	if keyW, keyUp := keys[glfw.KeyW], keys[glfw.KeyUp]; keyW || keyUp {
 		camera.ProcessKeyboard(CAMERA_FORWARD, deltaTime)
