@@ -7,38 +7,56 @@ import (
 	"regexp"
 	"strconv"
 	"strings"
+
+	"github.com/go-gl/mathgl/mgl32"
+)
+
+var (
+	GobFiles = []string{"J:\\Episode\\JK1.GOB", "J:\\Episode\\JK1CTF.GOB", "J:\\Episode\\JK1MP.GOB", "J:\\Resource\\Res2.gob", "J:\\Resource\\Res1hi.gob"}
 )
 
 // Jkl contains the information extracted from the Jedi Knight Level (.jkl) file
 type Jkl struct {
-	Vertices []vertex
-	Surfaces []surface
-}
-
-type vertex struct {
-	X float32
-	Y float32
-	Z float32
+	Vertices        []mgl32.Vec3
+	TextureVertices []mgl32.Vec2
+	Surfaces        []surface
+	Materials       []material
 }
 
 type surface struct {
-	VertexIds []int64
-	Normal    vertex
-	Geo       int64
+	VertexIds        []int64
+	TextureVertexIds []int64
+	Normal           mgl32.Vec3
+	Geo              int64
+	MaterialID       int64
 }
 
-// ReadJKL will read a .jkl file and return a struct containing all necessary information
-func ReadJKL(filePath string) Jkl {
+type material struct {
+	Texture []byte
+	SizeX   int32
+	SizeY   int32
+}
+
+// ReadJKLFromFile will read a .jkl file and return a struct containing all necessary information
+func ReadJKLFromFile(filePath string) Jkl {
 	bytes, err := ioutil.ReadFile(filePath)
 	if err != nil {
 		log.Fatal(err)
 	}
 	data := string(bytes)
 
+	return ReadJKLFromString(data)
+}
+
+// ReadJKLFromString will parse a string as a .jkl file
+func ReadJKLFromString(jklString string) Jkl {
+	data := jklString
+
 	jklResult := Jkl{}
 
 	parseVertices(data, &jklResult)
-
+	parseTextureVertices(data, &jklResult)
+	parseMaterials(data, &jklResult)
 	parseSurfaces(data, &jklResult)
 
 	return jklResult
@@ -63,11 +81,74 @@ func parseSection(data string, regex string, componentRegex string, callback fun
 func parseVertices(data string, jklResult *Jkl) {
 	parseSection(data, `(?s)World vertices.*World texture vertices`, "\\d+:.*",
 		func(components []string) {
-			x, _ := strconv.ParseFloat(components[1], 64)
-			y, _ := strconv.ParseFloat(components[2], 64)
-			z, _ := strconv.ParseFloat(components[3], 64)
+			var err error
 
-			jklResult.Vertices = append(jklResult.Vertices, vertex{X: float32(x), Y: float32(y), Z: float32(z)})
+			x, err := strconv.ParseFloat(components[1], 64)
+			if err != nil {
+				log.Fatal(err)
+			}
+			y, err := strconv.ParseFloat(components[2], 64)
+			if err != nil {
+				log.Fatal(err)
+			}
+			z, err := strconv.ParseFloat(components[3], 64)
+			if err != nil {
+				log.Fatal(err)
+			}
+
+			jklResult.Vertices = append(jklResult.Vertices, mgl32.Vec3{float32(x), float32(y), float32(z)})
+		})
+}
+
+func parseTextureVertices(data string, jklResult *Jkl) {
+	parseSection(data, `(?s)World texture vertices.*World adjoins`, "\\d+:.*",
+		func(components []string) {
+			var err error
+
+			u, err := strconv.ParseFloat(components[1], 64)
+			if err != nil {
+				log.Fatal(err)
+			}
+			v, err := strconv.ParseFloat(components[2], 64)
+			if err != nil {
+				log.Fatal(err)
+			}
+
+			jklResult.TextureVertices = append(jklResult.TextureVertices, mgl32.Vec2{float32(u), float32(v)})
+		})
+}
+
+func parseMaterials(data string, jklResult *Jkl) {
+	parseSection(data, `(?s)World materials.*SECTION: GEORESOURCE`, "\\d+:.*",
+		func(components []string) {
+			var err error
+
+			matName := components[1]
+
+			xTile, err := strconv.ParseFloat(components[2], 64)
+			if err != nil {
+				log.Fatal(err)
+			}
+
+			yTile, err := strconv.ParseFloat(components[3], 64)
+			if err != nil {
+				log.Fatal(err)
+			}
+
+			_ = xTile
+			_ = yTile
+
+			var matBytes []byte
+			for _, file := range GobFiles {
+				matBytes = LoadFileFromGOB(file, matName)
+				if matBytes != nil {
+					break
+				}
+			}
+
+			textureBytes := parseMatFile(matBytes)
+
+			jklResult.Materials = append(jklResult.Materials, textureBytes)
 		})
 }
 
@@ -79,13 +160,18 @@ func parseSurfaces(data string, jklResult *Jkl) {
 
 			surface := surface{}
 
+			materialID, _ := strconv.ParseInt(components[1], 10, 32)
+			surface.MaterialID = materialID
+
 			geoFlag, _ := strconv.ParseInt(components[4], 10, 32)
 			surface.Geo = geoFlag
 
 			for _, vertexIDPair := range vertexIds {
 				splitVertexIDPair := strings.Split(vertexIDPair, ",")
 				vertexID, _ := strconv.ParseInt(splitVertexIDPair[0], 10, 64)
+				texVertexID, _ := strconv.ParseInt(splitVertexIDPair[1], 10, 64)
 				surface.VertexIds = append(surface.VertexIds, vertexID)
+				surface.TextureVertexIds = append(surface.TextureVertexIds, texVertexID)
 			}
 
 			jklResult.Surfaces = append(jklResult.Surfaces, surface)
@@ -93,14 +179,12 @@ func parseSurfaces(data string, jklResult *Jkl) {
 
 	parseSection(data, `(?s)\#--- Surface normals ---.*Section: SECTORS`, "\\d+:.*",
 		func(components []string) {
-			// fmt.Println(components)
-
 			surfaceID, _ := strconv.ParseInt(strings.TrimRight(components[0], ":"), 10, 32)
 
 			x, _ := strconv.ParseFloat(components[1], 64)
 			y, _ := strconv.ParseFloat(components[2], 64)
 			z, _ := strconv.ParseFloat(components[3], 64)
 
-			jklResult.Surfaces[surfaceID].Normal = vertex{X: float32(x), Y: float32(y), Z: float32(z)}
+			jklResult.Surfaces[surfaceID].Normal = mgl32.Vec3{float32(x), float32(y), float32(z)}
 		})
 }

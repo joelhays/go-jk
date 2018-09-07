@@ -49,7 +49,6 @@ func NewCamera(position mgl32.Vec3, up mgl32.Vec3, yaw float64, pitch float64) C
 }
 
 func (c *Camera) GetViewMatrix() mgl32.Mat4 {
-	// fmt.Println(c.Position, c.Up, c.Yaw, c.Pitch, c.Front, c.Right, c.WorldUp)
 	return mgl32.LookAtV(c.Position, c.Position.Add(c.Front), c.Up)
 }
 

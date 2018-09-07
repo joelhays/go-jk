@@ -5,10 +5,9 @@ import (
 )
 
 var (
-	keys      = make(map[glfw.Key]bool)
-	modifiers = make(map[glfw.ModifierKey]bool)
-	lastX     float64
-	lastY     float64
+	keys  = make(map[glfw.Key]bool)
+	lastX float64
+	lastY float64
 )
 
 func KeyCallback(window *glfw.Window, key glfw.Key, scancode int, action glfw.Action, mods glfw.ModifierKey) {
@@ -18,10 +17,8 @@ func KeyCallback(window *glfw.Window, key glfw.Key, scancode int, action glfw.Ac
 
 	if action == glfw.Press {
 		keys[key] = true
-		modifiers[mods] = true
 	} else if action == glfw.Release {
 		delete(keys, key)
-		delete(modifiers, mods)
 	}
 }
 
