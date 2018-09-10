@@ -1,4 +1,4 @@
-package main
+package jk
 
 import (
 	"bytes"
@@ -33,30 +33,27 @@ type textureData struct {
 	NumMipMaps int32
 }
 
-type mtl struct {
-	header mtlHeader
-	textureHeader
-	textureData
-}
-
-func parseMatFile(data []byte) material {
+func ParseMatFile(data []byte) Material {
 	cursor := 0
 	var header mtlHeader
 	headerSize := int(unsafe.Sizeof(header))
 	headerBuf := bytes.NewBuffer(data[cursor:headerSize])
 	binary.Read(headerBuf, binary.LittleEndian, &header)
-	// fmt.Println(header, string(header.Name[:4]))
+
+	// fmt.Println("Header", string(header.Name[:4]))
+	// fmt.Println("Type", header.MatType)
+	// fmt.Println("NumOfTextures", header.NumTextures)
 
 	cursor += headerSize
 
 	if header.MatType == 2 {
+		// get the first texture header (full-sized image)
 		var texHeader textureHeader
 		texHeaderSize := int(unsafe.Sizeof(texHeader))
 		texBuf := bytes.NewBuffer(data[cursor : cursor+texHeaderSize])
 		binary.Read(texBuf, binary.LittleEndian, &texHeader)
-		// fmt.Println(texHeader)
 
-		cursor += texHeaderSize
+		cursor += texHeaderSize * int(header.NumTextures)
 
 		var texData textureData
 		texDataSize := int(unsafe.Sizeof(texData))
@@ -66,9 +63,11 @@ func parseMatFile(data []byte) material {
 
 		cursor += texDataSize
 
-		textureBytes := data[cursor : cursor+int(texData.SizeX)*int(texData.SizeY)]
-		return material{Texture: textureBytes, SizeX: texData.SizeX, SizeY: texData.SizeY}
+		// fmt.Println(texData.SizeX, texData.SizeY, texData.SizeX*texData.SizeY)
+
+		textureBytes := data[cursor : cursor+int(texData.SizeX*texData.SizeY)]
+		return Material{Texture: textureBytes, SizeX: texData.SizeX, SizeY: texData.SizeY}
 	}
 
-	return material{}
+	return Material{}
 }

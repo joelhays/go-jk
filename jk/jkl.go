@@ -1,4 +1,4 @@
-package main
+package jk
 
 import (
 	"bufio"
@@ -12,7 +12,7 @@ import (
 )
 
 var (
-	GobFiles = []string{"J:\\Episode\\JK1.GOB", "J:\\Episode\\JK1CTF.GOB", "J:\\Episode\\JK1MP.GOB", "J:\\Resource\\Res2.gob", "J:\\Resource\\Res1hi.gob"}
+	GobFiles = []string{"J:\\Resource\\Res2.gob"} //"J:\\Episode\\JK1.GOB", "J:\\Episode\\JK1CTF.GOB", "J:\\Episode\\JK1MP.GOB", "J:\\Resource\\Res2.gob", "J:\\Resource\\Res1hi.gob"}
 )
 
 // Jkl contains the information extracted from the Jedi Knight Level (.jkl) file
@@ -20,7 +20,8 @@ type Jkl struct {
 	Vertices        []mgl32.Vec3
 	TextureVertices []mgl32.Vec2
 	Surfaces        []surface
-	Materials       []material
+	Materials       []Material
+	ColorMaps       []ColorMap
 }
 
 type surface struct {
@@ -31,7 +32,7 @@ type surface struct {
 	MaterialID       int64
 }
 
-type material struct {
+type Material struct {
 	Texture []byte
 	SizeX   int32
 	SizeY   int32
@@ -57,6 +58,7 @@ func ReadJKLFromString(jklString string) Jkl {
 	parseVertices(data, &jklResult)
 	parseTextureVertices(data, &jklResult)
 	parseMaterials(data, &jklResult)
+	parseColormaps(data, &jklResult)
 	parseSurfaces(data, &jklResult)
 
 	return jklResult
@@ -146,9 +148,28 @@ func parseMaterials(data string, jklResult *Jkl) {
 				}
 			}
 
-			textureBytes := parseMatFile(matBytes)
+			textureBytes := ParseMatFile(matBytes)
 
 			jklResult.Materials = append(jklResult.Materials, textureBytes)
+		})
+}
+
+func parseColormaps(data string, jklResult *Jkl) {
+	parseSection(data, `(?s)World Colormaps	1.*World vertices`, "\\d+:.*",
+		func(components []string) {
+			cmpName := components[1]
+
+			var cmpBytes []byte
+			for _, file := range GobFiles {
+				cmpBytes = LoadFileFromGOB(file, cmpName)
+				if cmpBytes != nil {
+					break
+				}
+			}
+
+			colorMap := ParseCmpFile(cmpBytes)
+
+			jklResult.ColorMaps = append(jklResult.ColorMaps, colorMap)
 		})
 }
 

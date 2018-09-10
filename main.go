@@ -9,6 +9,8 @@ import (
 	// "github.com/go-gl/gl/v2.1/gl"
 	"github.com/go-gl/glfw/v3.2/glfw"
 	"github.com/go-gl/mathgl/mgl32"
+
+	"github.com/joelhays/go-vulkan/jk"
 )
 
 const (
@@ -16,7 +18,7 @@ const (
 	height = 768
 )
 
-var jklData Jkl
+var jklData jk.Jkl
 
 var camera Camera
 var previousTime float64
@@ -30,45 +32,51 @@ func main() {
 	defer glfw.Terminate()
 	program := initOpenGL()
 
-	// matBytes := LoadFileFromGOB("J:\\Resource\\Res2.gob", "00cglyf3.mat")
-	// data := parseMatFile(matBytes)
+	// camera = NewCamera(mgl32.Vec3{5, 5, 0}, mgl32.Vec3{0, 0, 1}, 0, -90)
+	camera = NewCamera(mgl32.Vec3{0, 0, 1}, mgl32.Vec3{0, 0, 1}, 0, -90)
+
+	// matBytes := jk.LoadFileFromGOB("J:\\Resource\\Res2.gob", "00cglyf3.mat")
+	// data := jk.ParseMatFile(matBytes)
 	// _ = data
 	// return
 
-	jklBytes := LoadFileFromGOB("J:\\Episode\\JK1MP.GOB", "jkl\\m_boss15.jkl")
-	jklData = ReadJKLFromString(string(jklBytes))
+	// cmpBytes := jk.LoadFileFromGOB("J:\\Resource\\Res2.gob", "dflt.cmp")
+	// data := jk.ParseCmpFile(cmpBytes)
+	// _ = data
+	// return
+
+	jklBytes := jk.LoadFileFromGOB("J:\\Episode\\JK1MP.GOB", "jkl\\m_boss15.jkl")
+	jklData = jk.ReadJKLFromString(string(jklBytes))
 
 	// jklData = ReadJKLFromFile("./jkl/01narshadda.jkl")
 	// jklData = ReadJKL("./jkl/test.jkl")
 
 	// fmt.Println(jklData)
 
-	var points []float32
-	for _, surface := range jklData.Surfaces {
-		var mat material
-		if surface.MaterialID != -1 {
-			mat = jklData.Materials[surface.MaterialID]
-		}
-
-		for _, id := range surface.VertexIds {
-			points = append(points, float32(jklData.Vertices[id][0]))
-			points = append(points, float32(jklData.Vertices[id][1]))
-			points = append(points, float32(jklData.Vertices[id][2]))
-
-			points = append(points, float32(surface.Normal[0]))
-			points = append(points, float32(surface.Normal[1]))
-			points = append(points, float32(surface.Normal[2]))
-
-			points = append(points, jklData.TextureVertices[id][0]/float32(mat.SizeX))
-			points = append(points, jklData.TextureVertices[id][1]/float32(mat.SizeY))
-		}
-	}
-
-	camera = NewCamera(mgl32.Vec3{5, 5, 0}, mgl32.Vec3{0, 0, 1}, 0, -90)
-
 	// vao := makeVao(triangle)
-	// vao := makeVao(cube)
-	vao := makeVao(points)
+	vao := makeVao(cube)
+
+	// var points []float32
+	// for _, surface := range jklData.Surfaces {
+	// 	var mat material
+	// 	if surface.MaterialID != -1 {
+	// 		mat = jklData.Materials[surface.MaterialID]
+	// 	}
+
+	// 	for _, id := range surface.VertexIds {
+	// 		points = append(points, float32(jklData.Vertices[id][0]))
+	// 		points = append(points, float32(jklData.Vertices[id][1]))
+	// 		points = append(points, float32(jklData.Vertices[id][2]))
+
+	// 		points = append(points, float32(surface.Normal[0]))
+	// 		points = append(points, float32(surface.Normal[1]))
+	// 		points = append(points, float32(surface.Normal[2]))
+
+	// 		points = append(points, jklData.TextureVertices[id][0]/float32(mat.SizeX))
+	// 		points = append(points, jklData.TextureVertices[id][1]/float32(mat.SizeY))
+	// 	}
+	// }
+	// vao := makeVao(points)
 
 	textures := makeTextures()
 	for !window.ShouldClose() {
@@ -120,28 +128,33 @@ func draw(vao uint32, textures *[]uint32, window *glfw.Window, program uint32) {
 
 	gl.BindVertexArray(vao)
 
-	var offset int32
+	// var offset int32
 
-	for _, surface := range jklData.Surfaces {
-		numVerts := int32(len(surface.VertexIds))
+	// for _, surface := range jklData.Surfaces {
+	// 	numVerts := int32(len(surface.VertexIds))
 
-		if surface.Geo != 0 {
+	// 	if surface.Geo != 0 {
 
-			gl.ActiveTexture(gl.TEXTURE0)
-			gl.BindTexture(gl.TEXTURE_2D, (*textures)[surface.MaterialID])
-			textureUniform := gl.GetUniformLocation(program, gl.Str("objectTexture\x00"))
-			gl.Uniform1i(textureUniform, 0)
+	// 		gl.ActiveTexture(gl.TEXTURE0)
+	// 		gl.BindTexture(gl.TEXTURE_2D, (*textures)[surface.MaterialID])
+	// 		textureUniform := gl.GetUniformLocation(program, gl.Str("objectTexture\x00"))
+	// 		gl.Uniform1i(textureUniform, 0)
 
-			gl.DrawArrays(gl.TRIANGLE_FAN, offset, int32(len(surface.VertexIds)))
-			// gl.DrawArrays(gl.LINE_LOOP, offset, int32(len(surface.VertexIds)))
+	// 		gl.DrawArrays(gl.TRIANGLE_FAN, offset, int32(len(surface.VertexIds)))
+	// 		// gl.DrawArrays(gl.LINE_LOOP, offset, int32(len(surface.VertexIds)))
 
-			gl.BindTexture(gl.TEXTURE_2D, 0)
-		}
+	// 		gl.BindTexture(gl.TEXTURE_2D, 0)
+	// 	}
 
-		offset = offset + numVerts
-	}
+	// 	offset = offset + numVerts
+	// }
 	// gl.DrawArrays(gl.TRIANGLES, 0, int32(len(triangle)/3))
-	// gl.DrawArrays(gl.TRIANGLES, 0, int32(len(cube)/6))
+
+	gl.ActiveTexture(gl.TEXTURE0)
+	gl.BindTexture(gl.TEXTURE_2D, (*textures)[185])
+	textureUniform := gl.GetUniformLocation(program, gl.Str("objectTexture\x00"))
+	gl.Uniform1i(textureUniform, 0)
+	gl.DrawArrays(gl.TRIANGLES, 0, int32(len(cube)/6))
 
 	glfw.PollEvents()
 	window.SwapBuffers()
@@ -252,7 +265,14 @@ func makeTextures() []uint32 {
 			continue
 		}
 
-		gl.TexImage2D(gl.TEXTURE_2D, 0, gl.RGBA, material.SizeX, material.SizeY, 0, gl.RGBA, gl.UNSIGNED_BYTE, gl.Ptr(material.Texture))
+		finalTexture := make([]byte, material.SizeX*material.SizeY*3)
+		for j := 0; j < int(material.SizeX*material.SizeY); j++ {
+			finalTexture[j*3] = jklData.ColorMaps[0].Pallette[material.Texture[j]].R
+			finalTexture[j*3+1] = jklData.ColorMaps[0].Pallette[material.Texture[j]].G
+			finalTexture[j*3+2] = jklData.ColorMaps[0].Pallette[material.Texture[j]].B
+		}
+
+		gl.TexImage2D(gl.TEXTURE_2D, 0, gl.RGB, material.SizeX, material.SizeY, 0, gl.RGB, gl.UNSIGNED_BYTE, gl.Ptr(finalTexture))
 		gl.GenerateMipmap(gl.TEXTURE_2D)
 
 		gl.BindTexture(gl.TEXTURE_2D, 0)
