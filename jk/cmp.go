@@ -3,7 +3,6 @@ package jk
 import (
 	"bytes"
 	"encoding/binary"
-	"fmt"
 	"unsafe"
 )
 
@@ -31,8 +30,6 @@ func ParseCmpFile(data []byte) ColorMap {
 	headerSize := int(unsafe.Sizeof(header))
 	headerBuf := bytes.NewBuffer(data[cursor:headerSize])
 	binary.Read(headerBuf, binary.LittleEndian, &header)
-
-	fmt.Println(header.Palette, len(header.Palette))
 
 	return ColorMap{Pallette: header.Palette}
 }

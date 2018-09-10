@@ -54,29 +54,37 @@ func main() {
 	// fmt.Println(jklData)
 
 	// vao := makeVao(triangle)
-	vao := makeVao(cube)
+	// vao := makeVao(cube)
 
-	// var points []float32
-	// for _, surface := range jklData.Surfaces {
-	// 	var mat material
-	// 	if surface.MaterialID != -1 {
-	// 		mat = jklData.Materials[surface.MaterialID]
-	// 	}
+	var points []float32
+	for _, surface := range jklData.Surfaces {
+		var mat jk.Material
+		if surface.MaterialID != -1 {
+			mat = jklData.Materials[surface.MaterialID]
+		}
 
-	// 	for _, id := range surface.VertexIds {
-	// 		points = append(points, float32(jklData.Vertices[id][0]))
-	// 		points = append(points, float32(jklData.Vertices[id][1]))
-	// 		points = append(points, float32(jklData.Vertices[id][2]))
+		fmt.Println(surface.TextureVertexIds)
 
-	// 		points = append(points, float32(surface.Normal[0]))
-	// 		points = append(points, float32(surface.Normal[1]))
-	// 		points = append(points, float32(surface.Normal[2]))
+		for idx, id := range surface.VertexIds {
+			points = append(points, float32(jklData.Vertices[id][0]))
+			points = append(points, float32(jklData.Vertices[id][1]))
+			points = append(points, float32(jklData.Vertices[id][2]))
 
-	// 		points = append(points, jklData.TextureVertices[id][0]/float32(mat.SizeX))
-	// 		points = append(points, jklData.TextureVertices[id][1]/float32(mat.SizeY))
-	// 	}
-	// }
-	// vao := makeVao(points)
+			points = append(points, float32(surface.Normal[0]))
+			points = append(points, float32(surface.Normal[1]))
+			points = append(points, float32(surface.Normal[2]))
+
+			textureVertexID := surface.TextureVertexIds[idx]
+			if textureVertexID != -1 {
+				points = append(points, jklData.TextureVertices[textureVertexID][0]/float32(mat.SizeX))
+				points = append(points, jklData.TextureVertices[textureVertexID][1]/float32(mat.SizeY))
+			} else {
+				points = append(points, 0)
+				points = append(points, 0)
+			}
+		}
+	}
+	vao := makeVao(points)
 
 	textures := makeTextures()
 	for !window.ShouldClose() {
@@ -128,33 +136,33 @@ func draw(vao uint32, textures *[]uint32, window *glfw.Window, program uint32) {
 
 	gl.BindVertexArray(vao)
 
-	// var offset int32
+	var offset int32
+	for _, surface := range jklData.Surfaces {
+		numVerts := int32(len(surface.VertexIds))
 
-	// for _, surface := range jklData.Surfaces {
-	// 	numVerts := int32(len(surface.VertexIds))
+		if surface.Geo != 0 {
 
-	// 	if surface.Geo != 0 {
+			gl.ActiveTexture(gl.TEXTURE0)
+			gl.BindTexture(gl.TEXTURE_2D, (*textures)[surface.MaterialID])
+			textureUniform := gl.GetUniformLocation(program, gl.Str("objectTexture\x00"))
+			gl.Uniform1i(textureUniform, 0)
 
-	// 		gl.ActiveTexture(gl.TEXTURE0)
-	// 		gl.BindTexture(gl.TEXTURE_2D, (*textures)[surface.MaterialID])
-	// 		textureUniform := gl.GetUniformLocation(program, gl.Str("objectTexture\x00"))
-	// 		gl.Uniform1i(textureUniform, 0)
+			gl.DrawArrays(gl.TRIANGLE_FAN, offset, int32(len(surface.VertexIds)))
+			// gl.DrawArrays(gl.LINE_LOOP, offset, int32(len(surface.VertexIds)))
 
-	// 		gl.DrawArrays(gl.TRIANGLE_FAN, offset, int32(len(surface.VertexIds)))
-	// 		// gl.DrawArrays(gl.LINE_LOOP, offset, int32(len(surface.VertexIds)))
+			gl.BindTexture(gl.TEXTURE_2D, 0)
+		}
 
-	// 		gl.BindTexture(gl.TEXTURE_2D, 0)
-	// 	}
+		offset = offset + numVerts
+	}
 
-	// 	offset = offset + numVerts
-	// }
 	// gl.DrawArrays(gl.TRIANGLES, 0, int32(len(triangle)/3))
 
-	gl.ActiveTexture(gl.TEXTURE0)
-	gl.BindTexture(gl.TEXTURE_2D, (*textures)[185])
-	textureUniform := gl.GetUniformLocation(program, gl.Str("objectTexture\x00"))
-	gl.Uniform1i(textureUniform, 0)
-	gl.DrawArrays(gl.TRIANGLES, 0, int32(len(cube)/6))
+	// gl.ActiveTexture(gl.TEXTURE0)
+	// gl.BindTexture(gl.TEXTURE_2D, (*textures)[185])
+	// textureUniform := gl.GetUniformLocation(program, gl.Str("objectTexture\x00"))
+	// gl.Uniform1i(textureUniform, 0)
+	// gl.DrawArrays(gl.TRIANGLES, 0, int32(len(cube)/6))
 
 	glfw.PollEvents()
 	window.SwapBuffers()

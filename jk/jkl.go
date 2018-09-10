@@ -32,12 +32,6 @@ type surface struct {
 	MaterialID       int64
 }
 
-type Material struct {
-	Texture []byte
-	SizeX   int32
-	SizeY   int32
-}
-
 // ReadJKLFromFile will read a .jkl file and return a struct containing all necessary information
 func ReadJKLFromFile(filePath string) Jkl {
 	bytes, err := ioutil.ReadFile(filePath)

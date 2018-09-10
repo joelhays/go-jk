@@ -33,6 +33,12 @@ type textureData struct {
 	NumMipMaps int32
 }
 
+type Material struct {
+	Texture []byte
+	SizeX   int32
+	SizeY   int32
+}
+
 func ParseMatFile(data []byte) Material {
 	cursor := 0
 	var header mtlHeader
