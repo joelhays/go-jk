@@ -45,10 +45,15 @@ func main() {
 	// _ = data
 	// return
 
-	jklBytes := jk.LoadFileFromGOB("J:\\Episode\\JK1MP.GOB", "jkl\\m_boss15.jkl")
+	// jklBytes := jk.LoadFileFromGOB("J:\\Episode\\JK1MP.GOB", "jkl\\m10.jkl")
+	// jklBytes := jk.LoadFileFromGOB("J:\\Episode\\JK1MP.GOB", "jkl\\m2.jkl")
+	// jklBytes := jk.LoadFileFromGOB("J:\\Episode\\JK1MP.GOB", "jkl\\m4.jkl")
+	// jklBytes := jk.LoadFileFromGOB("J:\\Episode\\JK1MP.GOB", "jkl\\m5.jkl") //BROKEN
+	// jklBytes := jk.LoadFileFromGOB("J:\\Episode\\JK1MP.GOB", "jkl\\m_boss15.jkl")
+	jklBytes := jk.LoadFileFromGOB("J:\\Episode\\JK1MP.GOB", "jkl\\m_boss17.jkl")
 	jklData = jk.ReadJKLFromString(string(jklBytes))
 
-	// jklData = ReadJKLFromFile("./jkl/01narshadda.jkl")
+	// jklData = jk.ReadJKLFromFile("./_testfiles/jkl/01narshadda.jkl")
 	// jklData = ReadJKL("./jkl/test.jkl")
 
 	// fmt.Println(jklData)
@@ -273,14 +278,31 @@ func makeTextures() []uint32 {
 			continue
 		}
 
-		finalTexture := make([]byte, material.SizeX*material.SizeY*3)
-		for j := 0; j < int(material.SizeX*material.SizeY); j++ {
-			finalTexture[j*3] = jklData.ColorMaps[0].Pallette[material.Texture[j]].R
-			finalTexture[j*3+1] = jklData.ColorMaps[0].Pallette[material.Texture[j]].G
-			finalTexture[j*3+2] = jklData.ColorMaps[0].Pallette[material.Texture[j]].B
+		var finalTexture []byte
+		if material.Transparent {
+			finalTexture = make([]byte, material.SizeX*material.SizeY*4)
+			for j := 0; j < int(material.SizeX*material.SizeY); j++ {
+				finalTexture[j*4] = jklData.ColorMaps[0].Pallette[material.Texture[j]].R
+				finalTexture[j*4+1] = jklData.ColorMaps[0].Pallette[material.Texture[j]].G
+				finalTexture[j*4+2] = jklData.ColorMaps[0].Pallette[material.Texture[j]].B
+
+				if material.Texture[j] == 0 {
+					finalTexture[j*4+3] = 0
+				} else {
+					finalTexture[j*4+3] = 255
+				}
+				gl.TexImage2D(gl.TEXTURE_2D, 0, gl.RGBA, material.SizeX, material.SizeY, 0, gl.RGBA, gl.UNSIGNED_BYTE, gl.Ptr(finalTexture))
+			}
+		} else {
+			finalTexture = make([]byte, material.SizeX*material.SizeY*3)
+			for j := 0; j < int(material.SizeX*material.SizeY); j++ {
+				finalTexture[j*3] = jklData.ColorMaps[0].Pallette[material.Texture[j]].R
+				finalTexture[j*3+1] = jklData.ColorMaps[0].Pallette[material.Texture[j]].G
+				finalTexture[j*3+2] = jklData.ColorMaps[0].Pallette[material.Texture[j]].B
+			}
+			gl.TexImage2D(gl.TEXTURE_2D, 0, gl.RGB, material.SizeX, material.SizeY, 0, gl.RGB, gl.UNSIGNED_BYTE, gl.Ptr(finalTexture))
 		}
 
-		gl.TexImage2D(gl.TEXTURE_2D, 0, gl.RGB, material.SizeX, material.SizeY, 0, gl.RGB, gl.UNSIGNED_BYTE, gl.Ptr(finalTexture))
 		gl.GenerateMipmap(gl.TEXTURE_2D)
 
 		gl.BindTexture(gl.TEXTURE_2D, 0)

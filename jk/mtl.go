@@ -34,9 +34,10 @@ type textureData struct {
 }
 
 type Material struct {
-	Texture []byte
-	SizeX   int32
-	SizeY   int32
+	Texture     []byte
+	SizeX       int32
+	SizeY       int32
+	Transparent bool
 }
 
 func ParseMatFile(data []byte) Material {
@@ -51,6 +52,10 @@ func ParseMatFile(data []byte) Material {
 	// fmt.Println("NumOfTextures", header.NumTextures)
 
 	cursor += headerSize
+
+	if header.MatType == 0 {
+		// TODO: handle color-only materials
+	}
 
 	if header.MatType == 2 {
 		// get the first texture header (full-sized image)
@@ -69,10 +74,17 @@ func ParseMatFile(data []byte) Material {
 
 		cursor += texDataSize
 
-		// fmt.Println(texData.SizeX, texData.SizeY, texData.SizeX*texData.SizeY)
-
 		textureBytes := data[cursor : cursor+int(texData.SizeX*texData.SizeY)]
-		return Material{Texture: textureBytes, SizeX: texData.SizeX, SizeY: texData.SizeY}
+
+		var transparent bool
+		for i := 0; i < len(textureBytes); i++ {
+			if textureBytes[i] == 0 {
+				transparent = true
+				break
+			}
+		}
+
+		return Material{Texture: textureBytes, SizeX: texData.SizeX, SizeY: texData.SizeY, Transparent: transparent}
 	}
 
 	return Material{}
