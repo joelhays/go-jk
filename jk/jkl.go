@@ -61,6 +61,12 @@ func ReadJKLFromString(jklString string) Jkl {
 func parseSection(data string, regex string, componentRegex string, callback func(components []string)) {
 	sectionRegex := regexp.MustCompile(regex)
 	sectionMatch := sectionRegex.FindAllString(data, -1)
+
+	if len(sectionMatch) == 0 {
+		callback([]string{})
+		return
+	}
+
 	scanner := bufio.NewScanner(strings.NewReader(sectionMatch[0]))
 	for scanner.Scan() {
 		match, _ := regexp.MatchString(componentRegex, scanner.Text())
@@ -151,7 +157,12 @@ func parseMaterials(data string, jklResult *Jkl) {
 func parseColormaps(data string, jklResult *Jkl) {
 	parseSection(data, `(?s)World Colormaps	1.*World vertices`, "\\d+:.*",
 		func(components []string) {
-			cmpName := components[1]
+			var cmpName string
+			if len(components) == 0 {
+				cmpName = "dflt.cmp"
+			} else {
+				cmpName = components[1]
+			}
 
 			var cmpBytes []byte
 			for _, file := range GobFiles {

@@ -48,9 +48,13 @@ func main() {
 	// jklBytes := jk.LoadFileFromGOB("J:\\Episode\\JK1MP.GOB", "jkl\\m10.jkl")
 	// jklBytes := jk.LoadFileFromGOB("J:\\Episode\\JK1MP.GOB", "jkl\\m2.jkl")
 	// jklBytes := jk.LoadFileFromGOB("J:\\Episode\\JK1MP.GOB", "jkl\\m4.jkl")
-	// jklBytes := jk.LoadFileFromGOB("J:\\Episode\\JK1MP.GOB", "jkl\\m5.jkl") //BROKEN
+	jklBytes := jk.LoadFileFromGOB("J:\\Episode\\JK1MP.GOB", "jkl\\m5.jkl")
 	// jklBytes := jk.LoadFileFromGOB("J:\\Episode\\JK1MP.GOB", "jkl\\m_boss15.jkl")
-	jklBytes := jk.LoadFileFromGOB("J:\\Episode\\JK1MP.GOB", "jkl\\m_boss17.jkl")
+	// jklBytes := jk.LoadFileFromGOB("J:\\Episode\\JK1MP.GOB", "jkl\\m_boss17.jkl")
+
+	// jklBytes := jk.LoadFileFromGOB("J:\\Episode\\JK1CTF.GOB", "jkl\\c1.jkl")
+	// jklBytes := jk.LoadFileFromGOB("J:\\Episode\\JK1CTF.GOB", "jkl\\c2.jkl")
+	// jklBytes := jk.LoadFileFromGOB("J:\\Episode\\JK1CTF.GOB", "jkl\\c3.jkl")
 	jklData = jk.ReadJKLFromString(string(jklBytes))
 
 	// jklData = jk.ReadJKLFromFile("./_testfiles/jkl/01narshadda.jkl")
