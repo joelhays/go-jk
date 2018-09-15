@@ -26,6 +26,12 @@ type textureHeader struct {
 	CurrentTXNum int32
 }
 
+type colorHeader struct {
+	TexType  int32
+	ColorNum int32
+	Unk0     [4]int32
+}
+
 type textureData struct {
 	SizeX      int32
 	SizeY      int32
@@ -37,6 +43,8 @@ type Material struct {
 	Texture     []byte
 	SizeX       int32
 	SizeY       int32
+	XTile       float32
+	YTile       float32
 	Transparent bool
 }
 
@@ -47,14 +55,19 @@ func ParseMatFile(data []byte) Material {
 	headerBuf := bytes.NewBuffer(data[cursor:headerSize])
 	binary.Read(headerBuf, binary.LittleEndian, &header)
 
-	// fmt.Println("Header", string(header.Name[:4]))
-	// fmt.Println("Type", header.MatType)
-	// fmt.Println("NumOfTextures", header.NumTextures)
-
 	cursor += headerSize
 
 	if header.MatType == 0 {
 		// TODO: handle color-only materials
+		var colHeader colorHeader
+		colHeaderSize := int(unsafe.Sizeof(colHeader))
+		colBuf := bytes.NewBuffer(data[cursor : cursor+colHeaderSize])
+		binary.Read(colBuf, binary.LittleEndian, &colHeader)
+
+		texture := make([]byte, 4)
+		binary.LittleEndian.PutUint32(texture, uint32(colHeader.ColorNum))
+
+		return Material{Texture: texture, SizeX: 1, SizeY: 1, Transparent: false}
 	}
 
 	if header.MatType == 2 {
@@ -70,7 +83,6 @@ func ParseMatFile(data []byte) Material {
 		texDataSize := int(unsafe.Sizeof(texData))
 		texDataBuf := bytes.NewBuffer(data[cursor : cursor+texDataSize])
 		binary.Read(texDataBuf, binary.LittleEndian, &texData)
-		// fmt.Println(texData)
 
 		cursor += texDataSize
 

@@ -3,6 +3,7 @@
 in vec3 FragPos;
 in vec3 Normal;
 in vec2 TexCoord;
+in float LightIntensity;
 
 uniform vec3 lightPos;
 uniform vec3 viewPos;
@@ -32,4 +33,15 @@ void main() {
 
     vec3 result = (ambient + diffuse + specular) * objectColor * vec3(texture(objectTexture, TexCoord));
     frag_color = vec4(result, 1.0f);
+
+//    float strength = LightIntensity / 100.0f;
+//    vec3 texColor = vec3(texture(objectTexture, TexCoord));
+//    vec3 objColor = vec3(strength, strength, strength);
+//    vec3 color = objColor + texColor;
+//    color *= .35;
+//    frag_color = vec4(color, 1.0f);
+
+//    vec3 texColor = vec3(texture(objectTexture, TexCoord));
+//    frag_color = vec4(texColor, 1.0f);
+//    frag_color = vec4(1f, 1f, 1f, 1f);
 }

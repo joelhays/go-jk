@@ -2,6 +2,7 @@ package jk
 
 import (
 	"bufio"
+	"fmt"
 	"io/ioutil"
 	"log"
 	"regexp"
@@ -27,6 +28,7 @@ type Jkl struct {
 type surface struct {
 	VertexIds        []int64
 	TextureVertexIds []int64
+	LightIntensities []float64
 	Normal           mgl32.Vec3
 	Geo              int64
 	MaterialID       int64
@@ -137,9 +139,6 @@ func parseMaterials(data string, jklResult *Jkl) {
 				log.Fatal(err)
 			}
 
-			_ = xTile
-			_ = yTile
-
 			var matBytes []byte
 			for _, file := range GobFiles {
 				matBytes = LoadFileFromGOB(file, matName)
@@ -148,14 +147,17 @@ func parseMaterials(data string, jklResult *Jkl) {
 				}
 			}
 
-			textureBytes := ParseMatFile(matBytes)
+			material := ParseMatFile(matBytes)
 
-			jklResult.Materials = append(jklResult.Materials, textureBytes)
+			material.XTile = float32(xTile)
+			material.YTile = float32(yTile)
+
+			jklResult.Materials = append(jklResult.Materials, material)
 		})
 }
 
 func parseColormaps(data string, jklResult *Jkl) {
-	parseSection(data, `(?s)World Colormaps	1.*World vertices`, "\\d+:.*",
+	parseSection(data, `(?s)World Colormaps.*World vertices`, "\\d+:.*",
 		func(components []string) {
 			var cmpName string
 			if len(components) == 0 {
@@ -163,6 +165,8 @@ func parseColormaps(data string, jklResult *Jkl) {
 			} else {
 				cmpName = components[1]
 			}
+
+			fmt.Println(cmpName)
 
 			var cmpBytes []byte
 			for _, file := range GobFiles {
@@ -181,9 +185,6 @@ func parseColormaps(data string, jklResult *Jkl) {
 func parseSurfaces(data string, jklResult *Jkl) {
 	parseSection(data, `(?s)World surfaces.*\#--- Surface normals ---`, "\\d+:.*",
 		func(components []string) {
-			numVertexIds, _ := strconv.ParseInt(components[9], 10, 32)
-			vertexIds := components[10 : 10+numVertexIds]
-
 			surface := surface{}
 
 			materialID, _ := strconv.ParseInt(components[1], 10, 32)
@@ -192,12 +193,21 @@ func parseSurfaces(data string, jklResult *Jkl) {
 			geoFlag, _ := strconv.ParseInt(components[4], 10, 32)
 			surface.Geo = geoFlag
 
-			for _, vertexIDPair := range vertexIds {
+			if components[5] != "3" {
+				fmt.Println("light != 3", components[5])
+			}
+
+			numVertexIds, _ := strconv.ParseInt(components[9], 10, 32)
+			vertexIds := components[10 : 10+numVertexIds]
+			for idx, vertexIDPair := range vertexIds {
 				splitVertexIDPair := strings.Split(vertexIDPair, ",")
 				vertexID, _ := strconv.ParseInt(splitVertexIDPair[0], 10, 64)
 				texVertexID, _ := strconv.ParseInt(splitVertexIDPair[1], 10, 64)
 				surface.VertexIds = append(surface.VertexIds, vertexID)
 				surface.TextureVertexIds = append(surface.TextureVertexIds, texVertexID)
+
+				lightIntensity, _ := strconv.ParseFloat(components[10+numVertexIds:][idx], 64)
+				surface.LightIntensities = append(surface.LightIntensities, lightIntensity)
 			}
 
 			jklResult.Surfaces = append(jklResult.Surfaces, surface)

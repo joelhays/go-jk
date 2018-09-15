@@ -40,11 +40,6 @@ func LoadFileFromGOB(gobPath string, fileName string) []byte {
 	file.Read(numItemsBytes)
 	numItems := binary.LittleEndian.Uint32(numItemsBytes)
 
-	// fmt.Println("Header", string(headerBytes))
-	// fmt.Println("First File Offset", binary.LittleEndian.Uint32(firstFileOffsetBytes))
-	// fmt.Println("Number Of Items Offset", binary.LittleEndian.Uint32(numItemsOffsetBytes))
-	// fmt.Println("Number of Items", numItems)
-
 	// read items
 	// GobItems =record
 	// Longint:              {offset from begining of file}
@@ -63,10 +58,6 @@ func LoadFileFromGOB(gobPath string, fileName string) []byte {
 		pathAndNameBytes := make([]byte, 128)
 		file.Read(pathAndNameBytes)
 		pathAndName := string(pathAndNameBytes)
-
-		// fmt.Println("Offset", offset)
-		// fmt.Println("File Length", fileLength)
-		// fmt.Println("Path and Name", pathAndName)
 
 		if strings.Contains(strings.ToUpper(pathAndName), strings.ToUpper(fileName)) {
 			file.Seek(int64(offset), io.SeekStart)
