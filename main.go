@@ -30,8 +30,6 @@ const (
 	height = 768
 )
 
-var jklData jk.Jkl
-
 var camera Camera
 var previousTime float64
 
@@ -63,47 +61,37 @@ func main() {
 	// return
 
 	// jklBytes := jk.LoadFileFromGOB("J:\\Episode\\JK1CTF.GOB", ctfLevels[0])
-	// jklBytes := jk.LoadFileFromGOB("J:\\Episode\\JK1.GOB", spLevels[0])
-	jklBytes := jk.LoadFileFromGOB("J:\\Episode\\JK1MP.GOB", mpLevels[4])
-	jklData = jk.ReadJKLFromString(string(jklBytes))
+	jklBytes := jk.LoadFileFromGOB("J:\\Episode\\JK1.GOB", spLevels[0])
+	// jklBytes := jk.LoadFileFromGOB("J:\\Episode\\JK1MP.GOB", mpLevels[4])
+	jklData := jk.ReadJKLFromString(string(jklBytes))
 
 	// vao := makeVao(triangle)
 	// vao := makeVao(cube)
 
-	var points []float32
-	for _, surface := range jklData.Surfaces {
-		var mat jk.Material
-		if surface.MaterialID != -1 {
-			mat = jklData.Materials[surface.MaterialID]
+	models := make([]*OpenGlModelRenderer, 1+len(jklData.Things))
+	models[0] = NewOpenGlModelRenderer(nil, nil, jklData.Model, program)
+
+	for i := 0; i < len(jklData.Things); i++ {
+		thing := jklData.Things[i]
+		if thing.TemplateName == "walkplayer" {
+			models[i+1] = nil
+			continue
 		}
 
-		for idx, id := range surface.VertexIds {
-			points = append(points, float32(jklData.Vertices[id][0]))
-			points = append(points, float32(jklData.Vertices[id][1]))
-			points = append(points, float32(jklData.Vertices[id][2]))
+		template := jklData.Jk3doTemplates[thing.TemplateName]
+		jk3do := jklData.Jk3dos[template.Jk3doName]
+		jk3do.ColorMaps = jklData.Model.ColorMaps
 
-			points = append(points, float32(surface.Normal[0]))
-			points = append(points, float32(surface.Normal[1]))
-			points = append(points, float32(surface.Normal[2]))
-
-			textureVertexID := surface.TextureVertexIds[idx]
-			if textureVertexID != -1 {
-				points = append(points, jklData.TextureVertices[textureVertexID][0]/float32(mat.SizeX)) // /mat.XTile)
-				points = append(points, jklData.TextureVertices[textureVertexID][1]/float32(mat.SizeY)) // /mat.YTile)
-			} else {
-				points = append(points, 0)
-				points = append(points, 0)
-			}
-
-			lightIntensity := surface.LightIntensities[idx]
-			points = append(points, float32(lightIntensity))
+		if len(jk3do.Vertices) == 0 {
+			models[i+1] = nil
+			continue
 		}
+
+		models[i+1] = NewOpenGlModelRenderer(&thing, &template, &jk3do, program)
 	}
-	vao := makeVao(points)
 
-	textures := makeTextures()
 	for !window.ShouldClose() {
-		draw(vao, &textures, window, program)
+		drawRenderer(window, models)
 	}
 }
 

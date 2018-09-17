@@ -1,8 +1,9 @@
+//TODO: SUPPORT MULTI-MESH MODELS
+
 package jk
 
 import (
 	"bufio"
-	"fmt"
 	"log"
 	"regexp"
 	"strconv"
@@ -47,15 +48,21 @@ func parse3doSection(data string, regex string, componentRegex string, callback 
 		if match != true {
 			continue
 		}
+		text := strings.Replace(scanner.Text(), ",", " ", -1)
 
-		components := strings.Fields(scanner.Text())
+		space := regexp.MustCompile(`\s+`)
+		text = space.ReplaceAllString(text, "|")
+		text = strings.TrimLeft(text, "|")
+		text = strings.TrimRight(text, "|")
+
+		components := strings.Split(text, "|")
 
 		callback(components)
 	}
 }
 
 func parse3doVertices(data string, obj *Jk3do) {
-	parse3doSection(data, `(?s)VERTICES.*TEXTURE VERTICES`, "\\d+:.*",
+	parse3doSection(data, `(?s)VERTICES.*?TEXTURE VERTICES`, "\\d+:.*",
 		func(components []string) {
 			var err error
 
@@ -77,7 +84,7 @@ func parse3doVertices(data string, obj *Jk3do) {
 }
 
 func parse3doTextureVertices(data string, obj *Jk3do) {
-	parse3doSection(data, `(?s)TEXTURE VERTICES.*VERTEX NORMALS`, "\\d+:.*",
+	parse3doSection(data, `(?s)TEXTURE VERTICES.*?VERTEX NORMALS`, "\\d+:.*",
 		func(components []string) {
 			var err error
 
@@ -95,7 +102,7 @@ func parse3doTextureVertices(data string, obj *Jk3do) {
 }
 
 func parse3doMaterials(data string, obj *Jk3do) {
-	parse3doSection(data, `(?s)MATERIALS.*SECTION: GEOMETRYDEF`, "\\d+:.*",
+	parse3doSection(data, `(?s)MATERIALS.*?SECTION: GEOMETRYDEF`, "\\d+:.*",
 		func(components []string) {
 			matName := components[1]
 
@@ -117,7 +124,7 @@ func parse3doMaterials(data string, obj *Jk3do) {
 }
 
 func parse3doSurfaces(data string, obj *Jk3do) {
-	parse3doSection(data, `(?s)FACES.*FACE NORMALS`, "\\d+:.*",
+	parse3doSection(data, `(?s)FACES.*?FACE NORMALS`, "\\d+:.*",
 		func(components []string) {
 			surface := surface{}
 
@@ -127,9 +134,10 @@ func parse3doSurfaces(data string, obj *Jk3do) {
 			geoFlag, _ := strconv.ParseInt(components[3], 10, 32)
 			surface.Geo = geoFlag
 
-			if components[4] != "3" {
-				fmt.Println("light != 3", components[5])
-			}
+			//TODO: WHAT DOES THIS VALUE MEAN?
+			// if components[4] != "3" {
+			// 	fmt.Println("light != 3", components[5])
+			// }
 
 			numVertexIds, _ := strconv.ParseInt(components[7], 10, 32)
 			vertexIds := components[8 : 8+(numVertexIds*2)]
@@ -143,12 +151,9 @@ func parse3doSurfaces(data string, obj *Jk3do) {
 				surface.LightIntensities = append(surface.LightIntensities, lightIntensity)
 			}
 			obj.Surfaces = append(obj.Surfaces, surface)
-
-			fmt.Println(surface.VertexIds)
-			fmt.Println(surface.TextureVertexIds)
 		})
 
-	parseSection(data, `(?s)FACE NORMALS.*SECTION: HIERARCHYDEF`, "\\d+:.*",
+	parseSection(data, `(?s)FACE NORMALS.*?(SECTION: HIERARCHYDEF|MESH)`, "\\d+:.*",
 		func(components []string) {
 			surfaceID, _ := strconv.ParseInt(strings.TrimRight(components[0], ":"), 10, 32)
 

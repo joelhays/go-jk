@@ -18,11 +18,10 @@ var (
 
 // Jkl contains the information extracted from the Jedi Knight Level (.jkl) file
 type Jkl struct {
-	Vertices        []mgl32.Vec3
-	TextureVertices []mgl32.Vec2
-	Surfaces        []surface
-	Materials       []Material
-	ColorMaps       []ColorMap
+	Model          *Jk3do
+	Jk3dos         map[string]Jk3do
+	Jk3doTemplates map[string]Template
+	Things         []Thing
 }
 
 type surface struct {
@@ -32,6 +31,20 @@ type surface struct {
 	Normal           mgl32.Vec3
 	Geo              int64
 	MaterialID       int64
+}
+
+type Template struct {
+	Name      string
+	Jk3doName string
+	Size      float64
+}
+
+type Thing struct {
+	TemplateName string
+	Position     mgl32.Vec3
+	Pitch        float64
+	Yaw          float64
+	Roll         float64
 }
 
 // ReadJKLFromFile will read a .jkl file and return a struct containing all necessary information
@@ -50,12 +63,20 @@ func ReadJKLFromString(jklString string) Jkl {
 	data := jklString
 
 	jklResult := Jkl{}
+	jklResult.Model = &Jk3do{}
+
+	jklResult.Jk3dos = make(map[string]Jk3do)
+	jklResult.Jk3doTemplates = make(map[string]Template)
 
 	parseVertices(data, &jklResult)
 	parseTextureVertices(data, &jklResult)
 	parseMaterials(data, &jklResult)
 	parseColormaps(data, &jklResult)
 	parseSurfaces(data, &jklResult)
+
+	parse3dos(data, &jklResult)
+	parse3doTemplates(data, &jklResult)
+	parseThings(data, &jklResult)
 
 	return jklResult
 }
@@ -100,7 +121,7 @@ func parseVertices(data string, jklResult *Jkl) {
 				log.Fatal(err)
 			}
 
-			jklResult.Vertices = append(jklResult.Vertices, mgl32.Vec3{float32(x), float32(y), float32(z)})
+			jklResult.Model.Vertices = append(jklResult.Model.Vertices, mgl32.Vec3{float32(x), float32(y), float32(z)})
 		})
 }
 
@@ -118,7 +139,7 @@ func parseTextureVertices(data string, jklResult *Jkl) {
 				log.Fatal(err)
 			}
 
-			jklResult.TextureVertices = append(jklResult.TextureVertices, mgl32.Vec2{float32(u), float32(v)})
+			jklResult.Model.TextureVertices = append(jklResult.Model.TextureVertices, mgl32.Vec2{float32(u), float32(v)})
 		})
 }
 
@@ -152,7 +173,7 @@ func parseMaterials(data string, jklResult *Jkl) {
 			material.XTile = float32(xTile)
 			material.YTile = float32(yTile)
 
-			jklResult.Materials = append(jklResult.Materials, material)
+			jklResult.Model.Materials = append(jklResult.Model.Materials, material)
 		})
 }
 
@@ -178,7 +199,7 @@ func parseColormaps(data string, jklResult *Jkl) {
 
 			colorMap := ParseCmpFile(cmpBytes)
 
-			jklResult.ColorMaps = append(jklResult.ColorMaps, colorMap)
+			jklResult.Model.ColorMaps = append(jklResult.Model.ColorMaps, colorMap)
 		})
 }
 
@@ -193,9 +214,10 @@ func parseSurfaces(data string, jklResult *Jkl) {
 			geoFlag, _ := strconv.ParseInt(components[4], 10, 32)
 			surface.Geo = geoFlag
 
-			if components[5] != "3" {
-				fmt.Println("light != 3", components[5])
-			}
+			// TODO: WHAT DOES THIS VALUE MEAN?
+			// if components[5] != "3" {
+			// 	fmt.Println("light != 3", components[5])
+			// }
 
 			numVertexIds, _ := strconv.ParseInt(components[9], 10, 32)
 			vertexIds := components[10 : 10+numVertexIds]
@@ -210,7 +232,7 @@ func parseSurfaces(data string, jklResult *Jkl) {
 				surface.LightIntensities = append(surface.LightIntensities, lightIntensity)
 			}
 
-			jklResult.Surfaces = append(jklResult.Surfaces, surface)
+			jklResult.Model.Surfaces = append(jklResult.Model.Surfaces, surface)
 		})
 
 	parseSection(data, `(?s)\#--- Surface normals ---.*Section: SECTORS`, "\\d+:.*",
@@ -221,6 +243,84 @@ func parseSurfaces(data string, jklResult *Jkl) {
 			y, _ := strconv.ParseFloat(components[2], 64)
 			z, _ := strconv.ParseFloat(components[3], 64)
 
-			jklResult.Surfaces[surfaceID].Normal = mgl32.Vec3{float32(x), float32(y), float32(z)}
+			jklResult.Model.Surfaces[surfaceID].Normal = mgl32.Vec3{float32(x), float32(y), float32(z)}
+		})
+}
+
+func parse3dos(data string, jklResult *Jkl) {
+	parseSection(data, `(?s)World models.*Section: SPRITES`, "\\d+:.*",
+		func(components []string) {
+			jk3doName := components[1]
+
+			if jk3doName == "conv.3do" || jk3doName == "strv.3do" {
+				jklResult.Jk3dos[jk3doName] = Jk3do{}
+				return
+			}
+
+			var jk3d0Bytes []byte
+			for _, file := range GobFiles {
+				jk3d0Bytes = LoadFileFromGOB(file, jk3doName)
+				if jk3d0Bytes != nil {
+					break
+				}
+			}
+
+			jk3do := Parse3doFromString(string(jk3d0Bytes))
+
+			jklResult.Jk3dos[jk3doName] = jk3do
+		})
+}
+
+func parse3doTemplates(data string, jklResult *Jkl) {
+	parseSection(data, `(?s)World templates.*Section: Things`, ".*",
+		func(components []string) {
+			if len(components) < 3 {
+				return
+			}
+
+			name := components[0]
+			var modelName string
+			size := 1.0
+			for i := 0; i < len(components); i++ {
+				if strings.HasPrefix(components[i], "size=") {
+					size, _ = strconv.ParseFloat(strings.TrimLeft(components[i], "size="), 32)
+				}
+				if strings.HasPrefix(components[i], "model3d=") {
+					modelName = strings.TrimLeft(components[i], "model3d=")
+				}
+			}
+
+			if modelName != "" {
+				tmp := Template{}
+				tmp.Name = name
+				tmp.Jk3doName = modelName
+				tmp.Size = size
+
+				jklResult.Jk3doTemplates[tmp.Name] = tmp
+			}
+		})
+}
+
+func parseThings(data string, jklResult *Jkl) {
+	parseSection(data, `(?s)World things.*end`, "\\d+:.*",
+		func(components []string) {
+			templateName := components[1]
+
+			x, _ := strconv.ParseFloat(components[3], 64)
+			y, _ := strconv.ParseFloat(components[4], 64)
+			z, _ := strconv.ParseFloat(components[5], 64)
+
+			pitch, _ := strconv.ParseFloat(components[6], 64)
+			yaw, _ := strconv.ParseFloat(components[7], 64)
+			Roll, _ := strconv.ParseFloat(components[8], 64)
+
+			t := Thing{}
+			t.TemplateName = templateName
+			t.Position = mgl32.Vec3{float32(x), float32(y), float32(z)}
+			t.Pitch = pitch
+			t.Yaw = yaw
+			t.Roll = Roll
+
+			jklResult.Things = append(jklResult.Things, t)
 		})
 }
