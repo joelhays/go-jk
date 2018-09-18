@@ -33,9 +33,9 @@ func (r *OpenGlModelRenderer) Render() {
 	model := mgl32.Ident4()
 	if r.thing != nil {
 		// scale := mgl32.Scale3D(float32(r.template.Size), float32(r.template.Size), float32(r.template.Size))
-		rotateX := mgl32.HomogRotate3DX(float32(r.thing.Pitch))
-		rotateY := mgl32.HomogRotate3DY(float32(r.thing.Roll))
-		rotateZ := mgl32.HomogRotate3DZ(float32(r.thing.Yaw))
+		rotateX := mgl32.HomogRotate3DX(mgl32.DegToRad(float32(r.thing.Pitch)))
+		rotateY := mgl32.HomogRotate3DY(mgl32.DegToRad(float32(r.thing.Roll)))
+		rotateZ := mgl32.HomogRotate3DZ(mgl32.DegToRad(float32(r.thing.Yaw)))
 		rotation := rotateX.Mul4(rotateY.Mul4(rotateZ))
 		translation := mgl32.Translate3D(r.thing.Position.X(), r.thing.Position.Y(), r.thing.Position.Z())
 		model = translation.Mul4(rotation)

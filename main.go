@@ -60,8 +60,8 @@ func main() {
 	// fmt.Println(jklData.Surfaces)
 	// return
 
-	// jklBytes := jk.LoadFileFromGOB("J:\\Episode\\JK1CTF.GOB", ctfLevels[0])
-	jklBytes := jk.LoadFileFromGOB("J:\\Episode\\JK1.GOB", spLevels[0])
+	jklBytes := jk.LoadFileFromGOB("J:\\Episode\\JK1CTF.GOB", ctfLevels[2])
+	// jklBytes := jk.LoadFileFromGOB("J:\\Episode\\JK1.GOB", spLevels[1])
 	// jklBytes := jk.LoadFileFromGOB("J:\\Episode\\JK1MP.GOB", mpLevels[4])
 	jklData := jk.ReadJKLFromString(string(jklBytes))
 
