@@ -8,11 +8,16 @@ import (
 	"regexp"
 	"strconv"
 	"strings"
+	"sync"
 
 	"github.com/go-gl/mathgl/mgl32"
 )
 
 type Jk3do struct {
+	Meshes []JkMesh
+}
+
+type JkMesh struct {
 	Vertices        []mgl32.Vec3
 	TextureVertices []mgl32.Vec2
 	VertexNormals   []mgl32.Vec3
@@ -24,11 +29,37 @@ type Jk3do struct {
 func Parse3doFromString(data string) Jk3do {
 	result := Jk3do{}
 
-	parse3doVertices(data, &result)
-	parse3doTextureVertices(data, &result)
-	parse3doMaterials(data, &result)
-	parse3doColormaps(data, &result)
-	parse3doSurfaces(data, &result)
+	// meshRegex := regexp.MustCompile(`(?s)MESH\s\d.*?(MESH|HIERARCHYDEF)`)
+	// meshMatch := meshRegex.FindAllString(data, -1)
+	meshRegex := regexp.MustCompile(`(?s)MESH\s\d`)
+	meshMatch := meshRegex.Split(data, -1)
+
+	result.Meshes = make([]JkMesh, len(meshMatch)-1)
+
+	var meshwg sync.WaitGroup
+	meshwg.Add(len(meshMatch) - 1)
+
+	for i := 1; i < len(meshMatch); i++ {
+		go func(idx int) {
+			defer meshwg.Done()
+
+			meshData := meshMatch[idx]
+
+			parse3doVertices(meshData, &result.Meshes[idx-1])
+			parse3doTextureVertices(meshData, &result.Meshes[idx-1])
+			parse3doMaterials(data, &result.Meshes[idx-1])
+			parse3doColormaps(meshData, &result.Meshes[idx-1])
+			parse3doSurfaces(meshData, &result.Meshes[idx-1])
+		}(i)
+	}
+
+	meshwg.Wait()
+
+	// parse3doVertices(data, &result)
+	// parse3doTextureVertices(data, &result)
+	// parse3doMaterials(data, &result)
+	// parse3doColormaps(data, &result)
+	// parse3doSurfaces(data, &result)
 
 	return result
 }
@@ -57,11 +88,15 @@ func parse3doSection(data string, regex string, componentRegex string, callback 
 
 		components := strings.Split(text, "|")
 
+		if strings.Contains(components[0], "#") {
+			continue
+		}
+
 		callback(components)
 	}
 }
 
-func parse3doVertices(data string, obj *Jk3do) {
+func parse3doVertices(data string, obj *JkMesh) {
 	parse3doSection(data, `(?s)VERTICES.*?TEXTURE VERTICES`, "\\d+:.*",
 		func(components []string) {
 			var err error
@@ -83,7 +118,7 @@ func parse3doVertices(data string, obj *Jk3do) {
 		})
 }
 
-func parse3doTextureVertices(data string, obj *Jk3do) {
+func parse3doTextureVertices(data string, obj *JkMesh) {
 	parse3doSection(data, `(?s)TEXTURE VERTICES.*?VERTEX NORMALS`, "\\d+:.*",
 		func(components []string) {
 			var err error
@@ -101,7 +136,7 @@ func parse3doTextureVertices(data string, obj *Jk3do) {
 		})
 }
 
-func parse3doMaterials(data string, obj *Jk3do) {
+func parse3doMaterials(data string, obj *JkMesh) {
 	parse3doSection(data, `(?s)MATERIALS.*?SECTION: GEOMETRYDEF`, "\\d+:.*",
 		func(components []string) {
 			matName := components[1]
@@ -123,7 +158,7 @@ func parse3doMaterials(data string, obj *Jk3do) {
 		})
 }
 
-func parse3doSurfaces(data string, obj *Jk3do) {
+func parse3doSurfaces(data string, obj *JkMesh) {
 	parse3doSection(data, `(?s)FACES.*?FACE NORMALS`, "\\d+:.*",
 		func(components []string) {
 			surface := surface{}
@@ -153,8 +188,11 @@ func parse3doSurfaces(data string, obj *Jk3do) {
 			obj.Surfaces = append(obj.Surfaces, surface)
 		})
 
-	parseSection(data, `(?s)FACE NORMALS.*?(SECTION: HIERARCHYDEF|MESH)`, "\\d+:.*",
+	parseSection(data, `(?s)FACE NORMALS.*?(SECTION: HIERARCHYDEF|Mesh definition)`, "\\d+:.*",
 		func(components []string) {
+			if len(obj.Surfaces) == 0 {
+				return
+			}
 			surfaceID, _ := strconv.ParseInt(strings.TrimRight(components[0], ":"), 10, 32)
 
 			x, _ := strconv.ParseFloat(components[1], 64)
@@ -165,7 +203,7 @@ func parse3doSurfaces(data string, obj *Jk3do) {
 		})
 }
 
-func parse3doColormaps(data string, obj *Jk3do) {
+func parse3doColormaps(data string, obj *JkMesh) {
 	var cmpName string
 	cmpName = "dflt.cmp"
 

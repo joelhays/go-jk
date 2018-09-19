@@ -1,0 +1,112 @@
+# Jedi Knight Cog Script
+#
+# FORCE_HEALING.COG
+#
+# FORCEPOWER Script - Healing
+#  Light Side Power
+#  Bin 25
+#
+# [YB]
+#
+# (C) 1997 LucasArts Entertainment Co. All Rights Reserved
+
+
+symbols
+
+thing       player                           local
+
+flex        cost=200.0                       local
+int         rank                             local
+flex        mana                             local
+
+sound       healingSound=ForceHealing01.WAV  local
+int         soundChannel=-1                  local
+
+template    sphere_tpl=+force_heal           local
+int         sphere=-1                        local
+
+vector      position                         local
+
+message     startup
+message     activated
+message     newplayer
+message     killed
+message     selected
+
+end
+
+# ========================================================================================
+
+code
+
+startup:
+   player = GetLocalPlayerThing();
+   call stop_power;
+
+   Return;
+
+# ........................................................................................
+
+activated:
+   if((!IsInvActivated(player, 25)) && (GetThingHealth(player) != 100) && (GetThingHealth(player) > 0))
+   {
+      mana = GetInv(player, 14);
+      if(mana >= cost)
+      {
+         if(GetInv(player, 65) != 1)  ChangeInv(player, 14, -cost);
+         SetInvActivated(player, 25, 1);
+
+         PlayMode(player, 24);
+
+         soundChannel = PlaySoundThing(healingSound, player, 1.0, -1, -1, 0x80);
+
+         rank = GetInv(player, 25);
+
+         // Create the sphere
+         position = VectorAdd(GetThingPos(player), '0.0 0.0 0.01');
+         sphere = CreateThingAtPosNR(sphere_tpl, GetThingSector(player), position, '0.0 0.0 0.0');
+
+         AttachThingToThingEx(sphere, player, 0x8);
+         Sleep(0.6);
+
+         SetParticleGrowthSpeed(sphere, -3.0);
+
+         // We don't want any strange things like a dead player with health in the HUD
+         if(GetThingHealth(player) > 0) HealThing(player, 20 * rank);
+
+         Sleep(0.40);
+
+         DestroyThing(sphere);
+         call stop_power;
+      }
+   }
+
+   Return;
+
+# ........................................................................................
+
+selected:
+   jkPrintUNIString(player, 25);
+   Return;
+
+# ........................................................................................
+
+killed:
+   if(GetSenderRef() != player) Return;
+
+newplayer:
+   call stop_power;
+
+   Return;
+
+# ........................................................................................
+
+stop_power:
+   SetInvActivated(player, 25, 0);
+
+   Return;
+
+end
+
+
+

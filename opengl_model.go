@@ -30,37 +30,40 @@ func NewOpenGlModelRenderer(thing *jk.Thing, template *jk.Template, object *jk.J
 }
 
 func (r *OpenGlModelRenderer) Render() {
-	model := mgl32.Ident4()
-	if r.thing != nil {
-		rotateX := mgl32.HomogRotate3DX(mgl32.DegToRad(float32(r.thing.Pitch)))
-		rotateY := mgl32.HomogRotate3DY(mgl32.DegToRad(float32(r.thing.Roll)))
-		rotateZ := mgl32.HomogRotate3DZ(mgl32.DegToRad(float32(r.thing.Yaw)))
-		rotation := rotateX.Mul4(rotateY.Mul4(rotateZ))
-		translation := mgl32.Translate3D(r.thing.Position.X(), r.thing.Position.Y(), r.thing.Position.Z())
-		model = translation.Mul4(rotation)
-	}
-	modelUniform := gl.GetUniformLocation(r.Program, gl.Str("model\x00"))
-	gl.UniformMatrix4fv(modelUniform, 1, false, &model[0])
-
 	gl.BindVertexArray(r.vao)
 
 	var offset int32
-	for _, surface := range r.object.Surfaces {
-		numVerts := int32(len(surface.VertexIds))
-
-		if surface.Geo != 0 {
-
-			gl.ActiveTexture(gl.TEXTURE0)
-			gl.BindTexture(gl.TEXTURE_2D, r.textures[surface.MaterialID])
-			textureUniform := gl.GetUniformLocation(r.Program, gl.Str("objectTexture\x00"))
-			gl.Uniform1i(textureUniform, 0)
-
-			gl.DrawArrays(gl.TRIANGLE_FAN, offset, int32(len(surface.VertexIds)))
-
-			gl.BindTexture(gl.TEXTURE_2D, 0)
+	for meshIdx, mesh := range r.object.Meshes {
+		_ = meshIdx
+		model := mgl32.Ident4()
+		if r.thing != nil {
+			rotateX := mgl32.HomogRotate3DX(mgl32.DegToRad(float32(r.thing.Pitch)))
+			rotateY := mgl32.HomogRotate3DY(mgl32.DegToRad(float32(r.thing.Roll)))
+			rotateZ := mgl32.HomogRotate3DZ(mgl32.DegToRad(float32(r.thing.Yaw)))
+			rotation := rotateX.Mul4(rotateY.Mul4(rotateZ))
+			translation := mgl32.Translate3D(r.thing.Position.X()+float32(meshIdx), r.thing.Position.Y(), r.thing.Position.Z())
+			model = translation.Mul4(rotation)
 		}
+		modelUniform := gl.GetUniformLocation(r.Program, gl.Str("model\x00"))
+		gl.UniformMatrix4fv(modelUniform, 1, false, &model[0])
 
-		offset = offset + numVerts
+		for _, surface := range mesh.Surfaces {
+			numVerts := int32(len(surface.VertexIds))
+
+			if surface.Geo != 0 {
+
+				gl.ActiveTexture(gl.TEXTURE0)
+				gl.BindTexture(gl.TEXTURE_2D, r.textures[surface.MaterialID])
+				textureUniform := gl.GetUniformLocation(r.Program, gl.Str("objectTexture\x00"))
+				gl.Uniform1i(textureUniform, 0)
+
+				gl.DrawArrays(gl.TRIANGLE_FAN, offset, int32(len(surface.VertexIds)))
+
+				gl.BindTexture(gl.TEXTURE_2D, 0)
+			}
+
+			offset = offset + numVerts
+		}
 	}
 }
 
@@ -72,32 +75,34 @@ func (r *OpenGlModelRenderer) setupMesh() {
 
 func (r *OpenGlModelRenderer) makePoints() []float32 {
 	var points []float32
-	for _, surface := range r.object.Surfaces {
-		var mat jk.Material
-		if surface.MaterialID != -1 {
-			mat = r.object.Materials[surface.MaterialID]
-		}
-
-		for idx, id := range surface.VertexIds {
-			points = append(points, float32(r.object.Vertices[id][0]))
-			points = append(points, float32(r.object.Vertices[id][1]))
-			points = append(points, float32(r.object.Vertices[id][2]))
-
-			points = append(points, float32(surface.Normal[0]))
-			points = append(points, float32(surface.Normal[1]))
-			points = append(points, float32(surface.Normal[2]))
-
-			textureVertexID := surface.TextureVertexIds[idx]
-			if textureVertexID != -1 {
-				points = append(points, r.object.TextureVertices[textureVertexID][0]/float32(mat.SizeX)) // /mat.XTile)
-				points = append(points, r.object.TextureVertices[textureVertexID][1]/float32(mat.SizeY)) // /mat.YTile)
-			} else {
-				points = append(points, 0)
-				points = append(points, 0)
+	for _, mesh := range r.object.Meshes {
+		for _, surface := range mesh.Surfaces {
+			var mat jk.Material
+			if surface.MaterialID != -1 {
+				mat = mesh.Materials[surface.MaterialID]
 			}
 
-			lightIntensity := surface.LightIntensities[idx]
-			points = append(points, float32(lightIntensity))
+			for idx, id := range surface.VertexIds {
+				points = append(points, float32(mesh.Vertices[id][0]))
+				points = append(points, float32(mesh.Vertices[id][1]))
+				points = append(points, float32(mesh.Vertices[id][2]))
+
+				points = append(points, float32(surface.Normal[0]))
+				points = append(points, float32(surface.Normal[1]))
+				points = append(points, float32(surface.Normal[2]))
+
+				textureVertexID := surface.TextureVertexIds[idx]
+				if textureVertexID != -1 {
+					points = append(points, mesh.TextureVertices[textureVertexID][0]/float32(mat.SizeX)) // /mat.XTile)
+					points = append(points, mesh.TextureVertices[textureVertexID][1]/float32(mat.SizeY)) // /mat.YTile)
+				} else {
+					points = append(points, 0)
+					points = append(points, 0)
+				}
+
+				lightIntensity := surface.LightIntensities[idx]
+				points = append(points, float32(lightIntensity))
+			}
 		}
 	}
 	return points
@@ -126,7 +131,7 @@ func (r *OpenGlModelRenderer) makeVao(points []float32) {
 
 func (r *OpenGlModelRenderer) makeTextures() {
 
-	numTextures := int32(len(r.object.Materials))
+	numTextures := int32(len(r.object.Meshes[0].Materials))
 
 	r.textures = make([]uint32, numTextures)
 
@@ -134,7 +139,7 @@ func (r *OpenGlModelRenderer) makeTextures() {
 
 	for i := int32(0); i < numTextures; i++ {
 		textureID := r.textures[i]
-		material := r.object.Materials[i]
+		material := r.object.Meshes[0].Materials[i]
 
 		gl.BindTexture(gl.TEXTURE_2D, textureID)
 
@@ -144,7 +149,7 @@ func (r *OpenGlModelRenderer) makeTextures() {
 		gl.TexParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR)
 		gl.TexParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR)
 
-		if len(r.object.Materials[i].Texture) == 0 {
+		if len(r.object.Meshes[0].Materials[i].Texture) == 0 {
 			fmt.Println("empty material")
 			continue
 		}
@@ -153,9 +158,9 @@ func (r *OpenGlModelRenderer) makeTextures() {
 		if material.Transparent {
 			finalTexture = make([]byte, material.SizeX*material.SizeY*4)
 			for j := 0; j < int(material.SizeX*material.SizeY); j++ {
-				finalTexture[j*4] = r.object.ColorMaps[0].Pallette[material.Texture[j]].R
-				finalTexture[j*4+1] = r.object.ColorMaps[0].Pallette[material.Texture[j]].G
-				finalTexture[j*4+2] = r.object.ColorMaps[0].Pallette[material.Texture[j]].B
+				finalTexture[j*4] = r.object.Meshes[0].ColorMaps[0].Pallette[material.Texture[j]].R
+				finalTexture[j*4+1] = r.object.Meshes[0].ColorMaps[0].Pallette[material.Texture[j]].G
+				finalTexture[j*4+2] = r.object.Meshes[0].ColorMaps[0].Pallette[material.Texture[j]].B
 
 				if material.Texture[j] == 0 {
 					finalTexture[j*4+3] = 0
@@ -167,9 +172,9 @@ func (r *OpenGlModelRenderer) makeTextures() {
 		} else {
 			finalTexture = make([]byte, material.SizeX*material.SizeY*3)
 			for j := 0; j < int(material.SizeX*material.SizeY); j++ {
-				finalTexture[j*3] = r.object.ColorMaps[0].Pallette[material.Texture[j]].R
-				finalTexture[j*3+1] = r.object.ColorMaps[0].Pallette[material.Texture[j]].G
-				finalTexture[j*3+2] = r.object.ColorMaps[0].Pallette[material.Texture[j]].B
+				finalTexture[j*3] = r.object.Meshes[0].ColorMaps[0].Pallette[material.Texture[j]].R
+				finalTexture[j*3+1] = r.object.Meshes[0].ColorMaps[0].Pallette[material.Texture[j]].G
+				finalTexture[j*3+2] = r.object.Meshes[0].ColorMaps[0].Pallette[material.Texture[j]].B
 			}
 			gl.TexImage2D(gl.TEXTURE_2D, 0, gl.RGB, material.SizeX, material.SizeY, 0, gl.RGB, gl.UNSIGNED_BYTE, gl.Ptr(finalTexture))
 		}

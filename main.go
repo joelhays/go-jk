@@ -55,18 +55,18 @@ func main() {
 	// return
 
 	// jk3doBytes := jk.LoadFileFromGOB("J:\\Resource\\Res2.gob", "00crte6x6.3do") // "landpad.3do")
-	// jklData = jk.Parse3doFromString(string(jk3doBytes))
+	// jklData := jk.Parse3doFromString(string(jk3doBytes))
 
 	// fmt.Println(jklData.Surfaces)
 	// return
 
-	jklBytes := jk.LoadFileFromGOB("J:\\Episode\\JK1CTF.GOB", ctfLevels[2])
-	// jklBytes := jk.LoadFileFromGOB("J:\\Episode\\JK1.GOB", spLevels[1])
-	// jklBytes := jk.LoadFileFromGOB("J:\\Episode\\JK1MP.GOB", mpLevels[4])
-	jklData := jk.ReadJKLFromString(string(jklBytes))
-
 	// vao := makeVao(triangle)
 	// vao := makeVao(cube)
+
+	// jklBytes := jk.LoadFileFromGOB("J:\\Episode\\JK1CTF.GOB", ctfLevels[2])
+	// jklBytes := jk.LoadFileFromGOB("J:\\Episode\\JK1.GOB", spLevels[0])
+	jklBytes := jk.LoadFileFromGOB("J:\\Episode\\JK1MP.GOB", mpLevels[4])
+	jklData := jk.ReadJKLFromString(string(jklBytes))
 
 	models := make([]*OpenGlModelRenderer, 1+len(jklData.Things))
 	models[0] = NewOpenGlModelRenderer(nil, nil, jklData.Model, program)
@@ -80,15 +80,26 @@ func main() {
 
 		template := jklData.Jk3doTemplates[thing.TemplateName]
 		jk3do := jklData.Jk3dos[template.Jk3doName]
-		jk3do.ColorMaps = jklData.Model.ColorMaps
 
-		if len(jk3do.Vertices) == 0 {
+		numVerts := 0
+		for _, mesh := range jk3do.Meshes {
+			mesh.ColorMaps[0] = jklData.Model.Meshes[0].ColorMaps[0]
+			numVerts += len(mesh.Vertices)
+		}
+
+		if numVerts == 0 {
 			models[i+1] = nil
 			continue
 		}
 
 		models[i+1] = NewOpenGlModelRenderer(&thing, &template, &jk3do, program)
 	}
+
+	// jk3doBytes := jk.LoadFileFromGOB("J:\\Resource\\Res2.gob", "rystr.3do")
+	// jklData := jk.Parse3doFromString(string(jk3doBytes))
+	// models := make([]*OpenGlModelRenderer, 1)
+	// thing := &jk.Thing{Position: mgl32.Vec3{float32(0), float32(0), float32(0)}}
+	// models[0] = NewOpenGlModelRenderer(thing, nil, &jklData, program)
 
 	for !window.ShouldClose() {
 		drawRenderer(window, models)

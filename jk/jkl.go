@@ -2,7 +2,6 @@ package jk
 
 import (
 	"bufio"
-	"fmt"
 	"io/ioutil"
 	"log"
 	"regexp"
@@ -64,6 +63,7 @@ func ReadJKLFromString(jklString string) Jkl {
 
 	jklResult := Jkl{}
 	jklResult.Model = &Jk3do{}
+	jklResult.Model.Meshes = make([]JkMesh, 1)
 
 	jklResult.Jk3dos = make(map[string]Jk3do)
 	jklResult.Jk3doTemplates = make(map[string]Template)
@@ -121,7 +121,7 @@ func parseVertices(data string, jklResult *Jkl) {
 				log.Fatal(err)
 			}
 
-			jklResult.Model.Vertices = append(jklResult.Model.Vertices, mgl32.Vec3{float32(x), float32(y), float32(z)})
+			jklResult.Model.Meshes[0].Vertices = append(jklResult.Model.Meshes[0].Vertices, mgl32.Vec3{float32(x), float32(y), float32(z)})
 		})
 }
 
@@ -139,7 +139,7 @@ func parseTextureVertices(data string, jklResult *Jkl) {
 				log.Fatal(err)
 			}
 
-			jklResult.Model.TextureVertices = append(jklResult.Model.TextureVertices, mgl32.Vec2{float32(u), float32(v)})
+			jklResult.Model.Meshes[0].TextureVertices = append(jklResult.Model.Meshes[0].TextureVertices, mgl32.Vec2{float32(u), float32(v)})
 		})
 }
 
@@ -173,7 +173,7 @@ func parseMaterials(data string, jklResult *Jkl) {
 			material.XTile = float32(xTile)
 			material.YTile = float32(yTile)
 
-			jklResult.Model.Materials = append(jklResult.Model.Materials, material)
+			jklResult.Model.Meshes[0].Materials = append(jklResult.Model.Meshes[0].Materials, material)
 		})
 }
 
@@ -187,8 +187,6 @@ func parseColormaps(data string, jklResult *Jkl) {
 				cmpName = components[1]
 			}
 
-			fmt.Println(cmpName)
-
 			var cmpBytes []byte
 			for _, file := range GobFiles {
 				cmpBytes = LoadFileFromGOB(file, cmpName)
@@ -199,7 +197,7 @@ func parseColormaps(data string, jklResult *Jkl) {
 
 			colorMap := ParseCmpFile(cmpBytes)
 
-			jklResult.Model.ColorMaps = append(jklResult.Model.ColorMaps, colorMap)
+			jklResult.Model.Meshes[0].ColorMaps = append(jklResult.Model.Meshes[0].ColorMaps, colorMap)
 		})
 }
 
@@ -232,7 +230,7 @@ func parseSurfaces(data string, jklResult *Jkl) {
 				surface.LightIntensities = append(surface.LightIntensities, lightIntensity)
 			}
 
-			jklResult.Model.Surfaces = append(jklResult.Model.Surfaces, surface)
+			jklResult.Model.Meshes[0].Surfaces = append(jklResult.Model.Meshes[0].Surfaces, surface)
 		})
 
 	parseSection(data, `(?s)\#--- Surface normals ---.*Section: SECTORS`, "\\d+:.*",
@@ -243,7 +241,7 @@ func parseSurfaces(data string, jklResult *Jkl) {
 			y, _ := strconv.ParseFloat(components[2], 64)
 			z, _ := strconv.ParseFloat(components[3], 64)
 
-			jklResult.Model.Surfaces[surfaceID].Normal = mgl32.Vec3{float32(x), float32(y), float32(z)}
+			jklResult.Model.Meshes[0].Surfaces[surfaceID].Normal = mgl32.Vec3{float32(x), float32(y), float32(z)}
 		})
 }
 
