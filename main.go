@@ -6,7 +6,6 @@ import (
 	// "github.com/go-gl/gl/v2.1/gl"
 	"github.com/go-gl/glfw/v3.2/glfw"
 	"github.com/go-gl/mathgl/mgl32"
-
 	"github.com/joelhays/go-vulkan/jk"
 )
 
@@ -64,8 +63,8 @@ func main() {
 	// vao := makeVao(cube)
 
 	// jklBytes := jk.LoadFileFromGOB("J:\\Episode\\JK1CTF.GOB", ctfLevels[2])
-	// jklBytes := jk.LoadFileFromGOB("J:\\Episode\\JK1.GOB", spLevels[0])
-	jklBytes := jk.LoadFileFromGOB("J:\\Episode\\JK1MP.GOB", mpLevels[4])
+	jklBytes := jk.LoadFileFromGOB("J:\\Episode\\JK1.GOB", spLevels[0])
+	// jklBytes := jk.LoadFileFromGOB("J:\\Episode\\JK1MP.GOB", mpLevels[4])
 	jklData := jk.ReadJKLFromString(string(jklBytes))
 
 	models := make([]*OpenGlModelRenderer, 1+len(jklData.Things))
@@ -95,6 +94,7 @@ func main() {
 		models[i+1] = NewOpenGlModelRenderer(&thing, &template, &jk3do, program)
 	}
 
+	// jk3doBytes := jk.LoadFileFromGOB("J:\\Resource\\Res2.gob", "conv.3do")
 	// jk3doBytes := jk.LoadFileFromGOB("J:\\Resource\\Res2.gob", "rystr.3do")
 	// jklData := jk.Parse3doFromString(string(jk3doBytes))
 	// models := make([]*OpenGlModelRenderer, 1)

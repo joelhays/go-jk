@@ -14,10 +14,12 @@ import (
 )
 
 type Jk3do struct {
-	Meshes []JkMesh
+	Meshes         []JkMesh
+	MeshTransforms map[string]JkMeshTransform
 }
 
 type JkMesh struct {
+	Name            string
 	Vertices        []mgl32.Vec3
 	TextureVertices []mgl32.Vec2
 	VertexNormals   []mgl32.Vec3
@@ -26,15 +28,29 @@ type JkMesh struct {
 	ColorMaps       []ColorMap
 }
 
+type JkMeshTransform struct {
+	Offset mgl32.Vec3
+	Pitch  float32
+	Yaw    float32
+	Roll   float32
+	Pivot  mgl32.Vec3
+}
+
 func Parse3doFromString(data string) Jk3do {
 	result := Jk3do{}
 
 	// meshRegex := regexp.MustCompile(`(?s)MESH\s\d.*?(MESH|HIERARCHYDEF)`)
 	// meshMatch := meshRegex.FindAllString(data, -1)
+
+	geosetRegex := regexp.MustCompile(`(?s)GEOSET\s\d`)
+	geosetMatch := geosetRegex.Split(data, -1)
+
 	meshRegex := regexp.MustCompile(`(?s)MESH\s\d`)
-	meshMatch := meshRegex.Split(data, -1)
+	meshMatch := meshRegex.Split(geosetMatch[1], -1)
 
 	result.Meshes = make([]JkMesh, len(meshMatch)-1)
+
+	result.MeshTransforms = make(map[string]JkMeshTransform)
 
 	var meshwg sync.WaitGroup
 	meshwg.Add(len(meshMatch) - 1)
@@ -44,6 +60,17 @@ func Parse3doFromString(data string) Jk3do {
 			defer meshwg.Done()
 
 			meshData := meshMatch[idx]
+
+			nameRegex := regexp.MustCompile(`(?s)NAME\s.*?(\r|\n)`)
+			nameMatch := nameRegex.FindString(meshData)
+
+			name := strings.TrimLeft(nameMatch, "NAME")
+			name = strings.TrimLeft(name, " ")
+			name = strings.TrimRight(name, " ")
+			name = strings.TrimRight(name, "\r")
+			name = strings.TrimRight(name, "\n")
+
+			result.Meshes[idx-1].Name = name
 
 			parse3doVertices(meshData, &result.Meshes[idx-1])
 			parse3doTextureVertices(meshData, &result.Meshes[idx-1])
@@ -55,11 +82,7 @@ func Parse3doFromString(data string) Jk3do {
 
 	meshwg.Wait()
 
-	// parse3doVertices(data, &result)
-	// parse3doTextureVertices(data, &result)
-	// parse3doMaterials(data, &result)
-	// parse3doColormaps(data, &result)
-	// parse3doSurfaces(data, &result)
+	parse3doHierarchy(data, &result)
 
 	return result
 }
@@ -188,7 +211,7 @@ func parse3doSurfaces(data string, obj *JkMesh) {
 			obj.Surfaces = append(obj.Surfaces, surface)
 		})
 
-	parseSection(data, `(?s)FACE NORMALS.*?(SECTION: HIERARCHYDEF|Mesh definition)`, "\\d+:.*",
+	parse3doSection(data, `(?s)FACE NORMALS.*?(SECTION: HIERARCHYDEF|Mesh definition|Geometry Set definition)`, "\\d+:.*",
 		func(components []string) {
 			if len(obj.Surfaces) == 0 {
 				return
@@ -200,6 +223,43 @@ func parse3doSurfaces(data string, obj *JkMesh) {
 			z, _ := strconv.ParseFloat(components[3], 64)
 
 			obj.Surfaces[surfaceID].Normal = mgl32.Vec3{float32(x), float32(y), float32(z)}
+		})
+}
+
+func parse3doHierarchy(data string, obj *Jk3do) {
+	parse3doSection(data, `(?s)SECTION: HIERARCHYDEF.*`, "\\d+:.*",
+		func(components []string) {
+			// fmt.Println(components)
+
+			id, _ := strconv.ParseInt(strings.TrimRight(components[0], ":"), 10, 32)
+			if id == 0 {
+				return
+			}
+
+			// meshID, _ := strconv.ParseInt(components[3], 10, 32)
+			// parentID, _ := strconv.ParseInt(components[4], 10, 32)
+
+			x, _ := strconv.ParseFloat(components[8], 64)
+			y, _ := strconv.ParseFloat(components[9], 64)
+			z, _ := strconv.ParseFloat(components[10], 64)
+
+			pitch, _ := strconv.ParseFloat(components[11], 64)
+			yaw, _ := strconv.ParseFloat(components[12], 64)
+			roll, _ := strconv.ParseFloat(components[13], 64)
+
+			pivotX, _ := strconv.ParseFloat(components[14], 64)
+			pivotY, _ := strconv.ParseFloat(components[15], 64)
+			pivotZ, _ := strconv.ParseFloat(components[16], 64)
+
+			meshName := components[17]
+
+			obj.MeshTransforms[meshName] = JkMeshTransform{
+				Offset: mgl32.Vec3{float32(x), float32(y), float32(z)},
+				Pitch:  float32(pitch),
+				Yaw:    float32(yaw),
+				Roll:   float32(roll),
+				Pivot:  mgl32.Vec3{float32(pivotX), float32(pivotY), float32(pivotZ)},
+			}
 		})
 }
 

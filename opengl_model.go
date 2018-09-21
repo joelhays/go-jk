@@ -37,11 +37,13 @@ func (r *OpenGlModelRenderer) Render() {
 		_ = meshIdx
 		model := mgl32.Ident4()
 		if r.thing != nil {
+			meshOffset := r.object.MeshTransforms[mesh.Name].Offset
+
 			rotateX := mgl32.HomogRotate3DX(mgl32.DegToRad(float32(r.thing.Pitch)))
 			rotateY := mgl32.HomogRotate3DY(mgl32.DegToRad(float32(r.thing.Roll)))
 			rotateZ := mgl32.HomogRotate3DZ(mgl32.DegToRad(float32(r.thing.Yaw)))
 			rotation := rotateX.Mul4(rotateY.Mul4(rotateZ))
-			translation := mgl32.Translate3D(r.thing.Position.X()+float32(meshIdx), r.thing.Position.Y(), r.thing.Position.Z())
+			translation := mgl32.Translate3D(r.thing.Position.X()+meshOffset.X(), r.thing.Position.Y()+meshOffset.Y(), r.thing.Position.Z()+meshOffset.Z())
 			model = translation.Mul4(rotation)
 		}
 		modelUniform := gl.GetUniformLocation(r.Program, gl.Str("model\x00"))
