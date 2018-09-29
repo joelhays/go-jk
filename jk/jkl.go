@@ -18,7 +18,7 @@ var (
 // Jkl contains the information extracted from the Jedi Knight Level (.jkl) file
 type Jkl struct {
 	Model          *Jk3do
-	Jk3dos         map[string]Jk3do
+	Jk3dos         map[string]Jk3doFile
 	Jk3doTemplates map[string]Template
 	Things         []Thing
 }
@@ -65,7 +65,7 @@ func ReadJKLFromString(jklString string) Jkl {
 	jklResult.Model = &Jk3do{}
 	jklResult.Model.Meshes = make([]JkMesh, 1)
 
-	jklResult.Jk3dos = make(map[string]Jk3do)
+	jklResult.Jk3dos = make(map[string]Jk3doFile)
 	jklResult.Jk3doTemplates = make(map[string]Template)
 
 	parseVertices(data, &jklResult)
@@ -251,19 +251,19 @@ func parse3dos(data string, jklResult *Jkl) {
 			jk3doName := components[1]
 
 			if jk3doName == "conv.3do" || jk3doName == "strv.3do" {
-				jklResult.Jk3dos[jk3doName] = Jk3do{}
+				jklResult.Jk3dos[jk3doName] = Jk3doFile{}
 				return
 			}
 
-			var jk3d0Bytes []byte
+			var jk3doBytes []byte
 			for _, file := range GobFiles {
-				jk3d0Bytes = LoadFileFromGOB(file, jk3doName)
-				if jk3d0Bytes != nil {
+				jk3doBytes = LoadFileFromGOB(file, jk3doName)
+				if jk3doBytes != nil {
 					break
 				}
 			}
 
-			jk3do := Parse3doFromString(string(jk3d0Bytes))
+			jk3do := Parse3doFile(string(jk3doBytes))
 
 			jklResult.Jk3dos[jk3doName] = jk3do
 		})
@@ -281,10 +281,10 @@ func parse3doTemplates(data string, jklResult *Jkl) {
 			size := 1.0
 			for i := 0; i < len(components); i++ {
 				if strings.HasPrefix(components[i], "size=") {
-					size, _ = strconv.ParseFloat(strings.TrimLeft(components[i], "size="), 32)
+					size, _ = strconv.ParseFloat(strings.TrimPrefix(components[i], "size="), 32)
 				}
 				if strings.HasPrefix(components[i], "model3d=") {
-					modelName = strings.TrimLeft(components[i], "model3d=")
+					modelName = strings.TrimPrefix(components[i], "model3d=")
 				}
 			}
 

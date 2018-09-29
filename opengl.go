@@ -65,13 +65,48 @@ func initOpenGL() uint32 {
 	return prog
 }
 
-func drawRenderer(window *glfw.Window, modelRenderers []*OpenGlModelRenderer) {
+func drawRenderer(window *glfw.Window, levelRenderer *OpenGlModelRenderer, modelRenderers []*OpenGl3doRenderer) {
 	deltaTime := glfw.GetTime() - previousTime
 	previousTime = glfw.GetTime()
 
 	doMovement(deltaTime)
 
 	gl.Clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT)
+
+	configureProgram := func(program uint32) {
+		gl.UseProgram(levelRenderer.Program)
+
+		// vertex shader uniforms
+
+		projection := mgl32.Perspective(mgl32.DegToRad(float32(camera.Zoom)), float32(width)/height, 0.1, 1000.0)
+		projectionUniform := gl.GetUniformLocation(levelRenderer.Program, gl.Str("projection\x00"))
+		gl.UniformMatrix4fv(projectionUniform, 1, false, &projection[0])
+
+		cameraView := camera.GetViewMatrix()
+		cameraUniform := gl.GetUniformLocation(levelRenderer.Program, gl.Str("view\x00"))
+		gl.UniformMatrix4fv(cameraUniform, 1, false, &cameraView[0])
+
+		// fragment shader uniforms
+
+		objectColor := mgl32.Vec3{1, 1, 1}
+		objectColorUniform := gl.GetUniformLocation(levelRenderer.Program, gl.Str("objectColor\x00"))
+		gl.Uniform3fv(objectColorUniform, 1, &objectColor[0])
+
+		lightColor := mgl32.Vec3{1, 1, 1}
+		lightColorUniform := gl.GetUniformLocation(levelRenderer.Program, gl.Str("lightColor\x00"))
+		gl.Uniform3fv(lightColorUniform, 1, &lightColor[0])
+
+		lightPosUniform := gl.GetUniformLocation(levelRenderer.Program, gl.Str("lightPos\x00"))
+		// gl.Uniform3fv(lightPosUniform, 1, &lightPos[0])
+		gl.Uniform3fv(lightPosUniform, 1, &camera.Position[0])
+
+		viewPos := camera.Position
+		viewPosUniform := gl.GetUniformLocation(levelRenderer.Program, gl.Str("viewPos\x00"))
+		gl.Uniform3fv(viewPosUniform, 1, &viewPos[0])
+	}
+
+	configureProgram(levelRenderer.Program)
+	levelRenderer.Render()
 
 	for idx, modelRenderer := range modelRenderers {
 		if modelRenderer == nil {
@@ -80,36 +115,7 @@ func drawRenderer(window *glfw.Window, modelRenderers []*OpenGlModelRenderer) {
 			continue
 		}
 
-		gl.UseProgram(modelRenderer.Program)
-
-		// vertex shader uniforms
-
-		projection := mgl32.Perspective(mgl32.DegToRad(float32(camera.Zoom)), float32(width)/height, 0.1, 1000.0)
-		projectionUniform := gl.GetUniformLocation(modelRenderer.Program, gl.Str("projection\x00"))
-		gl.UniformMatrix4fv(projectionUniform, 1, false, &projection[0])
-
-		cameraView := camera.GetViewMatrix()
-		cameraUniform := gl.GetUniformLocation(modelRenderer.Program, gl.Str("view\x00"))
-		gl.UniformMatrix4fv(cameraUniform, 1, false, &cameraView[0])
-
-		// fragment shader uniforms
-
-		objectColor := mgl32.Vec3{1, 1, 1}
-		objectColorUniform := gl.GetUniformLocation(modelRenderer.Program, gl.Str("objectColor\x00"))
-		gl.Uniform3fv(objectColorUniform, 1, &objectColor[0])
-
-		lightColor := mgl32.Vec3{1, 1, 1}
-		lightColorUniform := gl.GetUniformLocation(modelRenderer.Program, gl.Str("lightColor\x00"))
-		gl.Uniform3fv(lightColorUniform, 1, &lightColor[0])
-
-		lightPosUniform := gl.GetUniformLocation(modelRenderer.Program, gl.Str("lightPos\x00"))
-		// gl.Uniform3fv(lightPosUniform, 1, &lightPos[0])
-		gl.Uniform3fv(lightPosUniform, 1, &camera.Position[0])
-
-		viewPos := camera.Position
-		viewPosUniform := gl.GetUniformLocation(modelRenderer.Program, gl.Str("viewPos\x00"))
-		gl.Uniform3fv(viewPosUniform, 1, &viewPos[0])
-
+		configureProgram(modelRenderer.Program)
 		modelRenderer.Render()
 	}
 

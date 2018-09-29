@@ -65,44 +65,38 @@ func main() {
 	// jklBytes := jk.LoadFileFromGOB("J:\\Episode\\JK1CTF.GOB", ctfLevels[2])
 	jklBytes := jk.LoadFileFromGOB("J:\\Episode\\JK1.GOB", spLevels[0])
 	// jklBytes := jk.LoadFileFromGOB("J:\\Episode\\JK1MP.GOB", mpLevels[4])
-	jklData := jk.ReadJKLFromString(string(jklBytes))
+	jklLevel := jk.ReadJKLFromString(string(jklBytes))
+	level := NewOpenGlModelRenderer(nil, nil, jklLevel.Model, program)
 
-	models := make([]*OpenGlModelRenderer, 1+len(jklData.Things))
-	models[0] = NewOpenGlModelRenderer(nil, nil, jklData.Model, program)
+	models := make([]*OpenGl3doRenderer, len(jklLevel.Things))
 
-	for i := 0; i < len(jklData.Things); i++ {
-		thing := jklData.Things[i]
+	for i := 0; i < len(jklLevel.Things); i++ {
+		thing := jklLevel.Things[i]
 		if thing.TemplateName == "walkplayer" {
-			models[i+1] = nil
+			models[i] = nil
 			continue
 		}
 
-		template := jklData.Jk3doTemplates[thing.TemplateName]
-		jk3do := jklData.Jk3dos[template.Jk3doName]
+		template := jklLevel.Jk3doTemplates[thing.TemplateName]
+		jk3do := jklLevel.Jk3dos[template.Jk3doName]
+		jk3do.ColorMap = jklLevel.Model.Meshes[0].ColorMaps[0]
 
-		numVerts := 0
-		for _, mesh := range jk3do.Meshes {
-			mesh.ColorMaps[0] = jklData.Model.Meshes[0].ColorMaps[0]
-			numVerts += len(mesh.Vertices)
+		if len(jk3do.GeoSets) > 0 {
+			models[i] = NewOpenGl3doRenderer(&thing, &template, &jk3do, program)
+		} else {
+			models[i] = nil
 		}
-
-		if numVerts == 0 {
-			models[i+1] = nil
-			continue
-		}
-
-		models[i+1] = NewOpenGlModelRenderer(&thing, &template, &jk3do, program)
 	}
 
-	// jk3doBytes := jk.LoadFileFromGOB("J:\\Resource\\Res2.gob", "conv.3do")
-	// jk3doBytes := jk.LoadFileFromGOB("J:\\Resource\\Res2.gob", "rystr.3do")
-	// jklData := jk.Parse3doFromString(string(jk3doBytes))
-	// models := make([]*OpenGlModelRenderer, 1)
+	// jk3doBytes := jk.LoadFileFromGOB("J:\\Resource\\Res2.gob", "landpad.3do")
+	// jklModel := jk.Parse3doFile(string(jk3doBytes))
+	// jklModel.ColorMap = jklLevel.Model.Mesh.ColorMaps[0]
+	// models := make([]*OpenGl3doRenderer, 1)
 	// thing := &jk.Thing{Position: mgl32.Vec3{float32(0), float32(0), float32(0)}}
-	// models[0] = NewOpenGlModelRenderer(thing, nil, &jklData, program)
+	// models[0] = NewOpenGl3doRenderer(thing, nil, &jklModel, program)
 
 	for !window.ShouldClose() {
-		drawRenderer(window, models)
+		drawRenderer(window, level, models)
 	}
 }
 
