@@ -9,10 +9,6 @@ import (
 	"github.com/joelhays/go-vulkan/jk"
 )
 
-type ModelRenderer interface {
-	Render()
-}
-
 type OpenGlLevelRenderer struct {
 	thing    *jk.Thing
 	template *jk.Template
