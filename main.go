@@ -63,10 +63,10 @@ func main() {
 	// vao := makeVao(cube)
 
 	// jklBytes := jk.LoadFileFromGOB("J:\\Episode\\JK1CTF.GOB", ctfLevels[2])
-	jklBytes := jk.LoadFileFromGOB("J:\\Episode\\JK1.GOB", spLevels[0])
-	// jklBytes := jk.LoadFileFromGOB("J:\\Episode\\JK1MP.GOB", mpLevels[4])
+	// jklBytes := jk.LoadFileFromGOB("J:\\Episode\\JK1.GOB", spLevels[0])
+	jklBytes := jk.LoadFileFromGOB("J:\\Episode\\JK1MP.GOB", mpLevels[4])
 	jklLevel := jk.ReadJKLFromString(string(jklBytes))
-	level := NewOpenGlModelRenderer(nil, nil, jklLevel.Model, program)
+	level := NewOpenGlLevelRenderer(nil, nil, jklLevel.Model, program)
 
 	models := make([]*OpenGl3doRenderer, len(jklLevel.Things))
 
@@ -79,7 +79,7 @@ func main() {
 
 		template := jklLevel.Jk3doTemplates[thing.TemplateName]
 		jk3do := jklLevel.Jk3dos[template.Jk3doName]
-		jk3do.ColorMap = jklLevel.Model.Meshes[0].ColorMaps[0]
+		jk3do.ColorMap = jklLevel.Model.ColorMaps[0]
 
 		if len(jk3do.GeoSets) > 0 {
 			models[i] = NewOpenGl3doRenderer(&thing, &template, &jk3do, program)

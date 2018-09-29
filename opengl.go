@@ -65,7 +65,7 @@ func initOpenGL() uint32 {
 	return prog
 }
 
-func drawRenderer(window *glfw.Window, levelRenderer *OpenGlModelRenderer, modelRenderers []*OpenGl3doRenderer) {
+func drawRenderer(window *glfw.Window, levelRenderer *OpenGlLevelRenderer, modelRenderers []*OpenGl3doRenderer) {
 	deltaTime := glfw.GetTime() - previousTime
 	previousTime = glfw.GetTime()
 

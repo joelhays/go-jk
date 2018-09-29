@@ -17,7 +17,7 @@ var (
 
 // Jkl contains the information extracted from the Jedi Knight Level (.jkl) file
 type Jkl struct {
-	Model          *Jk3do
+	Model          *JkMesh
 	Jk3dos         map[string]Jk3doFile
 	Jk3doTemplates map[string]Template
 	Things         []Thing
@@ -46,6 +46,16 @@ type Thing struct {
 	Roll         float64
 }
 
+type JkMesh struct {
+	Name            string
+	Vertices        []mgl32.Vec3
+	TextureVertices []mgl32.Vec2
+	VertexNormals   []mgl32.Vec3
+	Surfaces        []surface
+	Materials       []Material
+	ColorMaps       []ColorMap
+}
+
 // ReadJKLFromFile will read a .jkl file and return a struct containing all necessary information
 func ReadJKLFromFile(filePath string) Jkl {
 	bytes, err := ioutil.ReadFile(filePath)
@@ -62,8 +72,7 @@ func ReadJKLFromString(jklString string) Jkl {
 	data := jklString
 
 	jklResult := Jkl{}
-	jklResult.Model = &Jk3do{}
-	jklResult.Model.Meshes = make([]JkMesh, 1)
+	jklResult.Model = &JkMesh{}
 
 	jklResult.Jk3dos = make(map[string]Jk3doFile)
 	jklResult.Jk3doTemplates = make(map[string]Template)
@@ -121,7 +130,7 @@ func parseVertices(data string, jklResult *Jkl) {
 				log.Fatal(err)
 			}
 
-			jklResult.Model.Meshes[0].Vertices = append(jklResult.Model.Meshes[0].Vertices, mgl32.Vec3{float32(x), float32(y), float32(z)})
+			jklResult.Model.Vertices = append(jklResult.Model.Vertices, mgl32.Vec3{float32(x), float32(y), float32(z)})
 		})
 }
 
@@ -139,7 +148,7 @@ func parseTextureVertices(data string, jklResult *Jkl) {
 				log.Fatal(err)
 			}
 
-			jklResult.Model.Meshes[0].TextureVertices = append(jklResult.Model.Meshes[0].TextureVertices, mgl32.Vec2{float32(u), float32(v)})
+			jklResult.Model.TextureVertices = append(jklResult.Model.TextureVertices, mgl32.Vec2{float32(u), float32(v)})
 		})
 }
 
@@ -173,7 +182,7 @@ func parseMaterials(data string, jklResult *Jkl) {
 			material.XTile = float32(xTile)
 			material.YTile = float32(yTile)
 
-			jklResult.Model.Meshes[0].Materials = append(jklResult.Model.Meshes[0].Materials, material)
+			jklResult.Model.Materials = append(jklResult.Model.Materials, material)
 		})
 }
 
@@ -197,7 +206,7 @@ func parseColormaps(data string, jklResult *Jkl) {
 
 			colorMap := ParseCmpFile(cmpBytes)
 
-			jklResult.Model.Meshes[0].ColorMaps = append(jklResult.Model.Meshes[0].ColorMaps, colorMap)
+			jklResult.Model.ColorMaps = append(jklResult.Model.ColorMaps, colorMap)
 		})
 }
 
@@ -230,7 +239,7 @@ func parseSurfaces(data string, jklResult *Jkl) {
 				surface.LightIntensities = append(surface.LightIntensities, lightIntensity)
 			}
 
-			jklResult.Model.Meshes[0].Surfaces = append(jklResult.Model.Meshes[0].Surfaces, surface)
+			jklResult.Model.Surfaces = append(jklResult.Model.Surfaces, surface)
 		})
 
 	parseSection(data, `(?s)\#--- Surface normals ---.*Section: SECTORS`, "\\d+:.*",
@@ -241,7 +250,7 @@ func parseSurfaces(data string, jklResult *Jkl) {
 			y, _ := strconv.ParseFloat(components[2], 64)
 			z, _ := strconv.ParseFloat(components[3], 64)
 
-			jklResult.Model.Meshes[0].Surfaces[surfaceID].Normal = mgl32.Vec3{float32(x), float32(y), float32(z)}
+			jklResult.Model.Surfaces[surfaceID].Normal = mgl32.Vec3{float32(x), float32(y), float32(z)}
 		})
 }
 
