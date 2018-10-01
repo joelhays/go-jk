@@ -53,30 +53,35 @@ func (r *OpenGl3doRenderer) Render() {
 			}
 		}
 
-		rotateValues := mgl32.Vec3{float32(hierarchy.Pitch + r.thing.Pitch), float32(hierarchy.Roll + r.thing.Roll), float32(hierarchy.Yaw + r.thing.Yaw)}
-		translationValues := r.thing.Position.Add(hierarchy.Position)
-		pivotValues := hierarchy.Pivot
+		meshRotateValues := mgl32.Vec3{float32(hierarchy.Pitch), float32(hierarchy.Roll), float32(hierarchy.Yaw)}
+		meshTranslateValues := hierarchy.Position
 
 		parentID := hierarchy.ParentID
 		for parentID != -1 {
 			parent := r.object.Hierarchy[parentID]
 
 			parentRotateValues := mgl32.Vec3{float32(parent.Pitch), float32(parent.Roll), float32(parent.Yaw)}
-			rotateValues = rotateValues.Add(parentRotateValues)
+			meshRotateValues = meshRotateValues.Add(parentRotateValues)
 
-			translationValues = translationValues.Add(parent.Position)
-			pivotValues = pivotValues.Add(parent.Pivot)
+			meshTranslateValues = meshTranslateValues.Add(parent.Position)
 
 			parentID = parent.ParentID
 		}
 
-		rotateX := mgl32.HomogRotate3DX(mgl32.DegToRad(rotateValues.X()))
-		rotateY := mgl32.HomogRotate3DY(mgl32.DegToRad(rotateValues.Y()))
-		rotateZ := mgl32.HomogRotate3DZ(mgl32.DegToRad(rotateValues.Z()))
-		rotation := rotateX.Mul4(rotateY.Mul4(rotateZ))
-		translation := mgl32.Translate3D(translationValues.X(), translationValues.Y(), translationValues.Z())
-		pivot := mgl32.Translate3D(pivotValues.X(), pivotValues.Y(), pivotValues.Z())
-		model = translation.Mul4(rotation.Mul4(pivot))
+		meshRotateX := mgl32.HomogRotate3DX(mgl32.DegToRad(meshRotateValues.X()))
+		meshRotateY := mgl32.HomogRotate3DY(mgl32.DegToRad(meshRotateValues.Y()))
+		meshRotateZ := mgl32.HomogRotate3DZ(mgl32.DegToRad(meshRotateValues.Z()))
+		meshRotation := meshRotateX.Mul4(meshRotateY.Mul4(meshRotateZ))
+		meshTranslation := mgl32.Translate3D(meshTranslateValues.X(), meshTranslateValues.Y(), meshTranslateValues.Z())
+		meshPivot := mgl32.Translate3D(hierarchy.Pivot.X(), hierarchy.Pivot.Y(), hierarchy.Pivot.Z())
+
+		thingTranslate := mgl32.Translate3D(r.thing.Position.X(), r.thing.Position.Y(), r.thing.Position.Z())
+		thingRotateX := mgl32.HomogRotate3DX(mgl32.DegToRad(float32(r.thing.Pitch)))
+		thingRotateY := mgl32.HomogRotate3DY(mgl32.DegToRad(float32(r.thing.Roll)))
+		thingRotateZ := mgl32.HomogRotate3DZ(mgl32.DegToRad(float32(r.thing.Yaw)))
+		thingRotation := thingRotateX.Mul4(thingRotateY.Mul4(thingRotateZ))
+
+		model = thingTranslate.Mul4(thingRotation).Mul4(meshTranslation).Mul4(meshRotation).Mul4(meshPivot)
 
 		gl.UniformMatrix4fv(modelUniform, 1, false, &model[0])
 
@@ -127,7 +132,7 @@ func (r *OpenGl3doRenderer) makePoints() []float32 {
 				textureVertexID := surface.TextureVertexIds[idx]
 				if len(mesh.TextureVertices) > 0 && textureVertexID != -1 {
 					points = append(points, mesh.TextureVertices[textureVertexID][0]/float32(mat.SizeX))
-					points = append(points, mesh.TextureVertices[textureVertexID][1]/float32(mat.SizeY))
+					points = append(points, -mesh.TextureVertices[textureVertexID][1]/float32(mat.SizeY))
 				} else {
 					points = append(points, 0)
 					points = append(points, 0)

@@ -88,12 +88,12 @@ func main() {
 		}
 	}
 
-	// jk3doBytes := jk.LoadFileFromGOB("J:\\Resource\\Res2.gob", "landpad.3do")
+	// jk3doBytes := jk.LoadFileFromGOB("J:\\Resource\\Res2.gob", "rystr.3do")
 	// jklModel := jk.Parse3doFile(string(jk3doBytes))
-	// jklModel.ColorMap = jklLevel.Model.Mesh.ColorMaps[0]
-	// models := make([]*OpenGl3doRenderer, 1)
-	// thing := &jk.Thing{Position: mgl32.Vec3{float32(0), float32(0), float32(0)}}
-	// models[0] = NewOpenGl3doRenderer(thing, nil, &jklModel, program)
+	// jklModel.ColorMap = jklLevel.Model.ColorMaps[0]
+	// //models := make([]*OpenGl3doRenderer, 1)
+	// thing := &jk.Thing{Position: mgl32.Vec3{float32(0), float32(0), float32(0)}, Yaw: 45}
+	// models = append(models, NewOpenGl3doRenderer(thing, nil, &jklModel, program))
 
 	for !window.ShouldClose() {
 		drawRenderer(window, level, models)
