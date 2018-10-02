@@ -14,14 +14,12 @@ type levelFile struct {
 	Name string
 }
 
-var mpLevels = []string{"jkl\\m10.jkl", "jkl\\m2.jkl", "jkl\\m4.jkl", "jkl\\m5.jkl", "jkl\\m_boss15.jkl", "jkl\\m_boss17.jkl"}
-var ctfLevels = []string{"jkl\\c1.jkl", "jkl\\c2.jkl", "jkl\\c3.jkl"}
-var spLevels = []string{
-	"jkl\\01narshadda.jkl", "jkl\\02narshadda.jkl", "jkl\\03katarn.jkl", "jkl\\04escapehouse.jkl", "jkl\\06abarons.jkl",
-	"jkl\\06bbarons.jkl", "jkl\\07yun.jkl", "jkl\\08escape88.jkl", "jkl\\09fuelstation.jkl", "jkl\\10cargo.jkl", "jkl\\11gorc.jkl",
-	"jkl\\12escape.jkl", "jkl\\14tower.jkl", "jkl\\15maw.jkl", "jkl\\16aescapeship.jkl", "jkl\\16bescapeship.jkl", "jkl\\17asarris.jkl",
-	"jkl\\17bsarris.jkl", "jkl\\18ascend.jkl", "jkl\\19a.jkl", "jkl\\19b.jkl", "jkl\\20aboc.jkl", "jkl\\20bboc.jkl", "jkl\\21ajarec.jkl",
-	"jkl\\21bjarec.jkl",
+var mpLevels = []string{"m10.jkl", "m2.jkl", "m4.jkl", "m5.jkl", "m_boss15.jkl", "m_boss17.jkl"}
+var ctfLevels = []string{"c1.jkl", "c2.jkl", "c3.jkl"}
+var spLevels = []string{"01narshadda.jkl", "02narshadda.jkl", "03katarn.jkl", "04escapehouse.jkl", "06abarons.jkl",
+	"06bbarons.jkl", "07yun.jkl", "08escape88.jkl", "09fuelstation.jkl", "10cargo.jkl", "11gorc.jkl", "12escape.jkl",
+	"14tower.jkl", "15maw.jkl", "16aescapeship.jkl", "16bescapeship.jkl", "17asarris.jkl", "17bsarris.jkl",
+	"18ascend.jkl", "19a.jkl", "19b.jkl", "20aboc.jkl", "20bboc.jkl", "21ajarec.jkl", "21bjarec.jkl",
 }
 
 const (
@@ -43,28 +41,12 @@ func main() {
 
 	camera = NewCamera(mgl32.Vec3{0, 0, 1}, mgl32.Vec3{0, 0, 1}, 0, -90)
 
-	// matBytes := jk.LoadFileFromGOB("J:\\Resource\\Res2.gob", "00cglyf3.mat")
-	// data := jk.ParseMatFile(matBytes)
-	// _ = data
-	// return
+	//vao := makeVao(triangle)
+	//vao := makeVao(cube)
 
-	// cmpBytes := jk.LoadFileFromGOB("J:\\Resource\\Res2.gob", "dflt.cmp")
-	// data := jk.ParseCmpFile(cmpBytes)
-	// _ = data
-	// return
-
-	// jk3doBytes := jk.LoadFileFromGOB("J:\\Resource\\Res2.gob", "00crte6x6.3do") // "landpad.3do")
-	// jklData := jk.Parse3doFromString(string(jk3doBytes))
-
-	// fmt.Println(jklData.Surfaces)
-	// return
-
-	// vao := makeVao(triangle)
-	// vao := makeVao(cube)
-
-	// jklBytes := jk.LoadFileFromGOB("J:\\Episode\\JK1CTF.GOB", ctfLevels[2])
-	// jklBytes := jk.LoadFileFromGOB("J:\\Episode\\JK1.GOB", spLevels[0])
-	jklBytes := jk.LoadFileFromGOB("J:\\Episode\\JK1MP.GOB", mpLevels[4])
+	//jklBytes := jk.LoadFileFromGOB("J:\\Episode\\JK1CTF.GOB", ctfLevels[2])
+	jklBytes := jk.LoadFileFromGOB("J:\\Episode\\JK1.GOB", spLevels[0])
+	//jklBytes := jk.LoadFileFromGOB("J:\\Episode\\JK1MP.GOB", mpLevels[4])
 	jklLevel := jk.ReadJKLFromString(string(jklBytes))
 	level := NewOpenGlLevelRenderer(nil, nil, jklLevel.Model, program)
 
@@ -88,12 +70,12 @@ func main() {
 		}
 	}
 
-	// jk3doBytes := jk.LoadFileFromGOB("J:\\Resource\\Res2.gob", "rystr.3do")
-	// jklModel := jk.Parse3doFile(string(jk3doBytes))
-	// jklModel.ColorMap = jklLevel.Model.ColorMaps[0]
-	// //models := make([]*OpenGl3doRenderer, 1)
-	// thing := &jk.Thing{Position: mgl32.Vec3{float32(0), float32(0), float32(0)}, Yaw: 45}
-	// models = append(models, NewOpenGl3doRenderer(thing, nil, &jklModel, program))
+	/* RENDER 3DO AT ORIGIN */
+	//jk3doBytes := jk.LoadFileFromGOB("J:\\Resource\\Res2.gob", "rh.3do")
+	//jklModel := jk.Parse3doFile(string(jk3doBytes))
+	//jklModel.ColorMap = jklLevel.Model.ColorMaps[0]
+	//thing := &jk.Thing{Position: mgl32.Vec3{float32(0), float32(0), float32(0)}, Yaw: 45}
+	//models = append(models, NewOpenGl3doRenderer(thing, nil, &jklModel, program))
 
 	for !window.ShouldClose() {
 		drawRenderer(window, level, models)

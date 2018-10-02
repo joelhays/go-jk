@@ -25,12 +25,21 @@ func NewOpenGl3doRenderer(thing *jk.Thing, template *jk.Template, object *jk.Jk3
 		panic("Thing is nil!")
 	}
 	r := &OpenGl3doRenderer{thing: thing, template: template, object: object, Program: program}
+
 	r.lod = 0
+
+	numGeoSets := len(r.object.GeoSets)
+
+	if r.lod >= int32(numGeoSets) {
+		r.lod = int32(numGeoSets - 1)
+	}
+
 	r.setupMesh()
 	return r
 }
 
 func (r *OpenGl3doRenderer) Render() {
+
 	gl.BindVertexArray(r.vao)
 
 	var offset int32
@@ -41,6 +50,11 @@ func (r *OpenGl3doRenderer) Render() {
 	textureUniform := gl.GetUniformLocation(r.Program, gl.Str("objectTexture\x00"))
 
 	for meshIdx, mesh := range r.object.GeoSets[r.lod].Meshes {
+
+		if len(mesh.Vertices) == 0 {
+			continue
+		}
+
 		_ = meshIdx
 		model := mgl32.Ident4()
 
