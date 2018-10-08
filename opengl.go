@@ -19,7 +19,7 @@ func initGlfw() *glfw.Window {
 	glfw.WindowHint(glfw.OpenGLProfile, glfw.OpenGLCoreProfile)
 	glfw.WindowHint(glfw.OpenGLForwardCompatible, glfw.True)
 
-	window, err := glfw.CreateWindow(width, height, "J", nil, nil)
+	window, err := glfw.CreateWindow(width, height, "JK Viewer", nil, nil)
 	if err != nil {
 		panic(err)
 	}
