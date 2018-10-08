@@ -6,7 +6,7 @@ import (
 	// "github.com/go-gl/gl/v2.1/gl"
 	"github.com/go-gl/glfw/v3.2/glfw"
 	"github.com/go-gl/mathgl/mgl32"
-	"github.com/joelhays/go-vulkan/jk"
+	"github.com/joelhays/go-jk/jk"
 )
 
 type levelFile struct {
@@ -29,6 +29,7 @@ const (
 
 var camera Camera
 var previousTime float64
+var foundPlayer bool
 
 var lightPos = mgl32.Vec3{1.2, 1.0, 2.0}
 
@@ -40,6 +41,7 @@ func main() {
 	program := initOpenGL()
 
 	camera = NewCamera(mgl32.Vec3{0, 0, 1}, mgl32.Vec3{0, 0, 1}, 0, -90)
+	camera.MovementSpeed = 2
 
 	//vao := makeVao(triangle)
 	//vao := makeVao(cube)
@@ -55,6 +57,10 @@ func main() {
 	for i := 0; i < len(jklLevel.Things); i++ {
 		thing := jklLevel.Things[i]
 		if thing.TemplateName == "walkplayer" {
+			if !foundPlayer {
+				camera.Position = thing.Position
+				foundPlayer = true
+			}
 			models[i] = nil
 			continue
 		}
@@ -71,44 +77,13 @@ func main() {
 	}
 
 	/* RENDER 3DO AT ORIGIN */
-	//jk3doBytes := jk.LoadFileFromGOB("J:\\Resource\\Res2.gob", "rh.3do")
+	//jk3doBytes := jk.LoadFileFromGOB("J:\\Resource\\Res2.gob", "rystr.3do")
 	//jklModel := jk.Parse3doFile(string(jk3doBytes))
 	//jklModel.ColorMap = jklLevel.Model.ColorMaps[0]
-	//thing := &jk.Thing{Position: mgl32.Vec3{float32(0), float32(0), float32(0)}, Yaw: 45}
+	//thing := &jk.Thing{Position: mgl32.Vec3{float32(0), float32(0), float32(0)}, Yaw: 45, Pitch: 45, Roll: 45}
 	//models = append(models, NewOpenGl3doRenderer(thing, nil, &jklModel, program))
 
 	for !window.ShouldClose() {
 		drawRenderer(window, level, models)
-	}
-}
-
-func doMovement(deltaTime float64) {
-
-	if keyMinus := keys[glfw.KeyKPSubtract]; keyMinus {
-		camera.MovementSpeed = .75
-	}
-
-	if keyDecimal := keys[glfw.KeyKPDecimal]; keyDecimal {
-		camera.MovementSpeed = 6
-	}
-
-	if keyPlus := keys[glfw.KeyKPAdd]; keyPlus {
-		camera.MovementSpeed = 12
-	}
-
-	if keyW, keyUp := keys[glfw.KeyW], keys[glfw.KeyUp]; keyW || keyUp {
-		camera.ProcessKeyboard(CAMERA_FORWARD, deltaTime)
-	}
-
-	if keyS, keyDown := keys[glfw.KeyS], keys[glfw.KeyDown]; keyS || keyDown {
-		camera.ProcessKeyboard(CAMERA_BACKWARD, deltaTime)
-	}
-
-	if keyA, keyLeft := keys[glfw.KeyA], keys[glfw.KeyLeft]; keyA || keyLeft {
-		camera.ProcessKeyboard(CAMERA_LEFT, deltaTime)
-	}
-
-	if keyD, keyRight := keys[glfw.KeyD], keys[glfw.KeyRight]; keyD || keyRight {
-		camera.ProcessKeyboard(CAMERA_RIGHT, deltaTime)
 	}
 }

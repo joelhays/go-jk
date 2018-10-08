@@ -6,7 +6,7 @@ import (
 	"github.com/go-gl/mathgl/mgl32"
 
 	"github.com/go-gl/gl/v4.1-core/gl"
-	"github.com/joelhays/go-vulkan/jk"
+	"github.com/joelhays/go-jk/jk"
 )
 
 type OpenGlLevelRenderer struct {
@@ -77,8 +77,8 @@ func (r *OpenGlLevelRenderer) makePoints() []float32 {
 
 			textureVertexID := surface.TextureVertexIds[idx]
 			if textureVertexID != -1 {
-				points = append(points, r.object.TextureVertices[textureVertexID][0]/float32(mat.SizeX)) // /mat.XTile)
-				points = append(points, r.object.TextureVertices[textureVertexID][1]/float32(mat.SizeY)) // /mat.YTile)
+				points = append(points, r.object.TextureVertices[textureVertexID][0]/float32(mat.SizeX))  // /mat.XTile)
+				points = append(points, -r.object.TextureVertices[textureVertexID][1]/float32(mat.SizeY)) // /mat.YTile)
 			} else {
 				points = append(points, 0)
 				points = append(points, 0)

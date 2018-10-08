@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/joelhays/go-vulkan/jk"
+	"github.com/joelhays/go-jk/jk"
 )
 
 func From3do2obj(mesh *jk.JkMesh) {

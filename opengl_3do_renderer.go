@@ -6,7 +6,7 @@ import (
 	"github.com/go-gl/mathgl/mgl32"
 
 	"github.com/go-gl/gl/v4.1-core/gl"
-	"github.com/joelhays/go-vulkan/jk"
+	"github.com/joelhays/go-jk/jk"
 )
 
 type OpenGl3doRenderer struct {

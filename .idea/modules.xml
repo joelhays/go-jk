@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/go-vulkan.iml" filepath="$PROJECT_DIR$/.idea/go-vulkan.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/go-jk.iml" filepath="$PROJECT_DIR$/.idea/go-jk.iml" />
     </modules>
   </component>
 </project>
