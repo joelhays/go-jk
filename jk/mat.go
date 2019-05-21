@@ -1,9 +1,7 @@
 package jk
 
 import (
-	"bytes"
 	"encoding/binary"
-	"unsafe"
 )
 
 type mtlHeader struct {
@@ -51,18 +49,12 @@ type Material struct {
 func ParseMatFile(data []byte) Material {
 	cursor := 0
 	var header mtlHeader
-	headerSize := int(unsafe.Sizeof(header))
-	headerBuf := bytes.NewBuffer(data[cursor:headerSize])
-	binary.Read(headerBuf, binary.LittleEndian, &header)
-
-	cursor += headerSize
+	cursor += readBytes(data, cursor, &header)
 
 	if header.MatType == 0 {
 		// TODO: handle color-only materials
 		var colHeader colorHeader
-		colHeaderSize := int(unsafe.Sizeof(colHeader))
-		colBuf := bytes.NewBuffer(data[cursor : cursor+colHeaderSize])
-		binary.Read(colBuf, binary.LittleEndian, &colHeader)
+		cursor += readBytes(data, cursor, &colHeader)
 
 		texture := make([]byte, 4)
 		binary.LittleEndian.PutUint32(texture, uint32(colHeader.ColorNum))
@@ -73,18 +65,10 @@ func ParseMatFile(data []byte) Material {
 	if header.MatType == 2 {
 		// get the first texture header (full-sized image)
 		var texHeader textureHeader
-		texHeaderSize := int(unsafe.Sizeof(texHeader))
-		texBuf := bytes.NewBuffer(data[cursor : cursor+texHeaderSize])
-		binary.Read(texBuf, binary.LittleEndian, &texHeader)
-
-		cursor += texHeaderSize * int(header.NumTextures)
+		cursor += readBytes(data, cursor, &texHeader) * int(header.NumTextures)
 
 		var texData textureData
-		texDataSize := int(unsafe.Sizeof(texData))
-		texDataBuf := bytes.NewBuffer(data[cursor : cursor+texDataSize])
-		binary.Read(texDataBuf, binary.LittleEndian, &texData)
-
-		cursor += texDataSize
+		cursor += readBytes(data, cursor, &texData)
 
 		textureBytes := data[cursor : cursor+int(texData.SizeX*texData.SizeY)]
 

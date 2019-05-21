@@ -65,7 +65,7 @@ func initOpenGL() uint32 {
 	return prog
 }
 
-func drawRenderer(window *glfw.Window, levelRenderer *OpenGlLevelRenderer, modelRenderers []*OpenGl3doRenderer) {
+func drawRenderer(window *glfw.Window, levelRenderer *OpenGlLevelRenderer, modelRenderers []*OpenGl3doRenderer, bmRenderer *OpenGlBmRenderer) {
 	deltaTime := glfw.GetTime() - previousTime
 	previousTime = glfw.GetTime()
 
@@ -73,18 +73,27 @@ func drawRenderer(window *glfw.Window, levelRenderer *OpenGlLevelRenderer, model
 
 	gl.Clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT)
 
-	configureProgram(levelRenderer.Program)
-	levelRenderer.Render()
+	if levelRenderer != nil {
+		configureProgram(levelRenderer.Program)
+		levelRenderer.Render()
+	}
 
-	for idx, modelRenderer := range modelRenderers {
-		if modelRenderer == nil {
-			_ = idx
-			// fmt.Println("nil renderer at", idx)
-			continue
+	if modelRenderers != nil {
+		for idx, modelRenderer := range modelRenderers {
+			if modelRenderer == nil {
+				_ = idx
+				// fmt.Println("nil renderer at", idx)
+				continue
+			}
+
+			configureProgram(modelRenderer.Program)
+			modelRenderer.Render()
 		}
+	}
 
-		configureProgram(modelRenderer.Program)
-		modelRenderer.Render()
+	if bmRenderer != nil {
+		configureProgram(bmRenderer.Program)
+		bmRenderer.Render()
 	}
 
 	glfw.PollEvents()

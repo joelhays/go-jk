@@ -43,12 +43,20 @@ func main() {
 	camera = NewCamera(mgl32.Vec3{0, 0, 1}, mgl32.Vec3{0, 0, 1}, 0, -90)
 	camera.MovementSpeed = 2
 
-	//vao := makeVao(triangle)
-	//vao := makeVao(cube)
+	bmBytes := jk.LoadFileFromGOB("J:\\Resource\\Res1hi.gob", "bkmain.bm")
+	bmFile := jk.ParseBmFile(bmBytes)
+
+	bmRenderer := NewOpenGlBmRenderer(&bmFile, program)
+
+	//for !window.ShouldClose() {
+	//	drawRenderer(window, nil, nil, bmRenderer)
+	//}
+	//
+	//return
 
 	//jklBytes := jk.LoadFileFromGOB("J:\\Episode\\JK1CTF.GOB", ctfLevels[2])
-	jklBytes := jk.LoadFileFromGOB("J:\\Episode\\JK1.GOB", spLevels[0])
 	//jklBytes := jk.LoadFileFromGOB("J:\\Episode\\JK1MP.GOB", mpLevels[4])
+	jklBytes := jk.LoadFileFromGOB("J:\\Episode\\JK1.GOB", spLevels[0])
 	jklLevel := jk.ReadJKLFromString(string(jklBytes))
 	level := NewOpenGlLevelRenderer(nil, nil, jklLevel.Model, program)
 
@@ -84,6 +92,6 @@ func main() {
 	//models = append(models, NewOpenGl3doRenderer(thing, nil, &jklModel, program))
 
 	for !window.ShouldClose() {
-		drawRenderer(window, level, models)
+		drawRenderer(window, level, models, bmRenderer)
 	}
 }

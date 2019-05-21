@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"github.com/joelhays/go-jk/opengl"
 
 	"github.com/go-gl/mathgl/mgl32"
 
@@ -15,7 +16,6 @@ type OpenGl3doRenderer struct {
 	object   *jk.Jk3doFile
 	Program  uint32
 	vao      uint32
-	vbo      uint32
 	textures []uint32
 	lod      int32
 }
@@ -120,7 +120,7 @@ func (r *OpenGl3doRenderer) Render() {
 
 func (r *OpenGl3doRenderer) setupMesh() {
 	points := r.makePoints()
-	r.makeVao(points)
+	r.vao = opengl.LoadToVAO(points)
 	r.makeTextures()
 }
 
@@ -160,27 +160,6 @@ func (r *OpenGl3doRenderer) makePoints() []float32 {
 	return points
 }
 
-func (r *OpenGl3doRenderer) makeVao(points []float32) {
-	gl.GenBuffers(1, &r.vbo)
-	gl.BindBuffer(gl.ARRAY_BUFFER, r.vbo)
-	gl.BufferData(gl.ARRAY_BUFFER, 4*len(points), gl.Ptr(points), gl.STATIC_DRAW)
-
-	gl.GenVertexArrays(1, &r.vao)
-	gl.BindVertexArray(r.vao)
-	gl.EnableVertexAttribArray(0)
-	gl.BindBuffer(gl.ARRAY_BUFFER, r.vbo)
-	gl.VertexAttribPointer(0, 3, gl.FLOAT, false, 9*4, gl.PtrOffset(0))
-
-	gl.EnableVertexAttribArray(1)
-	gl.VertexAttribPointer(1, 3, gl.FLOAT, false, 9*4, gl.PtrOffset(3*4))
-
-	gl.EnableVertexAttribArray(2)
-	gl.VertexAttribPointer(2, 2, gl.FLOAT, false, 9*4, gl.PtrOffset(6*4))
-
-	gl.EnableVertexAttribArray(3)
-	gl.VertexAttribPointer(3, 1, gl.FLOAT, false, 9*4, gl.PtrOffset(7*4))
-}
-
 func (r *OpenGl3doRenderer) makeTextures() {
 	numTextures := int32(len(r.object.Materials))
 
@@ -209,9 +188,9 @@ func (r *OpenGl3doRenderer) makeTextures() {
 		if material.Transparent {
 			finalTexture = make([]byte, material.SizeX*material.SizeY*4)
 			for j := 0; j < int(material.SizeX*material.SizeY); j++ {
-				finalTexture[j*4] = r.object.ColorMap.Pallette[material.Texture[j]].R
-				finalTexture[j*4+1] = r.object.ColorMap.Pallette[material.Texture[j]].G
-				finalTexture[j*4+2] = r.object.ColorMap.Pallette[material.Texture[j]].B
+				finalTexture[j*4] = r.object.ColorMap.Palette[material.Texture[j]].R
+				finalTexture[j*4+1] = r.object.ColorMap.Palette[material.Texture[j]].G
+				finalTexture[j*4+2] = r.object.ColorMap.Palette[material.Texture[j]].B
 
 				if material.Texture[j] == 0 {
 					finalTexture[j*4+3] = 0
@@ -223,9 +202,9 @@ func (r *OpenGl3doRenderer) makeTextures() {
 		} else {
 			finalTexture = make([]byte, material.SizeX*material.SizeY*3)
 			for j := 0; j < int(material.SizeX*material.SizeY); j++ {
-				finalTexture[j*3] = r.object.ColorMap.Pallette[material.Texture[j]].R
-				finalTexture[j*3+1] = r.object.ColorMap.Pallette[material.Texture[j]].G
-				finalTexture[j*3+2] = r.object.ColorMap.Pallette[material.Texture[j]].B
+				finalTexture[j*3] = r.object.ColorMap.Palette[material.Texture[j]].R
+				finalTexture[j*3+1] = r.object.ColorMap.Palette[material.Texture[j]].G
+				finalTexture[j*3+2] = r.object.ColorMap.Palette[material.Texture[j]].B
 			}
 			gl.TexImage2D(gl.TEXTURE_2D, 0, gl.RGB, material.SizeX, material.SizeY, 0, gl.RGB, gl.UNSIGNED_BYTE, gl.Ptr(finalTexture))
 		}

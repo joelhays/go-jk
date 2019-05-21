@@ -1,11 +1,5 @@
 package jk
 
-import (
-	"bytes"
-	"encoding/binary"
-	"unsafe"
-)
-
 type TCMPHeader struct {
 	Name         [4]byte
 	Ver          int32
@@ -21,15 +15,13 @@ type Vec3Byte struct {
 }
 
 type ColorMap struct {
-	Pallette [256]Vec3Byte
+	Palette [256]Vec3Byte
 }
 
 func ParseCmpFile(data []byte) ColorMap {
 	cursor := 0
 	var header TCMPHeader
-	headerSize := int(unsafe.Sizeof(header))
-	headerBuf := bytes.NewBuffer(data[cursor:headerSize])
-	binary.Read(headerBuf, binary.LittleEndian, &header)
+	cursor += readBytes(data, cursor, &header)
 
-	return ColorMap{Pallette: header.Palette}
+	return ColorMap{Palette: header.Palette}
 }
