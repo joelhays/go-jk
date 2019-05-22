@@ -20,6 +20,7 @@ var spLevels = []string{"01narshadda.jkl", "02narshadda.jkl", "03katarn.jkl", "0
 }
 
 var cam camera.Camera
+var previousTime float64
 
 func main() {
 	runtime.LockOSThread()
@@ -37,7 +38,12 @@ func main() {
 	bmRenderer := opengl.NewOpenGlBmRenderer(&bmFile, program)
 
 	//for !window.ShouldClose() {
-	//	drawRenderer(window, nil, nil, bmRenderer)
+	//	deltaTime := glfw.GetTime() - previousTime
+	//	previousTime = glfw.GetTime()
+	//
+	//	doMovement(deltaTime)
+	//
+	//	opengl.DrawRenderer(window, &cam, nil, nil, bmRenderer)
 	//}
 	//
 	//return
@@ -80,7 +86,6 @@ func main() {
 	//thing := &jk.Thing{Position: mgl32.Vec3{float32(0), float32(0), float32(0)}, Yaw: 45, Pitch: 45, Roll: 45}
 	//models = append(models, NewOpenGl3doRenderer(thing, nil, &jklModel, program))
 
-	var previousTime float64
 	for !window.ShouldClose() {
 		deltaTime := glfw.GetTime() - previousTime
 		previousTime = glfw.GetTime()

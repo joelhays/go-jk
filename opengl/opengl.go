@@ -35,7 +35,7 @@ func InitGlfw(windowWidth int, windowHeight int, keyCallback func(*glfw.Window, 
 	return window
 }
 
-// initOpenGL initializes OpenGL and returns an intiialized program.
+// initOpenGL initializes OpenGL and returns an initialized program.
 func InitOpenGL() uint32 {
 	if err := gl.Init(); err != nil {
 		panic(err)

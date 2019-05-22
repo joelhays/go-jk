@@ -101,14 +101,6 @@ func (r *OpenGlLevelRenderer) makeTextures() {
 		textureID := r.textures[i]
 		material := r.object.Materials[i]
 
-		gl.BindTexture(gl.TEXTURE_2D, textureID)
-
-		gl.TexParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.REPEAT)
-		gl.TexParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.REPEAT)
-
-		gl.TexParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR)
-		gl.TexParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR)
-
 		if len(r.object.Materials[i].Texture) == 0 {
 			fmt.Println("empty material")
 			continue
@@ -127,7 +119,6 @@ func (r *OpenGlLevelRenderer) makeTextures() {
 				} else {
 					finalTexture[j*4+3] = 255
 				}
-				gl.TexImage2D(gl.TEXTURE_2D, 0, gl.RGBA, material.SizeX, material.SizeY, 0, gl.RGBA, gl.UNSIGNED_BYTE, gl.Ptr(finalTexture))
 			}
 		} else {
 			finalTexture = make([]byte, material.SizeX*material.SizeY*3)
@@ -136,11 +127,8 @@ func (r *OpenGlLevelRenderer) makeTextures() {
 				finalTexture[j*3+1] = r.object.ColorMaps[0].Palette[material.Texture[j]].G
 				finalTexture[j*3+2] = r.object.ColorMaps[0].Palette[material.Texture[j]].B
 			}
-			gl.TexImage2D(gl.TEXTURE_2D, 0, gl.RGB, material.SizeX, material.SizeY, 0, gl.RGB, gl.UNSIGNED_BYTE, gl.Ptr(finalTexture))
 		}
 
-		gl.GenerateMipmap(gl.TEXTURE_2D)
-
-		gl.BindTexture(gl.TEXTURE_2D, 0)
+		LoadToTexture(textureID, material.SizeX, material.SizeY, &finalTexture, material.Transparent)
 	}
 }
