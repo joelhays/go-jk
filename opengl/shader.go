@@ -1,4 +1,4 @@
-package main
+package opengl
 
 import (
 	"fmt"
@@ -9,7 +9,7 @@ import (
 	"github.com/go-gl/gl/v4.1-core/gl"
 )
 
-func readShader(filePath string) string {
+func ReadShader(filePath string) string {
 	bytes, err := ioutil.ReadFile(filePath)
 	if err != nil {
 		log.Fatal(err)
@@ -19,7 +19,7 @@ func readShader(filePath string) string {
 	return shaderSource
 }
 
-func compileShader(source string, shaderType uint32) (uint32, error) {
+func CompileShader(source string, shaderType uint32) (uint32, error) {
 	shader := gl.CreateShader(shaderType)
 
 	csources, free := gl.Strs(source)

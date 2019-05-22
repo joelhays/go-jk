@@ -1,6 +1,8 @@
 package main
 
 import (
+	"github.com/joelhays/go-jk/camera"
+	"github.com/joelhays/go-jk/opengl"
 	"runtime"
 
 	// "github.com/go-gl/gl/v2.1/gl"
@@ -8,11 +10,6 @@ import (
 	"github.com/go-gl/mathgl/mgl32"
 	"github.com/joelhays/go-jk/jk"
 )
-
-type levelFile struct {
-	Gob  string
-	Name string
-}
 
 var mpLevels = []string{"m10.jkl", "m2.jkl", "m4.jkl", "m5.jkl", "m_boss15.jkl", "m_boss17.jkl"}
 var ctfLevels = []string{"c1.jkl", "c2.jkl", "c3.jkl"}
@@ -22,31 +19,22 @@ var spLevels = []string{"01narshadda.jkl", "02narshadda.jkl", "03katarn.jkl", "0
 	"18ascend.jkl", "19a.jkl", "19b.jkl", "20aboc.jkl", "20bboc.jkl", "21ajarec.jkl", "21bjarec.jkl",
 }
 
-const (
-	width  = 1024
-	height = 768
-)
-
-var camera Camera
-var previousTime float64
-var foundPlayer bool
-
-var lightPos = mgl32.Vec3{1.2, 1.0, 2.0}
+var cam camera.Camera
 
 func main() {
 	runtime.LockOSThread()
 
-	window := initGlfw()
+	window := opengl.InitGlfw(1024, 768, KeyCallback, MouseCallback)
 	defer glfw.Terminate()
-	program := initOpenGL()
+	program := opengl.InitOpenGL()
 
-	camera = NewCamera(mgl32.Vec3{0, 0, 1}, mgl32.Vec3{0, 0, 1}, 0, -90)
-	camera.MovementSpeed = 2
+	cam = camera.NewCamera(mgl32.Vec3{0, 0, 1}, mgl32.Vec3{0, 0, 1}, 0, -90)
+	cam.MovementSpeed = 2
 
 	bmBytes := jk.LoadFileFromGOB("J:\\Resource\\Res1hi.gob", "bkmain.bm")
 	bmFile := jk.ParseBmFile(bmBytes)
 
-	bmRenderer := NewOpenGlBmRenderer(&bmFile, program)
+	bmRenderer := opengl.NewOpenGlBmRenderer(&bmFile, program)
 
 	//for !window.ShouldClose() {
 	//	drawRenderer(window, nil, nil, bmRenderer)
@@ -58,15 +46,16 @@ func main() {
 	//jklBytes := jk.LoadFileFromGOB("J:\\Episode\\JK1MP.GOB", mpLevels[4])
 	jklBytes := jk.LoadFileFromGOB("J:\\Episode\\JK1.GOB", spLevels[0])
 	jklLevel := jk.ReadJKLFromString(string(jklBytes))
-	level := NewOpenGlLevelRenderer(nil, nil, jklLevel.Model, program)
+	level := opengl.NewOpenGlLevelRenderer(nil, nil, jklLevel.Model, program)
 
-	models := make([]*OpenGl3doRenderer, len(jklLevel.Things))
+	models := make([]*opengl.OpenGl3doRenderer, len(jklLevel.Things))
 
+	var foundPlayer bool
 	for i := 0; i < len(jklLevel.Things); i++ {
 		thing := jklLevel.Things[i]
 		if thing.TemplateName == "walkplayer" {
 			if !foundPlayer {
-				camera.Position = thing.Position
+				cam.Position = thing.Position
 				foundPlayer = true
 			}
 			models[i] = nil
@@ -78,7 +67,7 @@ func main() {
 		jk3do.ColorMap = jklLevel.Model.ColorMaps[0]
 
 		if len(jk3do.GeoSets) > 0 {
-			models[i] = NewOpenGl3doRenderer(&thing, &template, &jk3do, program)
+			models[i] = opengl.NewOpenGl3doRenderer(&thing, &template, &jk3do, program)
 		} else {
 			models[i] = nil
 		}
@@ -91,7 +80,13 @@ func main() {
 	//thing := &jk.Thing{Position: mgl32.Vec3{float32(0), float32(0), float32(0)}, Yaw: 45, Pitch: 45, Roll: 45}
 	//models = append(models, NewOpenGl3doRenderer(thing, nil, &jklModel, program))
 
+	var previousTime float64
 	for !window.ShouldClose() {
-		drawRenderer(window, level, models, bmRenderer)
+		deltaTime := glfw.GetTime() - previousTime
+		previousTime = glfw.GetTime()
+
+		doMovement(deltaTime)
+
+		opengl.DrawRenderer(window, &cam, level, models, bmRenderer)
 	}
 }

@@ -1,9 +1,7 @@
-package main
+package opengl
 
 import (
 	"fmt"
-	"github.com/joelhays/go-jk/opengl"
-
 	"github.com/go-gl/mathgl/mgl32"
 
 	"github.com/go-gl/gl/v4.1-core/gl"
@@ -120,7 +118,7 @@ func (r *OpenGl3doRenderer) Render() {
 
 func (r *OpenGl3doRenderer) setupMesh() {
 	points := r.makePoints()
-	r.vao = opengl.LoadToVAO(points)
+	r.vao = LoadToVAO(points)
 	r.makeTextures()
 }
 

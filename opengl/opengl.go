@@ -1,6 +1,7 @@
-package main
+package opengl
 
 import (
+	"github.com/joelhays/go-jk/camera"
 	"log"
 
 	"github.com/go-gl/gl/v4.1-core/gl"
@@ -8,8 +9,10 @@ import (
 	"github.com/go-gl/mathgl/mgl32"
 )
 
-// initGlfw initializes glfw and returns a Window to use.
-func initGlfw() *glfw.Window {
+// InitGlfw initializes glfw and returns a Window to use.
+func InitGlfw(windowWidth int, windowHeight int, keyCallback func(*glfw.Window, glfw.Key, int, glfw.Action, glfw.ModifierKey),
+	mouseCallback func(*glfw.Window, float64, float64)) *glfw.Window {
+
 	if err := glfw.Init(); err != nil {
 		panic(err)
 	}
@@ -19,21 +22,21 @@ func initGlfw() *glfw.Window {
 	glfw.WindowHint(glfw.OpenGLProfile, glfw.OpenGLCoreProfile)
 	glfw.WindowHint(glfw.OpenGLForwardCompatible, glfw.True)
 
-	window, err := glfw.CreateWindow(width, height, "JK Viewer", nil, nil)
+	window, err := glfw.CreateWindow(windowWidth, windowHeight, "JK Viewer", nil, nil)
 	if err != nil {
 		panic(err)
 	}
 	window.MakeContextCurrent()
 
 	window.SetInputMode(glfw.CursorMode, glfw.CursorDisabled)
-	window.SetKeyCallback(KeyCallback)
-	window.SetCursorPosCallback(MouseCallback)
+	window.SetKeyCallback(keyCallback)
+	window.SetCursorPosCallback(mouseCallback)
 
 	return window
 }
 
 // initOpenGL initializes OpenGL and returns an intiialized program.
-func initOpenGL() uint32 {
+func InitOpenGL() uint32 {
 	if err := gl.Init(); err != nil {
 		panic(err)
 	}
@@ -46,14 +49,14 @@ func initOpenGL() uint32 {
 	gl.Enable(gl.BLEND)
 	gl.BlendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA)
 
-	vertexShaderSource := readShader("./shaders/vertex.glsl")
-	vertexShader, err := compileShader(vertexShaderSource, gl.VERTEX_SHADER)
+	vertexShaderSource := ReadShader("./shaders/vertex.glsl")
+	vertexShader, err := CompileShader(vertexShaderSource, gl.VERTEX_SHADER)
 	if err != nil {
 		panic(err)
 	}
 
-	fragmentShaderSource := readShader("./shaders/fragment.glsl")
-	fragmentShader, err := compileShader(fragmentShaderSource, gl.FRAGMENT_SHADER)
+	fragmentShaderSource := ReadShader("./shaders/fragment.glsl")
+	fragmentShader, err := CompileShader(fragmentShaderSource, gl.FRAGMENT_SHADER)
 	if err != nil {
 		panic(err)
 	}
@@ -65,16 +68,13 @@ func initOpenGL() uint32 {
 	return prog
 }
 
-func drawRenderer(window *glfw.Window, levelRenderer *OpenGlLevelRenderer, modelRenderers []*OpenGl3doRenderer, bmRenderer *OpenGlBmRenderer) {
-	deltaTime := glfw.GetTime() - previousTime
-	previousTime = glfw.GetTime()
-
-	doMovement(deltaTime)
-
+func DrawRenderer(window *glfw.Window, camera *camera.Camera, levelRenderer *OpenGlLevelRenderer, modelRenderers []*OpenGl3doRenderer, bmRenderer *OpenGlBmRenderer) {
 	gl.Clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT)
 
+	width, height := window.GetSize()
+
 	if levelRenderer != nil {
-		configureProgram(levelRenderer.Program)
+		configureProgram(levelRenderer.Program, camera, width, height)
 		levelRenderer.Render()
 	}
 
@@ -86,13 +86,13 @@ func drawRenderer(window *glfw.Window, levelRenderer *OpenGlLevelRenderer, model
 				continue
 			}
 
-			configureProgram(modelRenderer.Program)
+			configureProgram(modelRenderer.Program, camera, width, height)
 			modelRenderer.Render()
 		}
 	}
 
 	if bmRenderer != nil {
-		configureProgram(bmRenderer.Program)
+		configureProgram(bmRenderer.Program, camera, width, height)
 		bmRenderer.Render()
 	}
 
@@ -100,12 +100,12 @@ func drawRenderer(window *glfw.Window, levelRenderer *OpenGlLevelRenderer, model
 	window.SwapBuffers()
 }
 
-func configureProgram(program uint32) {
+func configureProgram(program uint32, camera *camera.Camera, width int, height int) {
 	gl.UseProgram(program)
 
 	// vertex shader uniforms
 
-	projection := mgl32.Perspective(mgl32.DegToRad(float32(camera.Zoom)), float32(width)/height, 0.1, 1000.0)
+	projection := mgl32.Perspective(mgl32.DegToRad(float32(camera.Zoom)), float32(width)/float32(height), 0.1, 1000.0)
 	projectionUniform := gl.GetUniformLocation(program, gl.Str("projection\x00"))
 	gl.UniformMatrix4fv(projectionUniform, 1, false, &projection[0])
 
