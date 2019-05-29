@@ -52,7 +52,7 @@ func (r *OpenGlLevelRenderer) Render() {
 
 func (r *OpenGlLevelRenderer) setupMesh() {
 	points := r.makePoints()
-	r.vao = LoadToVAO(points)
+	r.vao = loadToVAO(points)
 	r.makeTextures()
 }
 
@@ -129,6 +129,6 @@ func (r *OpenGlLevelRenderer) makeTextures() {
 			}
 		}
 
-		LoadToTexture(textureID, material.SizeX, material.SizeY, &finalTexture, material.Transparent)
+		loadToTexture(textureID, material.SizeX, material.SizeY, &finalTexture, material.Transparent)
 	}
 }

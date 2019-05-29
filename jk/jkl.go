@@ -11,10 +11,6 @@ import (
 	"github.com/go-gl/mathgl/mgl32"
 )
 
-var (
-	GobFiles = []string{"J:\\Resource\\Res2.gob"} //"J:\\Episode\\JK1.GOB", "J:\\Episode\\JK1CTF.GOB", "J:\\Episode\\JK1MP.GOB", "J:\\Resource\\Res2.gob", "J:\\Resource\\Res1hi.gob"}
-)
-
 // Jkl contains the information extracted from the Jedi Knight Level (.jkl) file
 type Jkl struct {
 	Model          *JkMesh
@@ -57,18 +53,18 @@ type JkMesh struct {
 }
 
 // ReadJKLFromFile will read a .jkl file and return a struct containing all necessary information
-func ReadJKLFromFile(filePath string) Jkl {
+func readJKLFromFile(filePath string) Jkl {
 	bytes, err := ioutil.ReadFile(filePath)
 	if err != nil {
 		log.Fatal(err)
 	}
 	data := string(bytes)
 
-	return ReadJKLFromString(data)
+	return readJKLFromString(data)
 }
 
 // ReadJKLFromString will parse a string as a .jkl file
-func ReadJKLFromString(jklString string) Jkl {
+func readJKLFromString(jklString string) Jkl {
 	data := jklString
 
 	jklResult := Jkl{}
@@ -169,15 +165,7 @@ func parseMaterials(data string, jklResult *Jkl) {
 				log.Fatal(err)
 			}
 
-			var matBytes []byte
-			for _, file := range GobFiles {
-				matBytes = LoadFileFromGOB(file, matName)
-				if matBytes != nil {
-					break
-				}
-			}
-
-			material := ParseMatFile(matBytes)
+			material := GetLoader().LoadMAT(matName)
 
 			material.XTile = float32(xTile)
 			material.YTile = float32(yTile)
@@ -196,15 +184,7 @@ func parseColormaps(data string, jklResult *Jkl) {
 				cmpName = components[1]
 			}
 
-			var cmpBytes []byte
-			for _, file := range GobFiles {
-				cmpBytes = LoadFileFromGOB(file, cmpName)
-				if cmpBytes != nil {
-					break
-				}
-			}
-
-			colorMap := ParseCmpFile(cmpBytes)
+			colorMap := GetLoader().LoadCMP(cmpName)
 
 			jklResult.Model.ColorMaps = append(jklResult.Model.ColorMaps, colorMap)
 		})
@@ -264,16 +244,10 @@ func parse3dos(data string, jklResult *Jkl) {
 				return
 			}
 
-			var jk3doBytes []byte
-			for _, file := range GobFiles {
-				jk3doBytes = LoadFileFromGOB(file, jk3doName)
-				if jk3doBytes != nil {
-					break
-				}
+			jk3do := GetLoader().Load3DO(jk3doName)
+			if len(jklResult.Model.ColorMaps) > 0 {
+				jk3do.ColorMap = jklResult.Model.ColorMaps[0]
 			}
-
-			jk3do := Parse3doFile(string(jk3doBytes))
-
 			jklResult.Jk3dos[jk3doName] = jk3do
 		})
 }

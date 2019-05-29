@@ -94,14 +94,7 @@ func Parse3doFile(data string) Jk3doFile {
 	}
 
 	cmpName := "dflt.cmp"
-	var cmpBytes []byte
-	for _, file := range GobFiles {
-		cmpBytes = LoadFileFromGOB(file, cmpName)
-		if cmpBytes != nil {
-			break
-		}
-	}
-	result.ColorMap = ParseCmpFile(cmpBytes)
+	result.ColorMap = GetLoader().LoadCMP(cmpName)
 
 	return result
 }
@@ -111,15 +104,7 @@ func parse3doFileMaterials(data string, obj *Jk3doFile) {
 		func(components []string) {
 			matName := components[1]
 
-			var matBytes []byte
-			for _, file := range GobFiles {
-				matBytes = LoadFileFromGOB(file, matName)
-				if matBytes != nil {
-					break
-				}
-			}
-
-			material := ParseMatFile(matBytes)
+			material := GetLoader().LoadMAT(matName)
 
 			material.XTile = 1.0
 			material.YTile = 1.0

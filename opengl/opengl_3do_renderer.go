@@ -118,7 +118,7 @@ func (r *OpenGl3doRenderer) Render() {
 
 func (r *OpenGl3doRenderer) setupMesh() {
 	points := r.makePoints()
-	r.vao = LoadToVAO(points)
+	r.vao = loadToVAO(points)
 	r.makeTextures()
 }
 
@@ -197,6 +197,6 @@ func (r *OpenGl3doRenderer) makeTextures() {
 			}
 		}
 
-		LoadToTexture(textureID, material.SizeX, material.SizeY, &finalTexture, material.Transparent)
+		loadToTexture(textureID, material.SizeX, material.SizeY, &finalTexture, material.Transparent)
 	}
 }

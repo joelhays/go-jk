@@ -4,7 +4,7 @@ import (
 	"github.com/go-gl/gl/v4.1-core/gl"
 )
 
-func LoadToTexture(textureID uint32, sizeX int32, sizeY int32, data *[]byte, useAlpha bool) {
+func loadToTexture(textureID uint32, sizeX int32, sizeY int32, data *[]byte, useAlpha bool) {
 	gl.BindTexture(gl.TEXTURE_2D, textureID)
 
 	gl.TexParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.REPEAT)

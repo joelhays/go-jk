@@ -18,7 +18,7 @@ type ColorMap struct {
 	Palette [256]Vec3Byte
 }
 
-func ParseCmpFile(data []byte) ColorMap {
+func parseCmpFile(data []byte) ColorMap {
 	cursor := 0
 	var header TCMPHeader
 	cursor += readBytes(data, cursor, &header)

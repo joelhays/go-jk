@@ -10,7 +10,7 @@ import (
 type GOB struct {
 }
 
-func LoadFileFromGOB(gobPath string, fileName string) []byte {
+func loadFileFromGOB(gobPath string, fileName string) []byte {
 	file, err := os.Open(gobPath)
 	if err != nil {
 		panic(err)

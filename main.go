@@ -1,9 +1,13 @@
 package main
 
 import (
+	"flag"
 	"github.com/joelhays/go-jk/camera"
 	"github.com/joelhays/go-jk/opengl"
+	"log"
+	"os"
 	"runtime"
+	"runtime/pprof"
 
 	// "github.com/go-gl/gl/v2.1/gl"
 	"github.com/go-gl/glfw/v3.2/glfw"
@@ -22,7 +26,19 @@ var spLevels = []string{"01narshadda.jkl", "02narshadda.jkl", "03katarn.jkl", "0
 var cam camera.Camera
 var previousTime float64
 
+var cpuprofile = "go-jk.prof"
+
 func main() {
+	flag.Parse()
+	if cpuprofile != "" {
+		f, err := os.Create(cpuprofile)
+		if err != nil {
+			log.Fatal(err)
+		}
+		pprof.StartCPUProfile(f)
+		defer pprof.StopCPUProfile()
+	}
+
 	runtime.LockOSThread()
 
 	window := opengl.InitGlfw(1024, 768, KeyCallback, MouseCallback)
@@ -32,26 +48,10 @@ func main() {
 	cam = camera.NewCamera(mgl32.Vec3{0, 0, 1}, mgl32.Vec3{0, 0, 1}, 0, -90)
 	cam.MovementSpeed = 2
 
-	bmBytes := jk.LoadFileFromGOB("J:\\Resource\\Res1hi.gob", "bkmain.bm")
-	bmFile := jk.ParseBmFile(bmBytes)
-
+	bmFile := jk.GetLoader().LoadBM("bkmain.bm")
 	bmRenderer := opengl.NewOpenGlBmRenderer(&bmFile, program)
 
-	//for !window.ShouldClose() {
-	//	deltaTime := glfw.GetTime() - previousTime
-	//	previousTime = glfw.GetTime()
-	//
-	//	doMovement(deltaTime)
-	//
-	//	opengl.DrawRenderer(window, &cam, nil, nil, bmRenderer)
-	//}
-	//
-	//return
-
-	//jklBytes := jk.LoadFileFromGOB("J:\\Episode\\JK1CTF.GOB", ctfLevels[2])
-	//jklBytes := jk.LoadFileFromGOB("J:\\Episode\\JK1MP.GOB", mpLevels[4])
-	jklBytes := jk.LoadFileFromGOB("J:\\Episode\\JK1.GOB", spLevels[0])
-	jklLevel := jk.ReadJKLFromString(string(jklBytes))
+	jklLevel := jk.GetLoader().LoadJKL(spLevels[0])
 	level := opengl.NewOpenGlLevelRenderer(nil, nil, jklLevel.Model, program)
 
 	models := make([]*opengl.OpenGl3doRenderer, len(jklLevel.Things))
@@ -70,7 +70,6 @@ func main() {
 
 		template := jklLevel.Jk3doTemplates[thing.TemplateName]
 		jk3do := jklLevel.Jk3dos[template.Jk3doName]
-		jk3do.ColorMap = jklLevel.Model.ColorMaps[0]
 
 		if len(jk3do.GeoSets) > 0 {
 			models[i] = opengl.NewOpenGl3doRenderer(&thing, &template, &jk3do, program)

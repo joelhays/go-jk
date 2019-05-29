@@ -49,14 +49,14 @@ func InitOpenGL() uint32 {
 	gl.Enable(gl.BLEND)
 	gl.BlendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA)
 
-	vertexShaderSource := ReadShader("./shaders/vertex.glsl")
-	vertexShader, err := CompileShader(vertexShaderSource, gl.VERTEX_SHADER)
+	vertexShaderSource := readShader("./shaders/vertex.glsl")
+	vertexShader, err := compileShader(vertexShaderSource, gl.VERTEX_SHADER)
 	if err != nil {
 		panic(err)
 	}
 
-	fragmentShaderSource := ReadShader("./shaders/fragment.glsl")
-	fragmentShader, err := CompileShader(fragmentShaderSource, gl.FRAGMENT_SHADER)
+	fragmentShaderSource := readShader("./shaders/fragment.glsl")
+	fragmentShader, err := compileShader(fragmentShaderSource, gl.FRAGMENT_SHADER)
 	if err != nil {
 		panic(err)
 	}

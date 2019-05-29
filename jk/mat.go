@@ -46,7 +46,7 @@ type Material struct {
 	Transparent bool
 }
 
-func ParseMatFile(data []byte) Material {
+func parseMatFile(data []byte) Material {
 	cursor := 0
 	var header mtlHeader
 	cursor += readBytes(data, cursor, &header)

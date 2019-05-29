@@ -43,7 +43,7 @@ func (r *OpenGlBmRenderer) Render() {
 
 func (r *OpenGlBmRenderer) setupMesh() {
 	points := r.makePoints()
-	r.vao = LoadToVAO(points)
+	r.vao = loadToVAO(points)
 	r.makeTextures()
 }
 
@@ -83,6 +83,6 @@ func (r *OpenGlBmRenderer) makeTextures() {
 			finalTexture[j*3+1] = r.bm.Palette.Palette[material.Data[j]].G
 			finalTexture[j*3+2] = r.bm.Palette.Palette[material.Data[j]].B
 		}
-		LoadToTexture(textureID, material.SizeX, material.SizeY, &finalTexture, false)
+		loadToTexture(textureID, material.SizeX, material.SizeY, &finalTexture, false)
 	}
 }

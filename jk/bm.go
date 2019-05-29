@@ -42,7 +42,7 @@ type TPalette struct {
 	Palette [256]Vec3Byte
 }
 
-func ParseBmFile(data []byte) BMFile {
+func parseBmFile(data []byte) BMFile {
 	result := BMFile{}
 
 	fmt.Println("parsing bm file", len(data))
@@ -97,8 +97,6 @@ func ParseBmFile(data []byte) BMFile {
 		readBytes(data, cursor, &palette)
 		result.Palette = palette
 	}
-
-	// fmt.Println(result)
 
 	return result
 }
