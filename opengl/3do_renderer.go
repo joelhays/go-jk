@@ -12,13 +12,13 @@ type OpenGl3doRenderer struct {
 	thing    *jk.Thing
 	template *jk.Template
 	object   *jk.Jk3doFile
-	Program  uint32
+	Program  *ShaderProgram
 	vao      uint32
 	textures []uint32
 	lod      int32
 }
 
-func NewOpenGl3doRenderer(thing *jk.Thing, template *jk.Template, object *jk.Jk3doFile, program uint32) *OpenGl3doRenderer {
+func NewOpenGl3doRenderer(thing *jk.Thing, template *jk.Template, object *jk.Jk3doFile, program *ShaderProgram) Renderer {
 	if thing == nil {
 		panic("Thing is nil!")
 	}
@@ -39,13 +39,11 @@ func NewOpenGl3doRenderer(thing *jk.Thing, template *jk.Template, object *jk.Jk3
 func (r *OpenGl3doRenderer) Render() {
 
 	gl.BindVertexArray(r.vao)
+	defer gl.BindVertexArray(0)
 
 	var offset int32
 	// render the main mesh if it has vertices
 	// render all child meshes with parent transform
-
-	modelUniform := gl.GetUniformLocation(r.Program, gl.Str("model\x00"))
-	textureUniform := gl.GetUniformLocation(r.Program, gl.Str("objectTexture\x00"))
 
 	for meshIdx, mesh := range r.object.GeoSets[r.lod].Meshes {
 
@@ -95,7 +93,7 @@ func (r *OpenGl3doRenderer) Render() {
 
 		model = thingTranslate.Mul4(thingRotation).Mul4(meshTranslation).Mul4(meshRotation).Mul4(meshPivot)
 
-		gl.UniformMatrix4fv(modelUniform, 1, false, &model[0])
+		r.ShaderProgram().SetMatrixUniform("model", model)
 
 		for _, surface := range mesh.Faces {
 			numVerts := int32(len(surface.VertexIds))
@@ -104,7 +102,8 @@ func (r *OpenGl3doRenderer) Render() {
 
 				gl.ActiveTexture(gl.TEXTURE0)
 				gl.BindTexture(gl.TEXTURE_2D, r.textures[surface.MaterialID])
-				gl.Uniform1i(textureUniform, 0)
+
+				r.ShaderProgram().SetIntegerUniform("objectTexture", 0)
 
 				gl.DrawArrays(gl.TRIANGLE_FAN, offset, int32(len(surface.VertexIds)))
 
@@ -114,6 +113,10 @@ func (r *OpenGl3doRenderer) Render() {
 			offset = offset + numVerts
 		}
 	}
+}
+
+func (r *OpenGl3doRenderer) ShaderProgram() *ShaderProgram {
+	return r.Program
 }
 
 func (r *OpenGl3doRenderer) setupMesh() {

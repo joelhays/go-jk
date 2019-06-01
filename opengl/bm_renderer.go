@@ -10,12 +10,12 @@ import (
 
 type OpenGlBmRenderer struct {
 	bm       *jk.BMFile
-	Program  uint32
+	Program  *ShaderProgram
 	vao      uint32
 	textures []uint32
 }
 
-func NewOpenGlBmRenderer(bm *jk.BMFile, program uint32) *OpenGlBmRenderer {
+func NewOpenGlBmRenderer(bm *jk.BMFile, program *ShaderProgram) Renderer {
 	r := &OpenGlBmRenderer{bm: bm, Program: program}
 
 	r.setupMesh()
@@ -23,22 +23,25 @@ func NewOpenGlBmRenderer(bm *jk.BMFile, program uint32) *OpenGlBmRenderer {
 }
 
 func (r *OpenGlBmRenderer) Render() {
-
 	gl.BindVertexArray(r.vao)
+	defer gl.BindVertexArray(0)
 
 	var offset int32 = 0
 	model := mgl32.Ident4()
-	modelUniform := gl.GetUniformLocation(r.Program, gl.Str("model\x00"))
-	gl.UniformMatrix4fv(modelUniform, 1, false, &model[0])
+	r.ShaderProgram().SetMatrixUniform("model", model)
 
 	gl.ActiveTexture(gl.TEXTURE0)
 	gl.BindTexture(gl.TEXTURE_2D, r.textures[0])
-	textureUniform := gl.GetUniformLocation(r.Program, gl.Str("objectTexture\x00"))
-	gl.Uniform1i(textureUniform, 0)
+
+	r.ShaderProgram().SetIntegerUniform("objectTexture", 0)
 
 	gl.DrawArrays(gl.TRIANGLE_FAN, offset, 6)
 
 	gl.BindTexture(gl.TEXTURE_2D, 0)
+}
+
+func (r *OpenGlBmRenderer) ShaderProgram() *ShaderProgram {
+	return r.Program
 }
 
 func (r *OpenGlBmRenderer) setupMesh() {

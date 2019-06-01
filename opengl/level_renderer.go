@@ -12,12 +12,12 @@ type OpenGlLevelRenderer struct {
 	thing    *jk.Thing
 	template *jk.Template
 	object   *jk.JkMesh
-	Program  uint32
+	Program  *ShaderProgram
 	vao      uint32
 	textures []uint32
 }
 
-func NewOpenGlLevelRenderer(thing *jk.Thing, template *jk.Template, object *jk.JkMesh, program uint32) *OpenGlLevelRenderer {
+func NewOpenGlLevelRenderer(thing *jk.Thing, template *jk.Template, object *jk.JkMesh, program *ShaderProgram) Renderer {
 	r := &OpenGlLevelRenderer{thing: thing, template: template, object: object, Program: program}
 	r.setupMesh()
 	return r
@@ -25,11 +25,11 @@ func NewOpenGlLevelRenderer(thing *jk.Thing, template *jk.Template, object *jk.J
 
 func (r *OpenGlLevelRenderer) Render() {
 	gl.BindVertexArray(r.vao)
+	defer gl.BindVertexArray(0)
 
 	var offset int32
 	model := mgl32.Ident4()
-	modelUniform := gl.GetUniformLocation(r.Program, gl.Str("model\x00"))
-	gl.UniformMatrix4fv(modelUniform, 1, false, &model[0])
+	r.ShaderProgram().SetMatrixUniform("model", model)
 
 	for _, surface := range r.object.Surfaces {
 		numVerts := int32(len(surface.VertexIds))
@@ -38,8 +38,8 @@ func (r *OpenGlLevelRenderer) Render() {
 
 			gl.ActiveTexture(gl.TEXTURE0)
 			gl.BindTexture(gl.TEXTURE_2D, r.textures[surface.MaterialID])
-			textureUniform := gl.GetUniformLocation(r.Program, gl.Str("objectTexture\x00"))
-			gl.Uniform1i(textureUniform, 0)
+
+			r.ShaderProgram().SetIntegerUniform("objectTexture", 0)
 
 			gl.DrawArrays(gl.TRIANGLE_FAN, offset, int32(len(surface.VertexIds)))
 
@@ -48,6 +48,10 @@ func (r *OpenGlLevelRenderer) Render() {
 
 		offset = offset + numVerts
 	}
+}
+
+func (r *OpenGlLevelRenderer) ShaderProgram() *ShaderProgram {
+	return r.Program
 }
 
 func (r *OpenGlLevelRenderer) setupMesh() {
