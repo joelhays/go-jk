@@ -1,13 +1,14 @@
 package main
 
 import (
-	"github.com/joelhays/go-jk/camera"
-	"github.com/joelhays/go-jk/opengl"
-	"github.com/joelhays/go-jk/scene"
 	"log"
 	"os"
 	"runtime"
 	"runtime/pprof"
+
+	"github.com/joelhays/go-jk/camera"
+	"github.com/joelhays/go-jk/opengl"
+	"github.com/joelhays/go-jk/scene"
 
 	// "github.com/go-gl/gl/v2.1/gl"
 	"github.com/go-gl/glfw/v3.2/glfw"
@@ -60,7 +61,7 @@ func main() {
 	sceneManager.Add("ctfLevel", scene.NewJklScene(ctfLevels[0], window, &cam, shaderProgram))
 	sceneManager.Add("menu", scene.NewMenuScene("bkmain.bm", window, &cam, guiShaderProgram))
 	sceneManager.Add("3do", scene.NewJk3doScene("rystr.3do", window, &cam, shaderProgram))
-	sceneManager.LoadScene("mpLevel")
+	sceneManager.LoadScene("spLevel")
 
 	for !window.ShouldClose() {
 		deltaTime := glfw.GetTime() - previousTime

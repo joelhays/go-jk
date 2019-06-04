@@ -2,6 +2,7 @@ package opengl
 
 import (
 	"fmt"
+
 	"github.com/go-gl/mathgl/mgl32"
 
 	"github.com/go-gl/gl/v4.1-core/gl"
@@ -28,6 +29,7 @@ func (r *OpenGlBmRenderer) Render() {
 
 	var offset int32 = 0
 	model := mgl32.Ident4()
+	// model = mgl32.Scale3D(0.5, 0.5, 0.5)
 	r.ShaderProgram().SetMatrixUniform("model", model)
 
 	gl.ActiveTexture(gl.TEXTURE0)
@@ -53,12 +55,12 @@ func (r *OpenGlBmRenderer) setupMesh() {
 func (r *OpenGlBmRenderer) makePoints() []float32 {
 	// VERTICES (3), NORMALS (3), UV (2), LIGHT (1)
 	var points = []float32{
-		/*pos bl*/ -0.5, -0.5, -0.5 /*norm*/, 0.0, 1.0, 0.0 /*tex*/, 1.0, 0 /*light*/, 1,
-		/*pos br*/ 0.5, -0.5, -0.5 /*norm*/, 0.0, 1.0, 0.0 /*tex*/, 1.0, 1.0 /*light*/, 1,
-		/*pos tr*/ 0.5, 0.5, -0.5 /*norm*/, 0.0, 1.0, 0.0 /*tex*/, 0.0, 1.0 /*light*/, 1,
-		/*pos tr*/ 0.5, 0.5, -0.5 /*norm*/, 0.0, 1.0, 0.0 /*tex*/, 0.0, 1.0 /*light*/, 1,
-		/*pos tl*/ -0.5, 0.5, -0.5 /*norm*/, 0.0, 1.0, 0.0 /*tex*/, 0.0, 0.0 /*light*/, 1,
-		/*pos bl*/ -0.5, -0.5, -0.5 /*norm*/, 0.0, 1.0, 0.0 /*tex*/, 1.0, 0.0 /*light*/, 1,
+		/*pos bl*/ -1, -1, 0 /*norm*/, 0.0, 1.0, 0.0 /*tex*/, 0.0, 0.0 /*light*/, 1,
+		/*pos br*/ +1, -1, 0 /*norm*/, 0.0, 1.0, 0.0 /*tex*/, 1.0, 0.0 /*light*/, 1,
+		/*pos tr*/ +1, +1, 0 /*norm*/, 0.0, 1.0, 0.0 /*tex*/, 1.0, 1.0 /*light*/, 1,
+		/*pos tr*/ +1, +1, 0 /*norm*/, 0.0, 1.0, 0.0 /*tex*/, 1.0, 1.0 /*light*/, 1,
+		/*pos tl*/ -1, +1, 0 /*norm*/, 0.0, 1.0, 0.0 /*tex*/, 0.0, 1.0 /*light*/, 1,
+		/*pos bl*/ -1, -1, 0 /*norm*/, 0.0, 1.0, 0.0 /*tex*/, 0.0, 1.0 /*light*/, 1,
 	}
 	return points
 }

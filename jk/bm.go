@@ -69,7 +69,6 @@ func parseBmFile(data []byte) BMFile {
 		var image TImage
 		image.SizeX = imageSize.SizeX
 		image.SizeY = imageSize.SizeY
-		fmt.Println("image size", image.SizeX, image.SizeY)
 
 		if image.SizeX < 0 || image.SizeY < 0 {
 			continue
@@ -80,19 +79,17 @@ func parseBmFile(data []byte) BMFile {
 			// 8-bit image
 			image.Data = make([]byte, image.SizeX*image.SizeY)
 		} else {
-			fmt.Println("16-bit image")
+			fmt.Println("16-bit image", image, image.SizeX*image.SizeY)
 			// 16-bit image
 			image.Data = make([]byte, image.SizeX*image.SizeY*2)
 		}
 
-		fmt.Println("reading image data")
 		cursor += readBytes(data, cursor, &image.Data)
 
 		result.Images[i] = image
 	}
 
 	if header.PaletteIncluded == 2 {
-		fmt.Println("reading palette")
 		var palette TPalette
 		readBytes(data, cursor, &palette)
 		result.Palette = palette
