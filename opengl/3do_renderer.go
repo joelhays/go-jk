@@ -12,7 +12,7 @@ type OpenGl3doRenderer struct {
 	thing    *jk.Thing
 	template *jk.Template
 	object   *jk.Jk3doFile
-	Program  *ShaderProgram
+	program  *ShaderProgram
 	vao      uint32
 	textures []uint32
 	lod      int32
@@ -22,7 +22,7 @@ func NewOpenGl3doRenderer(thing *jk.Thing, template *jk.Template, object *jk.Jk3
 	if thing == nil {
 		panic("Thing is nil!")
 	}
-	r := &OpenGl3doRenderer{thing: thing, template: template, object: object, Program: program}
+	r := &OpenGl3doRenderer{thing: thing, template: template, object: object, program: program}
 
 	r.lod = 0
 
@@ -116,7 +116,7 @@ func (r *OpenGl3doRenderer) Render() {
 }
 
 func (r *OpenGl3doRenderer) ShaderProgram() *ShaderProgram {
-	return r.Program
+	return r.program
 }
 
 func (r *OpenGl3doRenderer) setupMesh() {

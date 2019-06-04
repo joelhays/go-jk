@@ -11,7 +11,7 @@ import (
 )
 
 type ShaderProgram struct {
-	ProgramID        uint32
+	programID        uint32
 	vertexShaderID   uint32
 	fragmentShaderID uint32
 }
@@ -33,17 +33,17 @@ func NewShaderProgram(vertexFile string, fragmentFile string) *ShaderProgram {
 		panic(err)
 	}
 
-	program.ProgramID = gl.CreateProgram()
-	gl.AttachShader(program.ProgramID, program.vertexShaderID)
-	gl.AttachShader(program.ProgramID, program.fragmentShaderID)
-	gl.LinkProgram(program.ProgramID)
-	gl.ValidateProgram(program.ProgramID)
+	program.programID = gl.CreateProgram()
+	gl.AttachShader(program.programID, program.vertexShaderID)
+	gl.AttachShader(program.programID, program.fragmentShaderID)
+	gl.LinkProgram(program.programID)
+	gl.ValidateProgram(program.programID)
 
 	return program
 }
 
 func (p *ShaderProgram) Start() {
-	gl.UseProgram(p.ProgramID)
+	gl.UseProgram(p.programID)
 }
 
 func (p *ShaderProgram) Stop() {
@@ -51,26 +51,26 @@ func (p *ShaderProgram) Stop() {
 }
 
 func (p *ShaderProgram) SetMatrixUniform(uniformName string, mat mgl32.Mat4) {
-	uniform := gl.GetUniformLocation(p.ProgramID, gl.Str(uniformName+"\x00"))
+	uniform := gl.GetUniformLocation(p.programID, gl.Str(uniformName+"\x00"))
 	gl.UniformMatrix4fv(uniform, 1, false, &mat[0])
 }
 
 func (p *ShaderProgram) SetVectorUniform(uniformName string, vec mgl32.Vec3) {
-	uniform := gl.GetUniformLocation(p.ProgramID, gl.Str(uniformName+"\x00"))
+	uniform := gl.GetUniformLocation(p.programID, gl.Str(uniformName+"\x00"))
 	gl.Uniform3fv(uniform, 1, &vec[0])
 }
 
 func (p *ShaderProgram) SetIntegerUniform(uniformName string, value int32) {
-	uniform := gl.GetUniformLocation(p.ProgramID, gl.Str(uniformName+"\x00"))
+	uniform := gl.GetUniformLocation(p.programID, gl.Str(uniformName+"\x00"))
 	gl.Uniform1i(uniform, value)
 }
 
 func (p *ShaderProgram) Cleanup() {
-	gl.DetachShader(p.ProgramID, p.vertexShaderID)
-	gl.DetachShader(p.ProgramID, p.fragmentShaderID)
+	gl.DetachShader(p.programID, p.vertexShaderID)
+	gl.DetachShader(p.programID, p.fragmentShaderID)
 	gl.DeleteShader(p.vertexShaderID)
 	gl.DeleteShader(p.fragmentShaderID)
-	gl.DeleteProgram(p.ProgramID)
+	gl.DeleteProgram(p.programID)
 }
 
 func readShader(filePath string) string {

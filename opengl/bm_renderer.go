@@ -10,13 +10,13 @@ import (
 
 type OpenGlBmRenderer struct {
 	bm       *jk.BMFile
-	Program  *ShaderProgram
+	program  *ShaderProgram
 	vao      uint32
 	textures []uint32
 }
 
 func NewOpenGlBmRenderer(bm *jk.BMFile, program *ShaderProgram) Renderer {
-	r := &OpenGlBmRenderer{bm: bm, Program: program}
+	r := &OpenGlBmRenderer{bm: bm, program: program}
 
 	r.setupMesh()
 	return r
@@ -41,7 +41,7 @@ func (r *OpenGlBmRenderer) Render() {
 }
 
 func (r *OpenGlBmRenderer) ShaderProgram() *ShaderProgram {
-	return r.Program
+	return r.program
 }
 
 func (r *OpenGlBmRenderer) setupMesh() {

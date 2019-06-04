@@ -3,6 +3,7 @@ package main
 import (
 	"github.com/joelhays/go-jk/camera"
 	"github.com/joelhays/go-jk/opengl"
+	"github.com/joelhays/go-jk/scene"
 	"log"
 	"os"
 	"runtime"
@@ -11,7 +12,6 @@ import (
 	// "github.com/go-gl/gl/v2.1/gl"
 	"github.com/go-gl/glfw/v3.2/glfw"
 	"github.com/go-gl/mathgl/mgl32"
-	"github.com/joelhays/go-jk/jk"
 )
 
 var (
@@ -53,12 +53,14 @@ func main() {
 	cam = camera.NewCamera(mgl32.Vec3{0, 0, 1}, mgl32.Vec3{0, 0, 1}, 0, -90)
 	cam.MovementSpeed = 2
 
-	var renderers []opengl.Renderer
-
-	//debug_createBmRenderer(&renderers, guiShaderProgram)
-	//debug_create3doRenderer(&renderers, shaderProgram)
-
-	createJklRenderer(&renderers, shaderProgram)
+	sceneManager := scene.NewSceneManager()
+	defer sceneManager.Unload()
+	sceneManager.Add("spLevel", scene.NewJklScene(spLevels[0], window, &cam, shaderProgram))
+	sceneManager.Add("mpLevel", scene.NewJklScene(mpLevels[0], window, &cam, shaderProgram))
+	sceneManager.Add("ctfLevel", scene.NewJklScene(ctfLevels[0], window, &cam, shaderProgram))
+	sceneManager.Add("menu", scene.NewMenuScene("bkmain.bm", window, &cam, guiShaderProgram))
+	sceneManager.Add("3do", scene.NewJk3doScene("rystr.3do", window, &cam, shaderProgram))
+	sceneManager.LoadScene("mpLevel")
 
 	for !window.ShouldClose() {
 		deltaTime := glfw.GetTime() - previousTime
@@ -66,44 +68,6 @@ func main() {
 
 		doMovement(deltaTime)
 
-		opengl.Draw(window, &cam, renderers)
+		sceneManager.Update()
 	}
-}
-
-func createJklRenderer(renderers *[]opengl.Renderer, shaderProgram *opengl.ShaderProgram) {
-	jklLevel := jk.GetLoader().LoadJKL(spLevels[0])
-	level := opengl.NewOpenGlLevelRenderer(nil, nil, jklLevel.Model, shaderProgram)
-	*renderers = append(*renderers, level)
-
-	var foundPlayer bool
-	for i := 0; i < len(jklLevel.Things); i++ {
-		thing := jklLevel.Things[i]
-		if thing.TemplateName == "walkplayer" {
-			if !foundPlayer {
-				cam.Position = thing.Position
-				foundPlayer = true
-			}
-			continue
-		}
-
-		template := jklLevel.Jk3doTemplates[thing.TemplateName]
-		jk3do := jklLevel.Jk3dos[template.Jk3doName]
-
-		if len(jk3do.GeoSets) > 0 {
-			objRenderer := opengl.NewOpenGl3doRenderer(&thing, &template, &jk3do, shaderProgram)
-			*renderers = append(*renderers, objRenderer)
-		}
-	}
-}
-
-func debug_createBmRenderer(renderers *[]opengl.Renderer, shaderProgram *opengl.ShaderProgram) {
-	bmFile := jk.GetLoader().LoadBM("bkmain.bm")
-	bmRenderer := opengl.NewOpenGlBmRenderer(&bmFile, shaderProgram)
-	*renderers = append(*renderers, bmRenderer)
-}
-func debug_create3doRenderer(renderers *[]opengl.Renderer, shaderProgram *opengl.ShaderProgram) {
-	/* RENDER 3DO AT ORIGIN */
-	obj := jk.GetLoader().Load3DO("rystr.3do")
-	objRenderer := opengl.NewOpenGl3doRenderer(&jk.Thing{Position: mgl32.Vec3{float32(0), float32(0), float32(0)}, Yaw: 0, Pitch: 0, Roll: 0}, nil, &obj, shaderProgram)
-	*renderers = append(*renderers, objRenderer)
 }

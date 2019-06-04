@@ -12,13 +12,13 @@ type OpenGlLevelRenderer struct {
 	thing    *jk.Thing
 	template *jk.Template
 	object   *jk.JkMesh
-	Program  *ShaderProgram
+	program  *ShaderProgram
 	vao      uint32
 	textures []uint32
 }
 
 func NewOpenGlLevelRenderer(thing *jk.Thing, template *jk.Template, object *jk.JkMesh, program *ShaderProgram) Renderer {
-	r := &OpenGlLevelRenderer{thing: thing, template: template, object: object, Program: program}
+	r := &OpenGlLevelRenderer{thing: thing, template: template, object: object, program: program}
 	r.setupMesh()
 	return r
 }
@@ -51,7 +51,7 @@ func (r *OpenGlLevelRenderer) Render() {
 }
 
 func (r *OpenGlLevelRenderer) ShaderProgram() *ShaderProgram {
-	return r.Program
+	return r.program
 }
 
 func (r *OpenGlLevelRenderer) setupMesh() {
