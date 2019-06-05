@@ -1,7 +1,7 @@
 package opengl
 
 import (
-	"github.com/go-gl/gl/v4.1-core/gl"
+	"github.com/go-gl/gl/v3.2-core/gl"
 )
 
 func loadToVAO(data []float32) uint32 {

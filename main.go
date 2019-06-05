@@ -1,6 +1,7 @@
 package main
 
 import (
+	"github.com/joelhays/go-jk/menu"
 	"log"
 	"os"
 	"runtime"
@@ -11,6 +12,7 @@ import (
 	"github.com/joelhays/go-jk/scene"
 
 	// "github.com/go-gl/gl/v2.1/gl"
+	"github.com/go-gl/gl/v3.2-core/gl"
 	"github.com/go-gl/glfw/v3.2/glfw"
 	"github.com/go-gl/mathgl/mgl32"
 )
@@ -61,14 +63,24 @@ func main() {
 	sceneManager.Add("ctfLevel", scene.NewJklScene(ctfLevels[0], window, &cam, shaderProgram))
 	sceneManager.Add("menu", scene.NewMenuScene("bkmain.bm", window, &cam, guiShaderProgram))
 	sceneManager.Add("3do", scene.NewJk3doScene("rystr.3do", window, &cam, shaderProgram))
-	sceneManager.LoadScene("spLevel")
+	sceneManager.LoadScene("3do")
+
+	m := menu.NewMenu(window)
+	m.Init()
+	defer m.Unload()
 
 	for !window.ShouldClose() {
+		gl.Clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT)
+
 		deltaTime := glfw.GetTime() - previousTime
 		previousTime = glfw.GetTime()
 
 		doMovement(deltaTime)
 
 		sceneManager.Update()
+		m.Update()
+
+		glfw.PollEvents()
+		window.SwapBuffers()
 	}
 }
