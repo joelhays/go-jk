@@ -82,7 +82,5 @@ func main() {
 
 		glfw.PollEvents()
 		window.SwapBuffers()
-
-		//test
 	}
 }
