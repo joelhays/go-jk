@@ -5,7 +5,7 @@ import (
 
 	"github.com/go-gl/mathgl/mgl32"
 
-	"github.com/go-gl/gl/v4.1-core/gl"
+	"github.com/go-gl/gl/v3.2-core/gl"
 	"github.com/joelhays/go-jk/jk"
 )
 
@@ -90,4 +90,8 @@ func (r *OpenGlBmRenderer) makeTextures() {
 		}
 		loadToTexture(textureID, material.SizeX, material.SizeY, &finalTexture, false)
 	}
+}
+
+func (r *OpenGlBmRenderer) GetTextureID() uint32 {
+	return r.textures[0]
 }
