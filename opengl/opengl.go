@@ -28,7 +28,7 @@ func InitGlfw(windowWidth int, windowHeight int, keyCallback func(*glfw.Window, 
 	}
 	window.MakeContextCurrent()
 
-	window.SetInputMode(glfw.CursorMode, glfw.CursorDisabled)
+	//window.SetInputMode(glfw.CursorMode, glfw.CursorDisabled)
 	window.SetKeyCallback(keyCallback)
 	window.SetCursorPosCallback(mouseCallback)
 
@@ -51,8 +51,6 @@ func InitOpenGL() {
 }
 
 func Draw(window *glfw.Window, camera *camera.Camera, renderers []Renderer) {
-	gl.Clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT)
-
 	width, height := window.GetSize()
 
 	for _, renderer := range renderers {
@@ -62,9 +60,6 @@ func Draw(window *glfw.Window, camera *camera.Camera, renderers []Renderer) {
 		renderer.Render()
 		program.Stop()
 	}
-
-	glfw.PollEvents()
-	window.SwapBuffers()
 }
 
 func configureProgram(program *ShaderProgram, camera *camera.Camera, width int, height int) {
