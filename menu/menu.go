@@ -56,6 +56,8 @@ func (m *MainMenu) Init() {
 	//if ok2 {
 	//	*m.context.GetStyle().GetButton().GetNormal() = nk.NkStyleItemImage(nk.NkSubimageId(int32(original2.GetTextureID()), 24, 24, nk.NkRect(0, 0, 24, 24)))
 	//}
+
+	m.window.SetInputMode(glfw.CursorMode, glfw.CursorNormal)
 }
 
 func (m *MainMenu) Update() {

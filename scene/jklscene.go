@@ -32,6 +32,8 @@ func (s *JklScene) Unload() {
 
 func (s *JklScene) Update() {
 	if s.level != nil && s.levelRenderer == nil {
+		s.window.SetInputMode(glfw.CursorMode, glfw.CursorDisabled)
+
 		s.levelRenderer = opengl.NewOpenGlLevelRenderer(nil, nil, s.level.Model, s.shaderProgram)
 		s.renderers = append(s.renderers, s.levelRenderer)
 
