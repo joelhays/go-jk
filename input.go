@@ -3,6 +3,7 @@ package main
 import (
 	"github.com/go-gl/glfw/v3.2/glfw"
 	"github.com/joelhays/go-jk/camera"
+	"github.com/joelhays/go-jk/scene"
 )
 
 var (
@@ -11,9 +12,20 @@ var (
 	lastY float64
 )
 
-func KeyCallback(window *glfw.Window, key glfw.Key, scancode int, action glfw.Action, mods glfw.ModifierKey) {
+type InputManager struct {
+	keys         map[glfw.Key]bool
+	lastX        float64
+	lastY        float64
+	sceneManager *scene.SceneManager
+}
+
+func NewInputManager(sceneManager *scene.SceneManager) *InputManager {
+	return &InputManager{keys: make(map[glfw.Key]bool), sceneManager: sceneManager}
+}
+
+func (m *InputManager) KeyCallback(window *glfw.Window, key glfw.Key, scancode int, action glfw.Action, mods glfw.ModifierKey) {
 	if key == glfw.KeyEscape && action == glfw.Press {
-		window.SetShouldClose(true)
+		m.sceneManager.LoadScene("menu")
 	}
 
 	if action == glfw.Press {
@@ -23,7 +35,7 @@ func KeyCallback(window *glfw.Window, key glfw.Key, scancode int, action glfw.Ac
 	}
 }
 
-func MouseCallback(window *glfw.Window, xpos float64, ypos float64) {
+func (m *InputManager) MouseCallback(window *glfw.Window, xpos float64, ypos float64) {
 	xOffset := xpos - lastX
 	yOffset := lastY - ypos
 	lastX = xpos

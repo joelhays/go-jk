@@ -2,41 +2,44 @@ package menu
 
 import (
 	"github.com/go-gl/glfw/v3.2/glfw"
-	"github.com/go-gl/mathgl/mgl32"
 	"github.com/golang-ui/nuklear/nk"
 	"github.com/joelhays/go-jk/jk"
 	"github.com/joelhays/go-jk/opengl"
+	"github.com/joelhays/go-jk/scene"
 	"log"
 )
 
-type Menu struct {
-	window    *glfw.Window
-	context   *nk.Context
-	textureId uint32
-	list      *nk.ListView
+var (
+	levels = []string{"01narshadda.jkl", "02narshadda.jkl", "03katarn.jkl", "04escapehouse.jkl", "06abarons.jkl",
+		"06bbarons.jkl", "07yun.jkl", "08escape88.jkl", "09fuelstation.jkl", "10cargo.jkl", "11gorc.jkl", "12escape.jkl",
+		"14tower.jkl", "15maw.jkl", "16aescapeship.jkl", "16bescapeship.jkl", "17asarris.jkl", "17bsarris.jkl",
+		"18ascend.jkl", "19a.jkl", "19b.jkl", "20aboc.jkl", "20bboc.jkl", "21ajarec.jkl", "21bjarec.jkl"}
+)
+
+type MainMenu struct {
+	window       *glfw.Window
+	context      *nk.Context
+	textureId    uint32
+	sceneManager *scene.SceneManager
+	fontAtlas    *nk.FontAtlas
+	font         *nk.Font
+	fontHandle   *nk.UserFont
 }
 
-func NewMenu(window *glfw.Window) *Menu {
-	return &Menu{window: window}
+func NewMainMenu(window *glfw.Window, sceneManager *scene.SceneManager) *MainMenu {
+	return &MainMenu{window: window, sceneManager: sceneManager}
 }
 
-func (m *Menu) AddButton(text string, position mgl32.Vec2) {
-
-}
-
-func (m *Menu) SetBackground(bmFile string) {
-
-}
-
-func (m *Menu) Init() {
+func (m *MainMenu) Init() {
 	m.context = nk.NkPlatformInit(m.window, nk.PlatformInstallCallbacks)
-	atlas := nk.NewFontAtlas()
-	nk.NkFontStashBegin(&atlas)
-	sansFont := nk.NkFontAtlasAddFromBytes(atlas, MustAsset("assets/FreeSans.ttf"), 24, nil)
-	//sansFont := nk.NkFontAtlasAddDefault(atlas, 16, nil)
+	m.fontAtlas = nk.NewFontAtlas()
+	nk.NkFontStashBegin(&m.fontAtlas)
+	m.font = nk.NkFontAtlasAddFromBytes(m.fontAtlas, MustAsset("assets/FreeSans.ttf"), 24, nil)
+	//m.font = nk.NkFontAtlasAddDefault(atlas, 16, nil)
 	nk.NkFontStashEnd()
-	if sansFont != nil {
-		nk.NkStyleSetFont(m.context, sansFont.Handle())
+	if m.font != nil {
+		m.fontHandle = m.font.Handle()
+		nk.NkStyleSetFont(m.context, m.fontHandle)
 	}
 
 	bmFile := jk.GetLoader().LoadBM("bkmain.bm")
@@ -53,11 +56,9 @@ func (m *Menu) Init() {
 	//if ok2 {
 	//	*m.context.GetStyle().GetButton().GetNormal() = nk.NkStyleItemImage(nk.NkSubimageId(int32(original2.GetTextureID()), 24, 24, nk.NkRect(0, 0, 24, 24)))
 	//}
-
-	m.list = &nk.ListView{}
 }
 
-func (m *Menu) Update() {
+func (m *MainMenu) Update() {
 	nk.NkPlatformNewFrame()
 
 	// Layout
@@ -77,33 +78,38 @@ func (m *Menu) Update() {
 		nk.NkLayoutRowStatic(m.context, 30, 1024/3, 3)
 		{
 			nk.NkSpacing(m.context, 1)
-			nk.NkLabel(m.context, "Select an option:", nk.TextCentered)
+			nk.NkLabel(m.context, "Select an level to load:", nk.TextCentered)
 		}
 
-		nk.NkLayoutRowStatic(m.context, 30*5, 1024/3, 3)
+		nk.NkLayoutRowStatic(m.context, 30*10, 1024/3, 3)
 		{
 			nk.NkSpacing(m.context, 1)
-			//var list nk.ListView
-			nk.NkListViewBegin(m.context, m.list, "level", nk.WindowBackground, 30, 5)
+			var list nk.ListView
+			nk.NkListViewBegin(m.context, &list, "level", nk.WindowBackground, 30, int32(len(levels)-1))
 			{
-
-				nk.NkLayoutRowDynamic(m.context, 30, 1)
-				{
-					nk.NkLabel(m.context, "Item 1", nk.TextLeft)
-					nk.NkLabel(m.context, "Item 2", nk.TextLeft)
-					nk.NkLabel(m.context, "Item 3", nk.TextLeft)
-					nk.NkLabel(m.context, "Item 4", nk.TextLeft)
-					nk.NkLabel(m.context, "Item 5", nk.TextLeft)
+				for l := list.Begin(); l < list.End(); l++ {
+					level := levels[l]
+					nk.NkLayoutRowDynamic(m.context, 30, 1)
+					{
+						if nk.NkButtonLabel(m.context, level) > 0 {
+							log.Println("[INFO] button pressed! " + level)
+							go m.sceneManager.LoadScene(level)
+						}
+						//nk.NkLabel(m.context, "Item "+strconv.Itoa(l), nk.TextLeft)
+					}
 				}
 			}
-			nk.NkListViewEnd(m.list)
+			nk.NkListViewEnd(&list)
 		}
 
+		nk.NkLayoutRowDynamic(m.context, 30, 1)
+		{
+		}
 		nk.NkLayoutRowStatic(m.context, 30, 1024/3, 3)
 		{
 			nk.NkSpacing(m.context, 1)
-			if nk.NkButtonLabel(m.context, "Load Level") > 0 {
-				log.Println("[INFO] button pressed!")
+			if nk.NkButtonLabel(m.context, "Quit") > 0 {
+				m.window.SetShouldClose(true)
 			}
 		}
 
@@ -115,6 +121,6 @@ func (m *Menu) Update() {
 	nk.NkPlatformRender(nk.AntiAliasingOn, maxVertexBuffer, maxElementBuffer)
 }
 
-func (m *Menu) Unload() {
-	nk.NkPlatformShutdown()
+func (m *MainMenu) Unload() {
+	//nk.NkPlatformShutdown()
 }

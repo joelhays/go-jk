@@ -37,6 +37,11 @@ func NewOpenGl3doRenderer(thing *jk.Thing, template *jk.Template, object *jk.Jk3
 }
 
 func (r *OpenGl3doRenderer) Render() {
+	gl.Enable(gl.DEPTH_TEST)
+	gl.Enable(gl.CULL_FACE)
+
+	gl.Enable(gl.BLEND)
+	gl.BlendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA)
 
 	gl.BindVertexArray(r.vao)
 	defer gl.BindVertexArray(0)

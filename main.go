@@ -41,8 +41,13 @@ func main() {
 	defer pprof.StopCPUProfile()
 
 	runtime.LockOSThread()
+	defer runtime.UnlockOSThread()
 
-	window := opengl.InitGlfw(1024, 768, KeyCallback, MouseCallback)
+	sceneManager := scene.NewSceneManager()
+	defer sceneManager.Unload()
+	inputManager := NewInputManager(sceneManager)
+
+	window := opengl.InitGlfw(1024, 768, inputManager.KeyCallback, inputManager.MouseCallback)
 	defer glfw.Terminate()
 
 	opengl.InitOpenGL()
@@ -50,24 +55,21 @@ func main() {
 	shaderProgram := opengl.NewShaderProgram("./shaders/vertex.glsl", "./shaders/fragment.glsl")
 	defer shaderProgram.Cleanup()
 
-	guiShaderProgram := opengl.NewShaderProgram("./shaders/gui_vertex.glsl", "./shaders/gui_fragment.glsl")
-	defer guiShaderProgram.Cleanup()
+	//guiShaderProgram := opengl.NewShaderProgram("./shaders/gui_vertex.glsl", "./shaders/gui_fragment.glsl")
+	//defer guiShaderProgram.Cleanup()
 
 	cam = camera.NewCamera(mgl32.Vec3{0, 0, 1}, mgl32.Vec3{0, 0, 1}, 0, -90)
 	cam.MovementSpeed = 2
 
-	sceneManager := scene.NewSceneManager()
-	defer sceneManager.Unload()
+	for _, level := range spLevels {
+		sceneManager.Add(level, scene.NewJklScene(level, window, &cam, shaderProgram))
+	}
 	sceneManager.Add("spLevel", scene.NewJklScene(spLevels[0], window, &cam, shaderProgram))
 	sceneManager.Add("mpLevel", scene.NewJklScene(mpLevels[0], window, &cam, shaderProgram))
 	sceneManager.Add("ctfLevel", scene.NewJklScene(ctfLevels[0], window, &cam, shaderProgram))
-	sceneManager.Add("menu", scene.NewMenuScene("bkmain.bm", window, &cam, guiShaderProgram))
 	sceneManager.Add("3do", scene.NewJk3doScene("rystr.3do", window, &cam, shaderProgram))
-	sceneManager.LoadScene("3do")
-
-	m := menu.NewMenu(window)
-	m.Init()
-	defer m.Unload()
+	sceneManager.Add("menu", scene.NewMenuScene(menu.NewMainMenu(window, sceneManager)))
+	sceneManager.LoadScene("menu")
 
 	for !window.ShouldClose() {
 		gl.Clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT)
@@ -78,7 +80,6 @@ func main() {
 		doMovement(deltaTime)
 
 		sceneManager.Update()
-		m.Update()
 
 		glfw.PollEvents()
 		window.SwapBuffers()
