@@ -1,7 +1,6 @@
 package main
 
 import (
-	"github.com/joelhays/go-jk/menu"
 	"log"
 	"os"
 	"runtime"
@@ -68,7 +67,7 @@ func main() {
 	sceneManager.Add("mpLevel", scene.NewJklScene(mpLevels[0], window, &cam, shaderProgram))
 	sceneManager.Add("ctfLevel", scene.NewJklScene(ctfLevels[0], window, &cam, shaderProgram))
 	sceneManager.Add("3do", scene.NewJk3doScene("rystr.3do", window, &cam, shaderProgram))
-	sceneManager.Add("menu", scene.NewMenuScene(menu.NewMainMenu(window, sceneManager)))
+	sceneManager.Add("menu", scene.NewMainMenuScene(window, sceneManager))
 	sceneManager.LoadScene("menu")
 
 	for !window.ShouldClose() {

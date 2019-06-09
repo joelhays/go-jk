@@ -1,11 +1,11 @@
-package menu
+package scene
 
 import (
 	"github.com/go-gl/glfw/v3.2/glfw"
 	"github.com/golang-ui/nuklear/nk"
 	"github.com/joelhays/go-jk/jk"
+	"github.com/joelhays/go-jk/menu"
 	"github.com/joelhays/go-jk/opengl"
-	"github.com/joelhays/go-jk/scene"
 	"log"
 )
 
@@ -16,25 +16,25 @@ var (
 		"18ascend.jkl", "19a.jkl", "19b.jkl", "20aboc.jkl", "20bboc.jkl", "21ajarec.jkl", "21bjarec.jkl"}
 )
 
-type MainMenu struct {
+type MainMenuScene struct {
 	window       *glfw.Window
 	context      *nk.Context
 	textureId    uint32
-	sceneManager *scene.SceneManager
+	sceneManager *SceneManager
 	fontAtlas    *nk.FontAtlas
 	font         *nk.Font
 	fontHandle   *nk.UserFont
 }
 
-func NewMainMenu(window *glfw.Window, sceneManager *scene.SceneManager) *MainMenu {
-	return &MainMenu{window: window, sceneManager: sceneManager}
+func NewMainMenuScene(window *glfw.Window, sceneManager *SceneManager) *MainMenuScene {
+	return &MainMenuScene{window: window, sceneManager: sceneManager}
 }
 
-func (m *MainMenu) Init() {
+func (m *MainMenuScene) Load() {
 	m.context = nk.NkPlatformInit(m.window, nk.PlatformInstallCallbacks)
 	m.fontAtlas = nk.NewFontAtlas()
 	nk.NkFontStashBegin(&m.fontAtlas)
-	m.font = nk.NkFontAtlasAddFromBytes(m.fontAtlas, MustAsset("assets/FreeSans.ttf"), 24, nil)
+	m.font = nk.NkFontAtlasAddFromBytes(m.fontAtlas, menu.MustAsset("assets/FreeSans.ttf"), 24, nil)
 	//m.font = nk.NkFontAtlasAddDefault(atlas, 16, nil)
 	nk.NkFontStashEnd()
 	if m.font != nil {
@@ -60,7 +60,11 @@ func (m *MainMenu) Init() {
 	m.window.SetInputMode(glfw.CursorMode, glfw.CursorNormal)
 }
 
-func (m *MainMenu) Update() {
+func (m *MainMenuScene) Unload() {
+	//nk.NkPlatformShutdown()
+}
+
+func (m *MainMenuScene) Update() {
 	nk.NkPlatformNewFrame()
 
 	// Layout
@@ -121,8 +125,4 @@ func (m *MainMenu) Update() {
 	maxVertexBuffer := 512 * 1024
 	maxElementBuffer := 128 * 1024
 	nk.NkPlatformRender(nk.AntiAliasingOn, maxVertexBuffer, maxElementBuffer)
-}
-
-func (m *MainMenu) Unload() {
-	//nk.NkPlatformShutdown()
 }
