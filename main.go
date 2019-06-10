@@ -63,6 +63,12 @@ func main() {
 	for _, level := range spLevels {
 		sceneManager.Add(level, scene.NewJklScene(level, window, &cam, shaderProgram))
 	}
+	for _, level := range mpLevels {
+		sceneManager.Add(level, scene.NewJklScene(level, window, &cam, shaderProgram))
+	}
+	for _, level := range ctfLevels {
+		sceneManager.Add(level, scene.NewJklScene(level, window, &cam, shaderProgram))
+	}
 	sceneManager.Add("spLevel", scene.NewJklScene(spLevels[0], window, &cam, shaderProgram))
 	sceneManager.Add("mpLevel", scene.NewJklScene(mpLevels[0], window, &cam, shaderProgram))
 	sceneManager.Add("ctfLevel", scene.NewJklScene(ctfLevels[0], window, &cam, shaderProgram))
