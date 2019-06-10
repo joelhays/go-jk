@@ -68,6 +68,11 @@ func (r *OpenGlBmRenderer) makePoints() []float32 {
 func (r *OpenGlBmRenderer) makeTextures() {
 	numTextures := int32(len(r.bm.Images))
 
+	if numTextures == 0 {
+		fmt.Println("bm contains no images")
+		return
+	}
+
 	r.textures = make([]uint32, numTextures)
 
 	gl.GenTextures(numTextures, &r.textures[0])

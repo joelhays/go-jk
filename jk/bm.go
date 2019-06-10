@@ -65,6 +65,7 @@ func parseBmFile(data []byte) BMFile {
 			0,
 		}
 		cursor += readBytes(data, cursor, &imageSize)
+		fmt.Println("image size", imageSize)
 
 		var image TImage
 		image.SizeX = imageSize.SizeX

@@ -10,19 +10,13 @@ var (
 )
 
 type Loader struct {
-	objCache map[string]Jk3doFile
-	matCache map[string]Material
-	cmpCache map[string]ColorMap
-	bmCache  map[string]BMFile
+	cache map[string]interface{}
 }
 
 func GetLoader() *Loader {
 	once.Do(func() {
 		instance = &Loader{}
-		instance.objCache = make(map[string]Jk3doFile)
-		instance.matCache = make(map[string]Material)
-		instance.cmpCache = make(map[string]ColorMap)
-		instance.bmCache = make(map[string]BMFile)
+		instance.cache = make(map[string]interface{})
 	})
 	return instance
 }
@@ -43,8 +37,8 @@ func (l *Loader) LoadJKL(filename string) Jkl {
 func (l *Loader) Load3DO(filename string) Jk3doFile {
 	var obj Jk3doFile
 
-	if obj, ok := l.objCache[filename]; ok {
-		return obj
+	if obj, ok := l.cache[filename]; ok {
+		return obj.(Jk3doFile)
 	}
 
 	for _, gob := range resourceGobFiles {
@@ -53,7 +47,7 @@ func (l *Loader) Load3DO(filename string) Jk3doFile {
 			continue
 		}
 		obj = Parse3doFile(string(fileBytes))
-		l.objCache[filename] = obj
+		l.cache[filename] = obj
 		return obj
 	}
 
@@ -63,8 +57,8 @@ func (l *Loader) Load3DO(filename string) Jk3doFile {
 func (l *Loader) LoadMAT(filename string) Material {
 	var mat Material
 
-	if mat, ok := l.matCache[filename]; ok {
-		return mat
+	if mat, ok := l.cache[filename]; ok {
+		return mat.(Material)
 	}
 
 	for _, gob := range resourceGobFiles {
@@ -73,7 +67,7 @@ func (l *Loader) LoadMAT(filename string) Material {
 			continue
 		}
 		mat = parseMatFile(fileBytes)
-		l.matCache[filename] = mat
+		l.cache[filename] = mat
 		return mat
 	}
 
@@ -83,8 +77,8 @@ func (l *Loader) LoadMAT(filename string) Material {
 func (l *Loader) LoadCMP(filename string) ColorMap {
 	var cmp ColorMap
 
-	if cmp, ok := l.cmpCache[filename]; ok {
-		return cmp
+	if cmp, ok := l.cache[filename]; ok {
+		return cmp.(ColorMap)
 	}
 
 	for _, gob := range resourceGobFiles {
@@ -93,7 +87,7 @@ func (l *Loader) LoadCMP(filename string) ColorMap {
 			continue
 		}
 		cmp = parseCmpFile(fileBytes)
-		l.cmpCache[filename] = cmp
+		l.cache[filename] = cmp
 		return cmp
 	}
 
@@ -103,8 +97,8 @@ func (l *Loader) LoadCMP(filename string) ColorMap {
 func (l *Loader) LoadBM(filename string) BMFile {
 	var bm BMFile
 
-	if bm, ok := l.bmCache[filename]; ok {
-		return bm
+	if bm, ok := l.cache[filename]; ok {
+		return bm.(BMFile)
 	}
 
 	for _, gob := range resourceGobFiles {
@@ -113,9 +107,29 @@ func (l *Loader) LoadBM(filename string) BMFile {
 			continue
 		}
 		bm = parseBmFile(fileBytes)
-		l.bmCache[filename] = bm
+		l.cache[filename] = bm
 		return bm
 	}
 
 	return BMFile{}
+}
+
+func (l *Loader) LoadSFT(filename string) SFTFile {
+	var sft SFTFile
+
+	if sft, ok := l.cache[filename]; ok {
+		return sft.(SFTFile)
+	}
+
+	for _, gob := range resourceGobFiles {
+		fileBytes := loadFileFromGOB(gob, filename)
+		if fileBytes == nil {
+			continue
+		}
+		sft = parseSFTFile(fileBytes)
+		l.cache[filename] = sft
+		return sft
+	}
+
+	return SFTFile{}
 }

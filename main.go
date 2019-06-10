@@ -54,8 +54,8 @@ func main() {
 	shaderProgram := opengl.NewShaderProgram("./shaders/vertex.glsl", "./shaders/fragment.glsl")
 	defer shaderProgram.Cleanup()
 
-	//guiShaderProgram := opengl.NewShaderProgram("./shaders/gui_vertex.glsl", "./shaders/gui_fragment.glsl")
-	//defer guiShaderProgram.Cleanup()
+	guiShaderProgram := opengl.NewShaderProgram("./shaders/gui_vertex.glsl", "./shaders/gui_fragment.glsl")
+	defer guiShaderProgram.Cleanup()
 
 	cam = camera.NewCamera(mgl32.Vec3{0, 0, 1}, mgl32.Vec3{0, 0, 1}, 0, -90)
 	cam.MovementSpeed = 2
@@ -68,6 +68,7 @@ func main() {
 	sceneManager.Add("ctfLevel", scene.NewJklScene(ctfLevels[0], window, &cam, shaderProgram))
 	sceneManager.Add("3do", scene.NewJk3doScene("rystr.3do", window, &cam, shaderProgram))
 	sceneManager.Add("menu", scene.NewMainMenuScene(window, sceneManager))
+	sceneManager.Add("sft", scene.NewSFTSceneScene("creditlarge.sft", window, &cam, guiShaderProgram))
 	sceneManager.LoadScene("menu")
 
 	for !window.ShouldClose() {
