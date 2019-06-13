@@ -23,7 +23,6 @@ func NewSFTScene(sftName string, window *glfw.Window, cam *camera.Camera, shader
 func (s *SFTScene) Load() {
 	sft := jk.GetLoader().LoadSFT(s.sftName)
 	fmt.Printf("%+v\n", sft)
-	//fmt.Println("sft", sft)
 	sftRenderer := opengl.NewOpenGlBmRenderer(&sft.BMFile, s.shaderProgram)
 	s.renderers = append(s.renderers, sftRenderer)
 }

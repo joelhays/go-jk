@@ -1,7 +1,6 @@
 package scene
 
 import (
-	"fmt"
 	"github.com/go-gl/glfw/v3.2/glfw"
 	"github.com/joelhays/go-jk/camera"
 	"github.com/joelhays/go-jk/jk"
@@ -22,7 +21,6 @@ func NewBMScene(bmName string, window *glfw.Window, cam *camera.Camera, shaderPr
 
 func (s *BMScene) Load() {
 	bm := jk.GetLoader().LoadBM(s.bmName)
-	fmt.Printf("%+v\n", bm)
 	sftRenderer := opengl.NewOpenGlBmRenderer(&bm, s.shaderProgram)
 	s.renderers = append(s.renderers, sftRenderer)
 }

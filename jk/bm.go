@@ -1,7 +1,5 @@
 package jk
 
-import "fmt"
-
 type BMFile struct {
 	Header  TBMHeader
 	Images  []TImage
@@ -45,8 +43,6 @@ type TPalette struct {
 func parseBmFile(data []byte) BMFile {
 	result := BMFile{}
 
-	fmt.Println("parsing bm file", len(data))
-
 	cursor := 0
 	var header TBMHeader
 	cursor += readBytes(data, cursor, &header)
@@ -55,7 +51,7 @@ func parseBmFile(data []byte) BMFile {
 	result.Images = make([]TImage, header.NumImages)
 
 	for i := int32(0); i < header.NumImages; i++ {
-		fmt.Println("reading image", i+1, "of", header.NumImages)
+		//fmt.Printf("reading image %d of %d\n", i+1, header.NumImages)
 
 		imageSize := struct {
 			SizeX int32
@@ -65,7 +61,6 @@ func parseBmFile(data []byte) BMFile {
 			0,
 		}
 		cursor += readBytes(data, cursor, &imageSize)
-		fmt.Println("image size", imageSize)
 
 		var image TImage
 		image.SizeX = imageSize.SizeX
@@ -76,12 +71,10 @@ func parseBmFile(data []byte) BMFile {
 		}
 
 		if header.NumBits == 8 {
-			fmt.Println("8-bit image", image, image.SizeX*image.SizeY)
-			// 8-bit image
+			//fmt.Printf("8-bit image %d pixels %+v\n", image.SizeX*image.SizeY, image)
 			image.Data = make([]byte, image.SizeX*image.SizeY)
 		} else {
-			fmt.Println("16-bit image", image, image.SizeX*image.SizeY)
-			// 16-bit image
+			//fmt.Printf("16-bit image %d pixels %+v\n", image.SizeX*image.SizeY, image)
 			image.Data = make([]byte, image.SizeX*image.SizeY*2)
 		}
 

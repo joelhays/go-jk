@@ -202,9 +202,9 @@ func parseSurfaces(data string, jklResult *Jkl) {
 			surface.Geo = geoFlag
 
 			// TODO: WHAT DOES THIS VALUE MEAN?
-			// if components[5] != "3" {
-			// 	fmt.Println("light != 3", components[5])
-			// }
+			//if components[5] != "3" {
+			//	fmt.Println("light != 3", components[5])
+			//}
 
 			numVertexIds, _ := strconv.ParseInt(components[9], 10, 32)
 			vertexIds := components[10 : 10+numVertexIds]

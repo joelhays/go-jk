@@ -245,9 +245,9 @@ func parse3doFileSurfaces(data string, obj *Mesh) {
 			surface.GeometryMode = geoFlag
 
 			//TODO: WHAT DOES THIS VALUE MEAN?
-			// if components[4] != "3" {
-			// 	fmt.Println("light != 3", components[5])
-			// }
+			//if components[4] != "3" {
+			//	fmt.Println("light != 3", components[5])
+			//}
 
 			numVertexIds, _ := strconv.ParseInt(components[7], 10, 32)
 			vertexIds := components[8 : 8+(numVertexIds*2)]

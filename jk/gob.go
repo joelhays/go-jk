@@ -28,7 +28,7 @@ type GOBItem struct {
 	FileName   [128]byte
 }
 
-func loadGOB(gobPath string) GOB {
+func loadGOBManifest(gobPath string) GOB {
 	file, err := os.Open(gobPath)
 	if err != nil {
 		panic(err)
@@ -60,7 +60,7 @@ func loadGOB(gobPath string) GOB {
 
 func loadFileFromGOB(gobPath string, fileName string) []byte {
 
-	gob := loadGOB(gobPath)
+	gob := loadGOBManifest(gobPath)
 
 	file, err := os.Open(gobPath)
 	if err != nil {

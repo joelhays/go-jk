@@ -28,7 +28,7 @@ func GetLoader() *Loader {
 func (l *Loader) LoadJKLManifest() []string {
 	var files []string
 	for _, gob := range episodeGobFiles {
-		for _, gobData := range loadGOB(gob).Items {
+		for _, gobData := range loadGOBManifest(gob).Items {
 			filenameBytes := bytes.Trim(gobData.FileName[:], "\x00")
 			filename := string(filenameBytes)
 			if strings.HasPrefix(filename, "jkl\\") && strings.HasSuffix(filename, "jkl") {
