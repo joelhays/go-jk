@@ -176,6 +176,7 @@ func parse3doFileSection(data string, regex string, componentRegex string, callb
 			continue
 		}
 		text := strings.Replace(scanner.Text(), ",", " ", -1)
+		text = strings.Replace(text, ":", " ", -1)
 
 		space := regexp.MustCompile(`\s+`)
 		text = space.ReplaceAllString(text, "|")

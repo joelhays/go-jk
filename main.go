@@ -1,28 +1,17 @@
 package main
 
 import (
+	"github.com/go-gl/gl/v3.2-core/gl"
+	"github.com/go-gl/glfw/v3.2/glfw"
+	"github.com/go-gl/mathgl/mgl32"
+	"github.com/joelhays/go-jk/camera"
+	"github.com/joelhays/go-jk/jk"
+	"github.com/joelhays/go-jk/opengl"
+	"github.com/joelhays/go-jk/scene"
 	"log"
 	"os"
 	"runtime"
 	"runtime/pprof"
-
-	"github.com/joelhays/go-jk/camera"
-	"github.com/joelhays/go-jk/opengl"
-	"github.com/joelhays/go-jk/scene"
-
-	// "github.com/go-gl/gl/v2.1/gl"
-	"github.com/go-gl/gl/v3.2-core/gl"
-	"github.com/go-gl/glfw/v3.2/glfw"
-	"github.com/go-gl/mathgl/mgl32"
-)
-
-var (
-	mpLevels  = []string{"m10.jkl", "m2.jkl", "m4.jkl", "m5.jkl", "m_boss15.jkl", "m_boss17.jkl"}
-	ctfLevels = []string{"c1.jkl", "c2.jkl", "c3.jkl"}
-	spLevels  = []string{"01narshadda.jkl", "02narshadda.jkl", "03katarn.jkl", "04escapehouse.jkl", "06abarons.jkl",
-		"06bbarons.jkl", "07yun.jkl", "08escape88.jkl", "09fuelstation.jkl", "10cargo.jkl", "11gorc.jkl", "12escape.jkl",
-		"14tower.jkl", "15maw.jkl", "16aescapeship.jkl", "16bescapeship.jkl", "17asarris.jkl", "17bsarris.jkl",
-		"18ascend.jkl", "19a.jkl", "19b.jkl", "20aboc.jkl", "20bboc.jkl", "21ajarec.jkl", "21bjarec.jkl"}
 )
 
 var (
@@ -60,21 +49,13 @@ func main() {
 	cam = camera.NewCamera(mgl32.Vec3{0, 0, 1}, mgl32.Vec3{0, 0, 1}, 0, -90)
 	cam.MovementSpeed = 2
 
-	for _, level := range spLevels {
-		sceneManager.Add(level, scene.NewJklScene(level, window, &cam, shaderProgram))
+	for _, gobFileName := range jk.GetLoader().LoadJKLManifest() {
+		sceneManager.Add(gobFileName, scene.NewJklScene(gobFileName, window, &cam, shaderProgram))
 	}
-	for _, level := range mpLevels {
-		sceneManager.Add(level, scene.NewJklScene(level, window, &cam, shaderProgram))
-	}
-	for _, level := range ctfLevels {
-		sceneManager.Add(level, scene.NewJklScene(level, window, &cam, shaderProgram))
-	}
-	sceneManager.Add("spLevel", scene.NewJklScene(spLevels[0], window, &cam, shaderProgram))
-	sceneManager.Add("mpLevel", scene.NewJklScene(mpLevels[0], window, &cam, shaderProgram))
-	sceneManager.Add("ctfLevel", scene.NewJklScene(ctfLevels[0], window, &cam, shaderProgram))
 	sceneManager.Add("3do", scene.NewJk3doScene("rystr.3do", window, &cam, shaderProgram))
 	sceneManager.Add("menu", scene.NewMainMenuScene(window, sceneManager))
-	sceneManager.Add("sft", scene.NewSFTSceneScene("creditlarge.sft", window, &cam, guiShaderProgram))
+	sceneManager.Add("sft", scene.NewSFTScene("creditlarge.sft", window, &cam, guiShaderProgram))
+	sceneManager.Add("bm", scene.NewBMScene("bkdialog.bm", window, &cam, guiShaderProgram))
 	sceneManager.LoadScene("menu")
 
 	for !window.ShouldClose() {

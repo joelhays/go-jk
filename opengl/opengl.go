@@ -64,7 +64,7 @@ func Draw(window *glfw.Window, camera *camera.Camera, renderers []Renderer) {
 
 func configureProgram(program *ShaderProgram, camera *camera.Camera, width int, height int) {
 	// vertex shader uniforms
-	projection := mgl32.Perspective(mgl32.DegToRad(float32(camera.Zoom)), float32(width)/float32(height), 0.1, 1000.0)
+	projection := mgl32.Perspective(mgl32.DegToRad(float32(camera.Zoom)), float32(width)/float32(height), 0.01, 1000.0)
 	program.SetMatrixUniform("projection", projection)
 	program.SetMatrixUniform("view", camera.GetViewMatrix())
 

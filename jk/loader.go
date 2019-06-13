@@ -1,6 +1,10 @@
 package jk
 
-import "sync"
+import (
+	"bytes"
+	"strings"
+	"sync"
+)
 
 var (
 	instance         *Loader
@@ -21,8 +25,32 @@ func GetLoader() *Loader {
 	return instance
 }
 
+func (l *Loader) LoadJKLManifest() []string {
+	var files []string
+	for _, gob := range episodeGobFiles {
+		for _, gobData := range loadGOB(gob).Items {
+			filenameBytes := bytes.Trim(gobData.FileName[:], "\x00")
+			filename := string(filenameBytes)
+			if strings.HasPrefix(filename, "jkl\\") && strings.HasSuffix(filename, "jkl") {
+				files = append(files, filename)
+			}
+		}
+	}
+
+	return files
+}
+
 func (l *Loader) LoadJKL(filename string) Jkl {
 	for _, gob := range episodeGobFiles {
+		fileBytes := loadFileFromGOB(gob, filename)
+		if fileBytes == nil {
+			continue
+		}
+		jklLevel := readJKLFromString(string(fileBytes))
+		return jklLevel
+	}
+
+	for _, gob := range resourceGobFiles {
 		fileBytes := loadFileFromGOB(gob, filename)
 		if fileBytes == nil {
 			continue

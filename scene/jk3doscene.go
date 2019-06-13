@@ -14,6 +14,8 @@ type Jk3doScene struct {
 	renderers     []opengl.Renderer
 	cam           *camera.Camera
 	window        *glfw.Window
+	obj           *jk.Jk3doFile
+	objRenderer   opengl.Renderer
 }
 
 func NewJk3doScene(jk3doName string, window *glfw.Window, cam *camera.Camera, shaderProgram *opengl.ShaderProgram) *Jk3doScene {
@@ -22,8 +24,11 @@ func NewJk3doScene(jk3doName string, window *glfw.Window, cam *camera.Camera, sh
 
 func (s *Jk3doScene) Load() {
 	obj := jk.GetLoader().Load3DO(s.jk3doName)
-	objRenderer := opengl.NewOpenGl3doRenderer(&jk.Thing{Position: mgl32.Vec3{float32(0), float32(0), float32(0)}, Yaw: 0, Pitch: 0, Roll: 0}, nil, &obj, s.shaderProgram)
-	s.renderers = append(s.renderers, objRenderer)
+	s.obj = &obj
+	s.cam.Position = mgl32.Vec3{0, 0, 1}
+	s.cam.Up = mgl32.Vec3{0, 0, 1}
+	s.cam.Yaw = 0
+	s.cam.Pitch = 0
 }
 
 func (s *Jk3doScene) Unload() {
@@ -31,5 +36,14 @@ func (s *Jk3doScene) Unload() {
 }
 
 func (s *Jk3doScene) Update() {
-	opengl.Draw(s.window, s.cam, s.renderers)
+	if s.obj != nil && s.objRenderer == nil {
+		s.window.SetInputMode(glfw.CursorMode, glfw.CursorDisabled)
+
+		s.objRenderer = opengl.NewOpenGl3doRenderer(&jk.Thing{Position: mgl32.Vec3{float32(0), float32(0), float32(0)}, Yaw: 0, Pitch: 0, Roll: 0}, nil, s.obj, s.shaderProgram)
+		s.renderers = append(s.renderers, s.objRenderer)
+	}
+
+	if len(s.renderers) > 0 {
+		opengl.Draw(s.window, s.cam, s.renderers)
+	}
 }

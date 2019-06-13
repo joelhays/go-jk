@@ -1,0 +1,162 @@
+#********** World file D:\jedi\Products\JK\Release\Jkl\static.jkl ***** Created 10/30/1996 6:32pm **********
+
+#### Copyright information #####
+SECTION: COPYRIGHT
+................................
+................@...@...@...@...
+.............@...@..@..@...@....
+................@.@.@.@.@.@.....
+@@@@@@@@......@...........@.....
+@@@@@@@@....@@......@@@....@....
+@@.....@.....@......@@@.....@@..
+@@.@@@@@......@.....@@@......@@.
+@@@@@@@@.......@....@@.....@@...
+@@@@@@@@.........@@@@@@@@@@.....
+@@@@@@@@..........@@@@@@........
+@@.....@..........@@@@@.........
+@@.@@@@@.........@@@@@@.........
+@@.....@.........@@@@@@.........
+@@@@@@@@.........@@@@@@.........
+@@@@@@@@.........@@@@@@@........
+@@@...@@.........@@@@@@@........
+@@.@@@.@.........@.....@........
+@@..@..@........@.......@.......
+@@@@@@@@........@.......@.......
+@@@@@@@@.......@........@.......
+@@..@@@@.......@........@.......
+@@@@..@@......@.........@.......
+@@@@.@.@......@.........@.......
+@@....@@........................
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@@@@@@@@@@@@@.@@@@@@@@@@@@@@@@@@
+@@.@@..@@@@@..@@@@@@@@@@.@@@@@@@
+@@.@.@.@@@@.@.@@@.@..@@...@@@..@
+@@..@@@@@@....@@@..@@@@@.@@@@.@@
+@@@@@@@@...@@.@@@.@@@@@..@@...@@
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@.copyright.(c).1997.lucasarts.@
+@@@@@@..entertainment.co..@@@@@@
+################################
+
+
+###### Header information ######
+SECTION: HEADER
+# version and global constant settings
+Version 1
+World Gravity 4.00
+Ceiling Sky Z    3.000000
+Horizon Distance 100.000000
+Horizon Pixels per Rev 768.000000
+Horizon Sky Offset   0.000000 0.000000
+Ceiling Sky Offset   0.000000 0.000000
+MipMap Distances	1.000000	2.000000	3.000000	4.000000
+LOD Distances		0.300000	0.600000	0.900000	1.200000
+Perspective distance 2.00
+Gouraud distance 2.00
+################################
+
+
+###### Sound information  ######
+SECTION: SOUNDS
+World sounds 60
+end
+################################
+
+
+##### Material information #####
+SECTION: MATERIALS
+World materials 160
+end
+################################
+
+
+Section: Soundclass
+World soundclasses 1
+0:	ky.snd
+end
+
+###### Models information ######
+Section: MODELS
+
+World models 32
+
+0:	bryv.3do
+1:	bryg.3do
+2:	sabv.3do
+3:	sabg.3do
+4:	rldv.3do
+5;	rldg.3do
+6:	conv.3do
+7:	cong.3do
+8:	strv.3do
+9:	strg.3do
+10: rptv.3do
+11: rptg.3do
+12: detv.3do
+13: detg.3do
+14: seqv.3do
+15: seqg.3do
+16: fistv.3do
+17: fistg.3do
+18: bowv.3do
+19: bowg.3do
+20: ky.3do
+21: bry0.3do
+22: con0.3do
+23: dflt.3do
+24: rep0.3do
+25: det0.3do
+26: seqp.3do
+27: rld0.3do
+end
+################################
+
+
+###### Sprite information ######
+Section: SPRITES
+
+World sprites 20
+0: bryx.spr
+1: detx.spr
+2: bowx2.spr
+3: bowx.spr
+4: rptx.spr
+5: seqx2.spr
+6: debrisx.spr
+7: rldx.spr
+8: conx.spr
+end
+################################
+
+
+##### Keyframe information #####
+Section: KEYFRAMES
+
+World keyframes 128
+end
+################################
+
+
+###### Animation Classes #######
+Section: ANIMCLASS
+
+World puppets 16
+0:	ky.pup
+end
+################################
+
+
+########## COG scripts #########
+Section: cogscripts
+World scripts 50
+end
+################################
+
+
+######### COG placement ########
+Section: cogs
+World cogs 50
+#Num	Script          Symbol values
+end
+################################
+

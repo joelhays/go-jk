@@ -22,12 +22,16 @@ func NewJklScene(jklName string, window *glfw.Window, cam *camera.Camera, shader
 }
 
 func (s *JklScene) Load() {
-	level := jk.GetLoader().LoadJKL(s.jklName)
-	s.level = &level
+	if s.level == nil {
+		level := jk.GetLoader().LoadJKL(s.jklName)
+		s.level = &level
+	}
 }
 
 func (s *JklScene) Unload() {
-
+	s.renderers = make([]opengl.Renderer, 0)
+	s.levelRenderer = nil
+	s.level = nil
 }
 
 func (s *JklScene) Update() {

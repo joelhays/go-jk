@@ -16,7 +16,7 @@ type SFTScene struct {
 	window        *glfw.Window
 }
 
-func NewSFTSceneScene(sftName string, window *glfw.Window, cam *camera.Camera, shaderProgram *opengl.ShaderProgram) *SFTScene {
+func NewSFTScene(sftName string, window *glfw.Window, cam *camera.Camera, shaderProgram *opengl.ShaderProgram) *SFTScene {
 	return &SFTScene{sftName: sftName, window: window, cam: cam, shaderProgram: shaderProgram}
 }
 

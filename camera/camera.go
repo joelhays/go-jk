@@ -43,7 +43,7 @@ func NewCamera(position mgl32.Vec3, up mgl32.Vec3, yaw float64, pitch float64) C
 		Zoom:             45,
 	}
 
-	c.updateCameraVectors()
+	c.UpdateCameraVectors()
 
 	return c
 }
@@ -77,10 +77,10 @@ func (c *Camera) ProcessMouseMovement(xOffset float64, yOffset float64, constrai
 		c.Pitch = float64(mgl32.Clamp(float32(c.Pitch), -89.0, 89.0))
 	}
 
-	c.updateCameraVectors()
+	c.UpdateCameraVectors()
 }
 
-func (c *Camera) updateCameraVectors() {
+func (c *Camera) UpdateCameraVectors() {
 	x := math.Cos(float64(mgl32.DegToRad(float32(c.Yaw)))) * math.Cos(float64(mgl32.DegToRad(float32(c.Pitch))))
 	// y := math.Sin(float64(mgl32.DegToRad(float32(c.Pitch))))
 	// z := math.Sin(float64(mgl32.DegToRad(float32(c.Yaw)))) * math.Cos(float64(mgl32.DegToRad(float32(c.Pitch))))

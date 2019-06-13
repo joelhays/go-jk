@@ -96,5 +96,10 @@ func parseBmFile(data []byte) BMFile {
 		result.Palette = palette
 	}
 
+	if header.PaletteIncluded != 2 {
+		cmp := GetLoader().LoadCMP("dflt.cmp")
+		result.Palette.Palette = cmp.Palette
+	}
+
 	return result
 }

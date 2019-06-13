@@ -1,71 +1,81 @@
 package jk
 
 import (
+	"bytes"
 	"encoding/binary"
 	"io"
 	"os"
 	"strings"
+	"unsafe"
 )
 
 type GOB struct {
+	Header GOBHeader
+	Items  []GOBItem
 }
 
-func loadFileFromGOB(gobPath string, fileName string) []byte {
+type GOBHeader struct {
+	FileType        [3]byte
+	Version         byte
+	FirstFileOffset int32
+	NumItemsOffset  int32
+	NumItems        int32
+}
+
+type GOBItem struct {
+	FileOffset uint32
+	FileLength uint32
+	FileName   [128]byte
+}
+
+func loadGOB(gobPath string) GOB {
 	file, err := os.Open(gobPath)
 	if err != nil {
 		panic(err)
 	}
 	defer file.Close()
 
-	// read header
-	// GOBHeader=record
-	// array[0..2] of char;    {'GOB '}
-	// byte;                   {Apparently - version= x20 }
-	// Longint;                {Offset to first file size from begining of file= x14 }
-	// Longint;                {Offset to #of GobItems from file beginning= x0C }
-	// Longint;                {# of items in gob file }
-	headerBytes := make([]byte, 3)
-	file.Read(headerBytes)
+	result := GOB{}
 
-	versionBytes := make([]byte, 1)
-	file.Read(versionBytes)
+	var header GOBHeader
+	data := make([]byte, unsafe.Sizeof(header))
+	file.Read(data)
+	buf := bytes.NewBuffer(data)
+	binary.Read(buf, binary.LittleEndian, &header)
 
-	firstFileOffsetBytes := make([]byte, 4)
-	file.Read(firstFileOffsetBytes)
+	result.Header = header
 
-	numItemsOffsetBytes := make([]byte, 4)
-	file.Read(numItemsOffsetBytes)
+	for i := int32(0); i < header.NumItems; i++ {
+		var item GOBItem
+		data := make([]byte, unsafe.Sizeof(item))
+		file.Read(data)
+		buf := bytes.NewBuffer(data)
+		binary.Read(buf, binary.LittleEndian, &item)
 
-	numItemsBytes := make([]byte, 4)
-	file.Read(numItemsBytes)
-	numItems := binary.LittleEndian.Uint32(numItemsBytes)
+		result.Items = append(result.Items, item)
+	}
 
-	// read items
-	// GobItems =record
-	// Longint:              {offset from begining of file}
-	// Longint;              {Length of file}
-	// array[0..127] of char {path and name of file}
+	return result
+}
 
-	for i := uint32(0); i < numItems; i++ {
-		offsetBytes := make([]byte, 4)
-		file.Read(offsetBytes)
-		offset := binary.LittleEndian.Uint32(offsetBytes)
+func loadFileFromGOB(gobPath string, fileName string) []byte {
 
-		fileLengthBytes := make([]byte, 4)
-		file.Read(fileLengthBytes)
-		fileLength := binary.LittleEndian.Uint32(fileLengthBytes)
+	gob := loadGOB(gobPath)
 
-		pathAndNameBytes := make([]byte, 128)
-		file.Read(pathAndNameBytes)
-		pathAndName := string(pathAndNameBytes)
+	file, err := os.Open(gobPath)
+	if err != nil {
+		panic(err)
+	}
+	defer file.Close()
 
+	for _, item := range gob.Items {
+		pathAndName := string(item.FileName[:])
 		if strings.Contains(strings.ToUpper(pathAndName), strings.ToUpper(fileName)) {
-			file.Seek(int64(offset), io.SeekStart)
-			contentBytes := make([]byte, fileLength)
+			file.Seek(int64(item.FileOffset), io.SeekStart)
+			contentBytes := make([]byte, item.FileLength)
 			file.Read(contentBytes)
 			return contentBytes
 		}
-
 	}
 
 	return nil

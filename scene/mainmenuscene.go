@@ -7,17 +7,7 @@ import (
 	"github.com/joelhays/go-jk/menu"
 	"github.com/joelhays/go-jk/opengl"
 	"log"
-)
-
-var (
-	levels = []string{"01narshadda.jkl", "02narshadda.jkl", "03katarn.jkl", "04escapehouse.jkl", "06abarons.jkl",
-		"06bbarons.jkl", "07yun.jkl", "08escape88.jkl", "09fuelstation.jkl", "10cargo.jkl", "11gorc.jkl", "12escape.jkl",
-		"14tower.jkl", "15maw.jkl", "16aescapeship.jkl", "16bescapeship.jkl", "17asarris.jkl", "17bsarris.jkl",
-		"18ascend.jkl", "19a.jkl", "19b.jkl", "20aboc.jkl", "20bboc.jkl", "21ajarec.jkl", "21bjarec.jkl",
-
-		"m10.jkl", "m2.jkl", "m4.jkl", "m5.jkl", "m_boss15.jkl", "m_boss17.jkl",
-
-		"c1.jkl", "c2.jkl", "c3.jkl"}
+	"strings"
 )
 
 type MainMenuScene struct {
@@ -28,6 +18,7 @@ type MainMenuScene struct {
 	fontAtlas    *nk.FontAtlas
 	font         *nk.Font
 	fontHandle   *nk.UserFont
+	levels       []string
 }
 
 func NewMainMenuScene(window *glfw.Window, sceneManager *SceneManager) *MainMenuScene {
@@ -62,6 +53,14 @@ func (m *MainMenuScene) Load() {
 	//}
 
 	m.window.SetInputMode(glfw.CursorMode, glfw.CursorNormal)
+
+	if len(m.levels) == 0 {
+		for _, gobFileName := range jk.GetLoader().LoadJKLManifest() {
+			if strings.HasPrefix(gobFileName, "jkl\\") && strings.HasSuffix(gobFileName, "jkl") {
+				m.levels = append(m.levels, gobFileName)
+			}
+		}
+	}
 }
 
 func (m *MainMenuScene) Unload() {
@@ -95,10 +94,10 @@ func (m *MainMenuScene) Update() {
 		{
 			nk.NkSpacing(m.context, 1)
 			var list nk.ListView
-			nk.NkListViewBegin(m.context, &list, "level", nk.WindowBackground, 35, int32(len(levels)-1))
+			nk.NkListViewBegin(m.context, &list, "level", nk.WindowBackground, 35, int32(len(m.levels)-1))
 			{
 				for l := list.Begin(); l < list.End(); l++ {
-					level := levels[l]
+					level := m.levels[l]
 					nk.NkLayoutRowDynamic(m.context, 30, 1)
 					{
 						if nk.NkButtonLabel(m.context, level) > 0 {
