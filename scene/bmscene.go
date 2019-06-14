@@ -33,15 +33,21 @@ func (s *BMScene) Unload() {
 
 func (s *BMScene) Update() {
 	if s.bm != nil && s.bmRenderer == nil {
-		w, h := s.window.GetSize()
+		//w, h := s.window.GetSize()
+		w := 640
+		h := 480
 		windowAspect := float32(w) / float32(h)
 
 		var scale mgl32.Vec2
-		imageRatio := float32(s.bm.Images[0].SizeX) / float32(s.bm.Images[0].SizeY) / windowAspect
-		scale = mgl32.Vec2{imageRatio, 1}
-		if imageRatio > 1 {
-			imageRatio = float32(s.bm.Images[0].SizeY) / float32(s.bm.Images[0].SizeX) / windowAspect
-			scale = mgl32.Vec2{1, imageRatio}
+		if s.bm.Images[0].SizeX < int32(w) && s.bm.Images[0].SizeY < int32(h) {
+			scale = mgl32.Vec2{float32(s.bm.Images[0].SizeX) / float32(w), float32(s.bm.Images[0].SizeY) / float32(h)}
+		} else {
+			imageRatio := float32(s.bm.Images[0].SizeX) / float32(s.bm.Images[0].SizeY) / windowAspect
+			scale = mgl32.Vec2{imageRatio, 1}
+			if imageRatio > 1 {
+				imageRatio = float32(s.bm.Images[0].SizeY) / float32(s.bm.Images[0].SizeX) / windowAspect
+				scale = mgl32.Vec2{1, imageRatio}
+			}
 		}
 		//fmt.Printf("%d, %d, %+v\n", s.bm.Images[0].SizeX, s.bm.Images[0].SizeY, scale)
 
