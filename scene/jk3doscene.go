@@ -25,10 +25,11 @@ func NewJk3doScene(jk3doName string, window *glfw.Window, cam *camera.Camera, sh
 func (s *Jk3doScene) Load() {
 	obj := jk.GetLoader().Load3DO(s.jk3doName)
 	s.obj = &obj
-	s.cam.Position = mgl32.Vec3{0, 0, 1}
+	s.cam.Position = mgl32.Vec3{0, 1, 0}
 	s.cam.Up = mgl32.Vec3{0, 0, 1}
-	s.cam.Yaw = 0
+	s.cam.Yaw = 90
 	s.cam.Pitch = 0
+	s.cam.UpdateCameraVectors()
 }
 
 func (s *Jk3doScene) Unload() {

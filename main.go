@@ -52,9 +52,15 @@ func main() {
 	for _, gobFileName := range jk.GetLoader().LoadJKLManifest() {
 		sceneManager.Add(gobFileName, scene.NewJklScene(gobFileName, window, &cam, shaderProgram))
 	}
+	for _, gobFileName := range jk.GetLoader().Load3DOManifest() {
+		sceneManager.Add(gobFileName, scene.NewJk3doScene(gobFileName, window, &cam, shaderProgram))
+	}
+	for _, gobFileName := range jk.GetLoader().LoadBMManifest() {
+		sceneManager.Add(gobFileName, scene.NewBMScene(gobFileName, window, &cam, guiShaderProgram))
+	}
 	sceneManager.Add("3do", scene.NewJk3doScene("rystr.3do", window, &cam, shaderProgram))
 	sceneManager.Add("menu", scene.NewMainMenuScene(window, sceneManager))
-	sceneManager.Add("sft", scene.NewSFTScene("creditlarge.sft", window, &cam, guiShaderProgram))
+	sceneManager.Add("sft", scene.NewSFTScene("large0.sft", window, &cam, guiShaderProgram))
 	sceneManager.Add("bm", scene.NewBMScene("bkdialog.bm", window, &cam, guiShaderProgram))
 	sceneManager.LoadScene("menu")
 

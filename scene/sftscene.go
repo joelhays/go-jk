@@ -1,8 +1,8 @@
 package scene
 
 import (
-	"fmt"
 	"github.com/go-gl/glfw/v3.2/glfw"
+	"github.com/go-gl/mathgl/mgl32"
 	"github.com/joelhays/go-jk/camera"
 	"github.com/joelhays/go-jk/jk"
 	"github.com/joelhays/go-jk/opengl"
@@ -22,8 +22,21 @@ func NewSFTScene(sftName string, window *glfw.Window, cam *camera.Camera, shader
 
 func (s *SFTScene) Load() {
 	sft := jk.GetLoader().LoadSFT(s.sftName)
-	fmt.Printf("%+v\n", sft)
-	sftRenderer := opengl.NewOpenGlBmRenderer(&sft.BMFile, s.shaderProgram)
+	//fmt.Printf("%+v\n", sft)
+
+	w, h := s.window.GetSize()
+	windowAspect := float32(w) / float32(h)
+
+	var scale mgl32.Vec2
+	imageRatio := float32(sft.BMFile.Images[0].SizeX) / float32(sft.BMFile.Images[0].SizeY) / windowAspect
+	scale = mgl32.Vec2{imageRatio, 1}
+	if imageRatio > 1 {
+		imageRatio = float32(sft.BMFile.Images[0].SizeY) / float32(sft.BMFile.Images[0].SizeX) / windowAspect
+		scale = mgl32.Vec2{1, imageRatio}
+	}
+	//fmt.Printf("%d, %d, %+v\n", sft.BMFile.Images[0].SizeX, sft.BMFile.Images[0].SizeY, scale)
+
+	sftRenderer := opengl.NewOpenGlBmRenderer(&sft.BMFile, scale, s.shaderProgram)
 	s.renderers = append(s.renderers, sftRenderer)
 }
 

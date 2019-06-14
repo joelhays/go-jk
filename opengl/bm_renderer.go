@@ -14,10 +14,11 @@ type OpenGlBmRenderer struct {
 	program  *ShaderProgram
 	vao      uint32
 	textures []uint32
+	scale    mgl32.Vec2
 }
 
-func NewOpenGlBmRenderer(bm *jk.BMFile, program *ShaderProgram) Renderer {
-	r := &OpenGlBmRenderer{bm: bm, program: program}
+func NewOpenGlBmRenderer(bm *jk.BMFile, scale mgl32.Vec2, program *ShaderProgram) Renderer {
+	r := &OpenGlBmRenderer{bm: bm, scale: scale, program: program}
 
 	r.setupMesh()
 	return r
@@ -29,7 +30,7 @@ func (r *OpenGlBmRenderer) Render() {
 
 	var offset int32 = 0
 	model := mgl32.Ident4()
-	// model = mgl32.Scale3D(0.5, 0.5, 0.5)
+	model = mgl32.Scale3D(r.scale.X(), r.scale.Y(), 1)
 	r.ShaderProgram().SetMatrixUniform("model", model)
 
 	gl.ActiveTexture(gl.TEXTURE0)

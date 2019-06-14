@@ -2,12 +2,12 @@ package scene
 
 import (
 	"github.com/go-gl/glfw/v3.2/glfw"
+	"github.com/go-gl/mathgl/mgl32"
 	"github.com/golang-ui/nuklear/nk"
 	"github.com/joelhays/go-jk/jk"
 	"github.com/joelhays/go-jk/menu"
 	"github.com/joelhays/go-jk/opengl"
 	"log"
-	"strings"
 )
 
 type MainMenuScene struct {
@@ -19,6 +19,9 @@ type MainMenuScene struct {
 	font         *nk.Font
 	fontHandle   *nk.UserFont
 	levels       []string
+	objs         []string
+	bms          []string
+	selectedTab  int
 }
 
 func NewMainMenuScene(window *glfw.Window, sceneManager *SceneManager) *MainMenuScene {
@@ -38,7 +41,8 @@ func (m *MainMenuScene) Load() {
 	}
 
 	bmFile := jk.GetLoader().LoadBM("bkmain.bm")
-	bmRenderer := opengl.NewOpenGlBmRenderer(&bmFile, nil)
+
+	bmRenderer := opengl.NewOpenGlBmRenderer(&bmFile, mgl32.Vec2{1, 1}, nil)
 	original, ok := bmRenderer.(*opengl.OpenGlBmRenderer)
 	if ok {
 		//*m.context.GetStyle().GetWindow().GetFixedBackground() = nk.NkStyleItemImage(nk.NkSubimageId(int32(original.GetTextureID()), 1024, 768, nk.NkRect(0, 0, 1024, 768)))
@@ -56,9 +60,19 @@ func (m *MainMenuScene) Load() {
 
 	if len(m.levels) == 0 {
 		for _, gobFileName := range jk.GetLoader().LoadJKLManifest() {
-			if strings.HasPrefix(gobFileName, "jkl\\") && strings.HasSuffix(gobFileName, "jkl") {
-				m.levels = append(m.levels, gobFileName)
-			}
+			m.levels = append(m.levels, gobFileName)
+		}
+	}
+
+	if len(m.objs) == 0 {
+		for _, gobFileName := range jk.GetLoader().Load3DOManifest() {
+			m.objs = append(m.objs, gobFileName)
+		}
+	}
+
+	if len(m.bms) == 0 {
+		for _, gobFileName := range jk.GetLoader().LoadBMManifest() {
+			m.bms = append(m.bms, gobFileName)
 		}
 	}
 }
@@ -87,24 +101,51 @@ func (m *MainMenuScene) Update() {
 		nk.NkLayoutRowStatic(m.context, 30, 1024/3, 3)
 		{
 			nk.NkSpacing(m.context, 1)
-			nk.NkLabel(m.context, "Select an level to load:", nk.TextCentered)
+			nk.NkLabel(m.context, "Select an item to load:", nk.TextCentered)
+		}
+
+		nk.NkLayoutRowStatic(m.context, 30, 1024/5, 5)
+		{
+			nk.NkSpacing(m.context, 1)
+			if nk.NkButtonLabel(m.context, "JKL") > 0 {
+				m.selectedTab = 0
+			}
+
+			if nk.NkButtonLabel(m.context, "3DO") > 0 {
+				m.selectedTab = 1
+			}
+
+			if nk.NkButtonLabel(m.context, "BM") > 0 {
+				m.selectedTab = 2
+			}
+		}
+
+		nk.NkLayoutRowDynamic(m.context, 30, 1)
+		{
 		}
 
 		nk.NkLayoutRowStatic(m.context, 30*10, 1024/3, 3)
 		{
 			nk.NkSpacing(m.context, 1)
+			var activeList *[]string
+			if m.selectedTab == 0 {
+				activeList = &m.levels
+			} else if m.selectedTab == 1 {
+				activeList = &m.objs
+			} else if m.selectedTab == 2 {
+				activeList = &m.bms
+			}
 			var list nk.ListView
-			nk.NkListViewBegin(m.context, &list, "level", nk.WindowBackground, 35, int32(len(m.levels)-1))
+			nk.NkListViewBegin(m.context, &list, "level", nk.WindowBackground, 35, int32(len(*activeList)-1))
 			{
 				for l := list.Begin(); l < list.End(); l++ {
-					level := m.levels[l]
+					item := (*activeList)[l]
 					nk.NkLayoutRowDynamic(m.context, 30, 1)
 					{
-						if nk.NkButtonLabel(m.context, level) > 0 {
-							log.Println("[INFO] button pressed! " + level)
-							go m.sceneManager.LoadScene(level)
+						if nk.NkButtonLabel(m.context, item) > 0 {
+							log.Println("[INFO] button pressed! " + item)
+							go m.sceneManager.LoadScene(item)
 						}
-						//nk.NkLabel(m.context, "Item "+strconv.Itoa(l), nk.TextLeft)
 					}
 				}
 			}
@@ -114,6 +155,7 @@ func (m *MainMenuScene) Update() {
 		nk.NkLayoutRowDynamic(m.context, 30, 1)
 		{
 		}
+
 		nk.NkLayoutRowStatic(m.context, 30, 1024/3, 3)
 		{
 			nk.NkSpacing(m.context, 1)

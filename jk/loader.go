@@ -25,19 +25,31 @@ func GetLoader() *Loader {
 	return instance
 }
 
-func (l *Loader) LoadJKLManifest() []string {
+func (l *Loader) getGobFiles(gobFiles []string, prefix string, suffix string) []string {
 	var files []string
-	for _, gob := range episodeGobFiles {
+	for _, gob := range gobFiles {
 		for _, gobData := range loadGOBManifest(gob).Items {
 			filenameBytes := bytes.Trim(gobData.FileName[:], "\x00")
 			filename := string(filenameBytes)
-			if strings.HasPrefix(filename, "jkl\\") && strings.HasSuffix(filename, "jkl") {
+			if strings.HasPrefix(filename, prefix) && strings.HasSuffix(filename, suffix) {
 				files = append(files, filename)
 			}
 		}
 	}
 
 	return files
+}
+
+func (l *Loader) LoadJKLManifest() []string {
+	return l.getGobFiles(episodeGobFiles, "jkl\\", "jkl")
+}
+
+func (l *Loader) LoadBMManifest() []string {
+	return l.getGobFiles(resourceGobFiles, "ui\\bm\\", "bm")
+}
+
+func (l *Loader) Load3DOManifest() []string {
+	return l.getGobFiles(resourceGobFiles, "3do\\", "3do")
 }
 
 func (l *Loader) LoadJKL(filename string) Jkl {
