@@ -7,7 +7,7 @@ This program parses the original Jedi Knight: Dark Forces 2 game assets to rende
 
 Creating using the following:
 
-- Golang 1.11.5
+- Golang 1.12.9
 - OpenGL 3.2
 - GLFW 3.2
 
