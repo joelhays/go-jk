@@ -8,10 +8,7 @@ import (
 	"github.com/joelhays/go-jk/jk"
 	"github.com/joelhays/go-jk/opengl"
 	"github.com/joelhays/go-jk/scene"
-	"log"
-	"os"
 	"runtime"
-	"runtime/pprof"
 )
 
 var (
@@ -21,12 +18,12 @@ var (
 )
 
 func main() {
-	f, err := os.Create(cpuprofile)
-	if err != nil {
-		log.Fatal(err)
-	}
-	pprof.StartCPUProfile(f)
-	defer pprof.StopCPUProfile()
+	//f, err := os.Create(cpuprofile)
+	//if err != nil {
+	//	log.Fatal(err)
+	//}
+	//pprof.StartCPUProfile(f)
+	//defer pprof.StopCPUProfile()
 
 	runtime.LockOSThread()
 	defer runtime.UnlockOSThread()

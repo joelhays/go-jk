@@ -1,6 +1,7 @@
 package jk
 
 import (
+	"bufio"
 	"bytes"
 	"encoding/binary"
 	"io"
@@ -23,12 +24,21 @@ type GOBHeader struct {
 }
 
 type GOBItem struct {
-	FileOffset uint32
-	FileLength uint32
-	FileName   [128]byte
+	FileOffset    uint32
+	FileLength    uint32
+	FileName      string
+	UpperFileName string
 }
 
+var (
+	gobManifestCache = make(map[string]GOB)
+)
+
 func loadGOBManifest(gobPath string) GOB {
+	if obj, ok := gobManifestCache[gobPath]; ok {
+		return obj
+	}
+
 	file, err := os.Open(gobPath)
 	if err != nil {
 		panic(err)
@@ -37,23 +47,40 @@ func loadGOBManifest(gobPath string) GOB {
 
 	result := GOB{}
 
+	fr := bufio.NewReader(file)
+
 	var header GOBHeader
 	data := make([]byte, unsafe.Sizeof(header))
-	file.Read(data)
+	io.ReadFull(fr, data)
 	buf := bytes.NewBuffer(data)
 	binary.Read(buf, binary.LittleEndian, &header)
 
 	result.Header = header
 
 	for i := int32(0); i < header.NumItems; i++ {
-		var item GOBItem
-		data := make([]byte, unsafe.Sizeof(item))
-		file.Read(data)
+		tempitem := struct {
+			FileOffset uint32
+			FileLength uint32
+			FileName   [128]byte
+		}{}
+
+		data := make([]byte, unsafe.Sizeof(tempitem))
+		io.ReadFull(fr, data)
 		buf := bytes.NewBuffer(data)
-		binary.Read(buf, binary.LittleEndian, &item)
+		binary.Read(buf, binary.LittleEndian, &tempitem)
+
+		var item GOBItem
+		item.FileOffset = tempitem.FileOffset
+		item.FileLength = tempitem.FileLength
+
+		filenameBytes := bytes.Trim(tempitem.FileName[:], "\x00")
+		item.FileName = string(filenameBytes)
+		item.UpperFileName = strings.ToUpper(item.FileName)
 
 		result.Items = append(result.Items, item)
 	}
+
+	gobManifestCache[gobPath] = result
 
 	return result
 }
@@ -68,9 +95,10 @@ func loadFileFromGOB(gobPath string, fileName string) []byte {
 	}
 	defer file.Close()
 
+	fileName = strings.ToUpper(fileName)
+
 	for _, item := range gob.Items {
-		pathAndName := string(item.FileName[:])
-		if strings.Contains(strings.ToUpper(pathAndName), strings.ToUpper(fileName)) {
+		if strings.Contains(item.UpperFileName, fileName) {
 			file.Seek(int64(item.FileOffset), io.SeekStart)
 			contentBytes := make([]byte, item.FileLength)
 			file.Read(contentBytes)

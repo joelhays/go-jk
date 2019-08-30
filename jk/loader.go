@@ -1,7 +1,6 @@
 package jk
 
 import (
-	"bytes"
 	"strings"
 	"sync"
 )
@@ -29,10 +28,8 @@ func (l *Loader) getGobFiles(gobFiles []string, prefix string, suffix string) []
 	var files []string
 	for _, gob := range gobFiles {
 		for _, gobData := range loadGOBManifest(gob).Items {
-			filenameBytes := bytes.Trim(gobData.FileName[:], "\x00")
-			filename := string(filenameBytes)
-			if strings.HasPrefix(filename, prefix) && strings.HasSuffix(filename, suffix) {
-				files = append(files, filename)
+			if strings.HasPrefix(gobData.FileName, prefix) && strings.HasSuffix(gobData.FileName, suffix) {
+				files = append(files, gobData.FileName)
 			}
 		}
 	}
