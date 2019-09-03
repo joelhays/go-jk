@@ -239,11 +239,6 @@ func parse3dos(data string, jklResult *Jkl) {
 		func(components []string) {
 			jk3doName := components[1]
 
-			if jk3doName == "conv.3do" || jk3doName == "strv.3do" {
-				jklResult.Jk3dos[jk3doName] = Jk3doFile{}
-				return
-			}
-
 			jk3do := GetLoader().Load3DO(jk3doName)
 			if len(jklResult.Model.ColorMaps) > 0 {
 				jk3do.ColorMap = jklResult.Model.ColorMaps[0]

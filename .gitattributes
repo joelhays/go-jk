@@ -2,3 +2,4 @@
 *.jkl linguist-language=text
 *.bm  linguist-language=binary
 *.3do linguist-language=text
+*.cog linguist-language=text

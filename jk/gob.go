@@ -73,7 +73,7 @@ func loadGOBManifest(gobPath string) GOB {
 		item.FileOffset = tempitem.FileOffset
 		item.FileLength = tempitem.FileLength
 
-		filenameBytes := bytes.Trim(tempitem.FileName[:], "\x00")
+		filenameBytes := bytes.Split(tempitem.FileName[:], []byte{byte('\x00')})[0]
 		item.FileName = string(filenameBytes)
 		item.UpperFileName = strings.ToUpper(item.FileName)
 
