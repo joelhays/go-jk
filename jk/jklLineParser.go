@@ -170,6 +170,10 @@ func (p *JklLineParser) processSection(callback func(string)) {
 }
 
 func (p *JklLineParser) processNLines(numToProcess int, callback func(string)) {
+	if numToProcess == 0 {
+		return
+	}
+
 	numProcessed := 0
 	for {
 		if numToProcess > 0 && numProcessed == numToProcess {
@@ -198,12 +202,21 @@ func (p *JklLineParser) parseGeoResource() {
 		if args, _ = fmt.Sscanf(line, "world colormaps %d", &count); args == 1 {
 			p.processNLines(count, p.parseGeoResourceWorldColormap)
 		} else if args, _ = fmt.Sscanf(line, "world vertices %d", &count); args == 1 {
-			p.processNLines(count, p.parseGeoResourceWorldVertex)
+			p.processNLines(count, func(l string) {
+				_, v := parseVec3(l)
+				p.jkl.Model.Vertices = append(p.jkl.Model.Vertices, v)
+			})
 		} else if args, _ = fmt.Sscanf(line, "world texture vertices %d", &count); args == 1 {
-			p.processNLines(count, p.parseGeoResourceWorldTextureVertex)
+			p.processNLines(count, func(l string) {
+				_, v := parseVec2(l)
+				p.jkl.Model.TextureVertices = append(p.jkl.Model.TextureVertices, v)
+			})
 		} else if args, _ = fmt.Sscanf(line, "world surfaces %d", &count); args == 1 {
 			p.processNLines(count, p.parseGeoResourceWorldSurface)
-			p.processNLines(count, p.parseGeoResourceWorldSurfaceNormal)
+			p.processNLines(count, func(l string) {
+				id, v := parseVec3(l)
+				p.jkl.Model.Surfaces[id].Normal = v
+			})
 		}
 	})
 }
@@ -220,30 +233,6 @@ func (p *JklLineParser) parseGeoResourceWorldColormap(line string) {
 	colorMap := GetLoader().LoadCMP(cmpName)
 
 	p.jkl.Model.ColorMaps = append(p.jkl.Model.ColorMaps, colorMap)
-}
-
-func (p *JklLineParser) parseGeoResourceWorldVertex(line string) {
-	var id int32
-	v := mgl32.Vec3{}
-	n, err := fmt.Sscanf(line, "%d: %f %f %f", &id, &v[0], &v[1], &v[2])
-	p.checkError(err)
-	if n != 4 {
-		panic("Unable to get vertex information")
-	}
-
-	p.jkl.Model.Vertices = append(p.jkl.Model.Vertices, v)
-}
-
-func (p *JklLineParser) parseGeoResourceWorldTextureVertex(line string) {
-	var id int32
-	v := mgl32.Vec2{}
-	n, err := fmt.Sscanf(line, "%d: %f %f", &id, &v[0], &v[1])
-	p.checkError(err)
-	if n != 3 {
-		panic("Unable to get texture vertex information")
-	}
-
-	p.jkl.Model.TextureVertices = append(p.jkl.Model.TextureVertices, v)
 }
 
 func (p *JklLineParser) parseGeoResourceWorldSurface(line string) {
@@ -276,18 +265,6 @@ func (p *JklLineParser) parseGeoResourceWorldSurface(line string) {
 	}
 
 	p.jkl.Model.Surfaces = append(p.jkl.Model.Surfaces, surface)
-}
-
-func (p *JklLineParser) parseGeoResourceWorldSurfaceNormal(line string) {
-	var surfaceID int32
-	v := mgl32.Vec3{}
-	n, err := fmt.Sscanf(line, "%d: %f %f %f", &surfaceID, &v[0], &v[1], &v[2])
-	p.checkError(err)
-	if n != 4 {
-		panic("Unable to get world surface normal information")
-	}
-
-	p.jkl.Model.Surfaces[surfaceID].Normal = v
 }
 
 func (p *JklLineParser) parseMaterials() {

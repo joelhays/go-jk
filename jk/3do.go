@@ -4,6 +4,11 @@ import (
 	"github.com/go-gl/mathgl/mgl32"
 )
 
+type Jk3doParser interface {
+	Parse3doFromFile(data string) Jk3doFile
+	Parse3doFromString(data string) Jk3doFile
+}
+
 type Jk3doFile struct {
 	Materials []Material
 	GeoSets   []GeoSet

@@ -2,6 +2,12 @@ package jk
 
 import (
 	"bufio"
+	"fmt"
+	"github.com/go-gl/mathgl/mgl32"
+	"io/ioutil"
+	"log"
+	"strconv"
+	"strings"
 )
 
 type Jk3doLineParser struct {
@@ -9,6 +15,7 @@ type Jk3doLineParser struct {
 	scanner *bufio.Scanner
 	line    string
 	done    bool
+	section string
 }
 
 func NewJk3doLineParser() *Jk3doLineParser {
@@ -17,508 +24,325 @@ func NewJk3doLineParser() *Jk3doLineParser {
 	}
 }
 
-//
-//func (p *Jk3doLineParser) Parse3doFromFile(filePath string) Jk3doFile {
-//	bytes, err := ioutil.ReadFile(filePath)
-//	if err != nil {
-//		log.Fatal(err)
-//	}
-//	data := string(bytes)
-//
-//	return p.Parse3doFromString(data)
-//}
-//
-//func (p *Jk3doLineParser) Parse3doFromString(jklString string) Jk3doFile {
-//	p.jk3do = Jk3doFile{}
-//	p.scanner = bufio.NewScanner(strings.NewReader(jklString))
-//	p.line = ""
-//	p.done = false
-//
-//	p.scanner.Text()
-//	for {
-//		section, ok := p.advanceToNextSection()
-//		if !ok {
-//			break
-//		}
-//
-//		switch section {
-//		case "JK":
-//			p.getNextLine()
-//			continue
-//		case "COPYRIGHT":
-//			p.getNextLine()
-//			continue
-//		case "HEADER":
-//			p.getNextLine()
-//			continue
-//		case "SOUNDS":
-//			p.getNextLine()
-//			continue
-//		case "MATERIALS":
-//			p.parseMaterials()
-//			continue
-//		case "GEORESOURCE":
-//			p.parseGeoResource()
-//			continue
-//		case "SECTORS":
-//			p.getNextLine()
-//			continue
-//		case "MODELS":
-//			p.parseModels()
-//			continue
-//		case "TEMPLATES":
-//			p.parseTemplates()
-//			continue
-//		case "THINGS":
-//			p.parseThings()
-//			continue
-//		default:
-//			p.getNextLine()
-//			continue
-//		}
-//	}
-//
-//	return p.jkl
-//}
-//
-//func (p *Jk3doLineParser) advanceToNextSection() (string, bool) {
-//	if p.done {
-//		return "", false
-//	}
-//
-//	////todo: handle current section better...
-//	currentLine := strings.ToUpper(p.line)
-//	if strings.HasPrefix(currentLine, "SECTION: ") {
-//		section := strings.TrimPrefix(currentLine, "SECTION: ")
-//		return section, true
-//	}
-//
-//	for {
-//		line, ok := p.getNextLine()
-//		if !ok {
-//			break
-//		}
-//		line = strings.ToUpper(line)
-//		if strings.HasPrefix(line, "SECTION: ") {
-//			section := strings.TrimPrefix(line, "SECTION: ")
-//			return section, true
-//		}
-//	}
-//
-//	return "", false
-//}
-//
-//func (p *Jk3doLineParser) getNextLine() (string, bool) {
-//	for {
-//		ok := p.scanner.Scan()
-//		if !ok {
-//			p.done = true
-//			break
-//		}
-//		line := p.scanner.Text()
-//		line = strings.TrimSpace(line)
-//		p.line = line
-//
-//		if len(line) == 0 {
-//			continue //blank line
-//		}
-//		if strings.HasPrefix(line, "#") {
-//			continue //comment
-//		}
-//
-//		return line, true
-//	}
-//	return "", false
-//}
-//
-//func (p *Jk3doLineParser) getLineArgs(line string) []string {
-//	return p.getLineArgsWithoutPrefix(line, "")
-//}
-//
-//func (p *Jk3doLineParser) getLineArgsWithoutPrefix(line string, ignore string) []string {
-//	if len(ignore) != 0 {
-//		line = strings.TrimPrefix(line, ignore)
-//	}
-//	return strings.Fields(line)
-//}
-//
-//func (p *Jk3doLineParser) parseGeoResource() {
-//	for {
-//		line, ok := p.getNextLine()
-//		if !ok {
-//			break
-//		}
-//		line = strings.ToUpper(line)
-//
-//		if strings.HasPrefix(line, "SECTION: ") {
-//			break
-//		}
-//
-//		if strings.HasPrefix(line, "WORLD COLORMAPS") {
-//			args := p.getLineArgsWithoutPrefix(line, "WORLD COLORMAPS")
-//			count, err := strconv.Atoi(args[0])
-//			if err != nil {
-//				panic(err)
-//			}
-//			p.parseGeoResourceWorldColormaps(count)
-//		} else if strings.HasPrefix(line, "WORLD VERTICES") {
-//			args := p.getLineArgsWithoutPrefix(line, "WORLD VERTICES")
-//			count, err := strconv.Atoi(args[0])
-//			if err != nil {
-//				panic(err)
-//			}
-//			p.parseGeoResourceWorldVertices(count)
-//		} else if strings.HasPrefix(line, "WORLD TEXTURE VERTICES") {
-//			args := p.getLineArgsWithoutPrefix(line, "WORLD TEXTURE VERTICES")
-//			count, err := strconv.Atoi(args[0])
-//			if err != nil {
-//				panic(err)
-//			}
-//			p.parseGeoResourceWorldTextureVertices(count)
-//		} else if strings.HasPrefix(line, "WORLD SURFACES") {
-//			args := p.getLineArgsWithoutPrefix(line, "WORLD SURFACES")
-//			count, err := strconv.Atoi(args[0])
-//			if err != nil {
-//				panic(err)
-//			}
-//			p.parseGeoResourceWorldSurfaces(count)
-//		}
-//	}
-//}
-//
-//func (p *Jk3doLineParser) parseGeoResourceWorldColormaps(count int) {
-//	for i := 0; i < count; i++ {
-//		line, ok := p.getNextLine()
-//		if !ok {
-//			continue
-//		}
-//		var id int32
-//		var cmpName string
-//		n, err := fmt.Sscanf(line, "%d: %s", &id, &cmpName)
-//		if err != nil {
-//			panic(err)
-//		}
-//		if n != 2 {
-//			panic("Unable to get colormap information")
-//		}
-//
-//		colorMap := GetLoader().LoadCMP(cmpName)
-//
-//		p.jkl.Model.ColorMaps = append(p.jkl.Model.ColorMaps, colorMap)
-//	}
-//}
-//
-//func (p *Jk3doLineParser) parseGeoResourceWorldVertices(count int) {
-//	for i := 0; i < count; i++ {
-//		line, ok := p.getNextLine()
-//		if !ok {
-//			continue
-//		}
-//		var id int32
-//		v := mgl32.Vec3{}
-//		n, err := fmt.Sscanf(line, "%d: %f %f %f", &id, &v[0], &v[1], &v[2])
-//		if err != nil {
-//			panic(err)
-//		}
-//		if n != 4 {
-//			panic("Unable to get vertex information")
-//		}
-//
-//		p.jkl.Model.Vertices = append(p.jkl.Model.Vertices, v)
-//	}
-//}
-//
-//func (p *Jk3doLineParser) parseGeoResourceWorldTextureVertices(count int) {
-//	for i := 0; i < count; i++ {
-//		line, ok := p.getNextLine()
-//		if !ok {
-//			continue
-//		}
-//		var id int32
-//		v := mgl32.Vec2{}
-//		n, err := fmt.Sscanf(line, "%d: %f %f", &id, &v[0], &v[1])
-//		if err != nil {
-//			panic(err)
-//		}
-//		if n != 3 {
-//			panic("Unable to get texture vertex information")
-//		}
-//
-//		p.jkl.Model.TextureVertices = append(p.jkl.Model.TextureVertices, v)
-//	}
-//}
-//
-//func (p *Jk3doLineParser) parseGeoResourceWorldSurfaces(count int) {
-//	for i := 0; i < count; i++ {
-//		line, ok := p.getNextLine()
-//		if !ok {
-//			continue
-//		}
-//
-//		args := p.getLineArgs(line)
-//
-//		surface := surface{}
-//
-//		materialID, _ := strconv.ParseInt(args[1], 10, 32)
-//		surface.MaterialID = materialID
-//
-//		geoFlag, _ := strconv.ParseInt(args[4], 10, 32)
-//		surface.Geo = geoFlag
-//
-//		// TODO: WHAT DOES THIS VALUE MEAN?
-//		//if args[5] != "3" {
-//		//	fmt.Println("light != 3", args[5])
-//		//}
-//
-//		numVertexIds, _ := strconv.ParseInt(args[9], 10, 32)
-//		vertexIds := args[10 : 10+numVertexIds]
-//		for idx, vertexIDPair := range vertexIds {
-//			splitVertexIDPair := strings.Split(vertexIDPair, ",")
-//			vertexID, _ := strconv.ParseInt(splitVertexIDPair[0], 10, 64)
-//			texVertexID, _ := strconv.ParseInt(splitVertexIDPair[1], 10, 64)
-//			surface.VertexIds = append(surface.VertexIds, vertexID)
-//			surface.TextureVertexIds = append(surface.TextureVertexIds, texVertexID)
-//
-//			lightIntensity, _ := strconv.ParseFloat(args[10+numVertexIds:][idx], 64)
-//			surface.LightIntensities = append(surface.LightIntensities, lightIntensity)
-//		}
-//
-//		p.jkl.Model.Surfaces = append(p.jkl.Model.Surfaces, surface)
-//	}
-//
-//	for i := 0; i < count; i++ {
-//		line, ok := p.getNextLine()
-//		if !ok {
-//			continue
-//		}
-//
-//		var surfaceID int32
-//		v := mgl32.Vec3{}
-//		n, err := fmt.Sscanf(line, "%d: %f %f %f", &surfaceID, &v[0], &v[1], &v[2])
-//		if err != nil {
-//			//todo: counts are wrong in jkl file, look for 'end' instead?
-//			//break
-//			panic(err)
-//		}
-//		if n != 4 {
-//			panic("Unable to get world surface normal information")
-//		}
-//
-//		p.jkl.Model.Surfaces[surfaceID].Normal = v
-//	}
-//}
-//
-//func (p *Jk3doLineParser) parseMaterials() {
-//	for {
-//		line, ok := p.getNextLine()
-//		if !ok {
-//			break
-//		}
-//		line = strings.ToUpper(line)
-//
-//		if strings.HasPrefix(line, "SECTION: ") {
-//			break
-//		}
-//
-//		if strings.HasPrefix(line, "WORLD MATERIALS") {
-//			args := p.getLineArgsWithoutPrefix(line, "WORLD MATERIALS")
-//			count, err := strconv.Atoi(args[0])
-//			if err != nil {
-//				panic(err)
-//			}
-//			p.parseMaterialsWorldMaterials(count)
-//		}
-//	}
-//}
-//
-//func (p *Jk3doLineParser) parseMaterialsWorldMaterials(count int) {
-//	for i := 0; i < count; i++ {
-//		line, ok := p.getNextLine()
-//		if !ok {
-//			break
-//		}
-//
-//		var id int32
-//		var matName string
-//		var xTile float32
-//		var yTile float32
-//		n, err := fmt.Sscanf(line, "%d: %s %f %f", &id, &matName, &xTile, &yTile)
-//		if err != nil {
-//			break
-//			//todo: counts are not correct in some jkl files...
-//			//panic(err)
-//		}
-//		if n != 4 {
-//			panic("Unable to get world material information")
-//		}
-//
-//		material := GetLoader().LoadMAT(matName)
-//
-//		material.XTile = xTile
-//		material.YTile = yTile
-//
-//		p.jkl.Model.Materials = append(p.jkl.Model.Materials, material)
-//	}
-//}
-//
-//func (p *Jk3doLineParser) parseModels() {
-//	for {
-//		line, ok := p.getNextLine()
-//		if !ok {
-//			break
-//		}
-//		line = strings.ToUpper(line)
-//
-//		if strings.HasPrefix(line, "SECTION: ") {
-//			break
-//		}
-//
-//		if strings.HasPrefix(line, "WORLD MODELS") {
-//			args := p.getLineArgsWithoutPrefix(line, "WORLD MODELS")
-//			count, err := strconv.Atoi(args[0])
-//			if err != nil {
-//				panic(err)
-//			}
-//			p.parseModelsWorldModels(count)
-//		}
-//	}
-//}
-//
-//func (p *Jk3doLineParser) parseModelsWorldModels(count int) {
-//	for i := 0; i < count; i++ {
-//		line, ok := p.getNextLine()
-//		if !ok {
-//			break
-//		}
-//
-//		var id int32
-//		var jk3doName string
-//		n, err := fmt.Sscanf(line, "%d: %s", &id, &jk3doName)
-//		if err != nil {
-//			//todo: counts are wrong in jkl file, look for 'end' instead?
-//			break
-//			panic(err)
-//		}
-//		if n != 2 {
-//			panic("Unable to get world model information")
-//		}
-//
-//		jk3do := GetLoader().Load3DO(jk3doName)
-//		if len(p.jkl.Model.ColorMaps) > 0 {
-//			jk3do.ColorMap = p.jkl.Model.ColorMaps[0]
-//		}
-//		p.jkl.Jk3dos[jk3doName] = jk3do
-//	}
-//}
-//
-//func (p *Jk3doLineParser) parseTemplates() {
-//	for {
-//		line, ok := p.getNextLine()
-//		if !ok {
-//			break
-//		}
-//		line = strings.ToUpper(line)
-//
-//		if strings.HasPrefix(line, "SECTION: ") {
-//			break
-//		}
-//
-//		if strings.HasPrefix(line, "WORLD TEMPLATES") {
-//			args := p.getLineArgsWithoutPrefix(line, "WORLD TEMPLATES")
-//			count, err := strconv.Atoi(args[0])
-//			if err != nil {
-//				panic(err)
-//			}
-//			p.parseTemplatesWorldTemplates(count)
-//		}
-//	}
-//}
-//
-//func (p *Jk3doLineParser) parseTemplatesWorldTemplates(count int) {
-//	for i := 0; i < count; i++ {
-//		line, ok := p.getNextLine()
-//		if !ok {
-//			break
-//		}
-//
-//		args := p.getLineArgs(line)
-//
-//		name := args[0]
-//		var modelName string
-//		size := 1.0
-//		for i := 0; i < len(args); i++ {
-//			if strings.HasPrefix(args[i], "size=") {
-//				size, _ = strconv.ParseFloat(strings.TrimPrefix(args[i], "size="), 32)
-//			}
-//			if strings.HasPrefix(args[i], "model3d=") {
-//				modelName = strings.TrimPrefix(args[i], "model3d=")
-//			}
-//		}
-//
-//		if modelName != "" {
-//			tmp := Template{}
-//			tmp.Name = name
-//			tmp.Jk3doName = modelName
-//			tmp.Size = size
-//
-//			p.jkl.Jk3doTemplates[tmp.Name] = tmp
-//		}
-//	}
-//}
-//
-//func (p *Jk3doLineParser) parseThings() {
-//	for {
-//		line, ok := p.getNextLine()
-//		if !ok {
-//			break
-//		}
-//		line = strings.ToUpper(line)
-//
-//		if strings.HasPrefix(line, "SECTION: ") {
-//			break
-//		}
-//
-//		if strings.HasPrefix(line, "WORLD THINGS") {
-//			args := p.getLineArgsWithoutPrefix(line, "WORLD THINGS")
-//			count, err := strconv.Atoi(args[0])
-//			if err != nil {
-//				panic(err)
-//			}
-//			p.parseThingsWorldThings(count)
-//		}
-//	}
-//}
-//
-//func (p *Jk3doLineParser) parseThingsWorldThings(count int) {
-//	for i := 0; i < count; i++ {
-//		line, ok := p.getNextLine()
-//		if !ok {
-//			break
-//		}
-//
-//		if line == "end" {
-//			break
-//		}
-//
-//		args := p.getLineArgs(line)
-//
-//		templateName := args[1]
-//
-//		x, _ := strconv.ParseFloat(args[3], 64)
-//		y, _ := strconv.ParseFloat(args[4], 64)
-//		z, _ := strconv.ParseFloat(args[5], 64)
-//
-//		pitch, _ := strconv.ParseFloat(args[6], 64)
-//		yaw, _ := strconv.ParseFloat(args[7], 64)
-//		Roll, _ := strconv.ParseFloat(args[8], 64)
-//
-//		t := Thing{}
-//		t.TemplateName = templateName
-//		t.Position = mgl32.Vec3{float32(x), float32(y), float32(z)}
-//		t.Pitch = pitch
-//		t.Yaw = yaw
-//		t.Roll = Roll
-//
-//		p.jkl.Things = append(p.jkl.Things, t)
-//	}
-//}
+func (p *Jk3doLineParser) Parse3doFromFile(filePath string) Jk3doFile {
+	bytes, err := ioutil.ReadFile(filePath)
+	if err != nil {
+		log.Fatal(err)
+	}
+	data := string(bytes)
+
+	return p.Parse3doFromString(data)
+}
+
+func (p *Jk3doLineParser) Parse3doFromString(objString string) Jk3doFile {
+	p.jk3do = Jk3doFile{}
+	p.scanner = bufio.NewScanner(strings.NewReader(objString))
+	p.line = ""
+	p.done = false
+
+	p.scanner.Text()
+	for {
+		section, ok := p.advanceToNextSection()
+		if !ok {
+			break
+		}
+
+		switch section {
+		case "header":
+		case "modelresource":
+			p.parseModelResource()
+		case "geometrydef":
+			p.parseGeometryDef()
+		case "hierarchydef":
+			p.parseHierarchyDef()
+		}
+	}
+
+	cmpName := "dflt.cmp"
+	p.jk3do.ColorMap = GetLoader().LoadCMP(cmpName)
+
+	return p.jk3do
+}
+
+func (p *Jk3doLineParser) checkError(err error) {
+	if err != nil {
+		log.Fatal(err)
+	}
+}
+
+func (p *Jk3doLineParser) atEndOfSection() bool {
+	if strings.HasPrefix(p.line, "section: ") {
+		section := strings.TrimPrefix(p.line, "section: ")
+		if section != p.section {
+			return true
+		}
+	}
+
+	if p.line == "end" {
+		return true
+	}
+
+	return false
+}
+
+func (p *Jk3doLineParser) advanceToNextSection() (string, bool) {
+	if p.done {
+		p.section = ""
+		return "", false
+	}
+
+	if p.atEndOfSection() {
+		if strings.HasPrefix(p.line, "section: ") {
+			section := strings.TrimPrefix(p.line, "section: ")
+			p.section = section
+			return section, true
+		}
+	}
+
+	for {
+		line, ok := p.getNextLine()
+		if !ok {
+			break
+		}
+		if strings.HasPrefix(line, "section: ") {
+			section := strings.TrimPrefix(line, "section: ")
+			p.section = section
+			return section, true
+		}
+	}
+
+	p.section = ""
+	return "", false
+}
+
+func (p *Jk3doLineParser) getNextLine() (string, bool) {
+	for {
+		ok := p.scanner.Scan()
+		if !ok {
+			p.done = true
+			break
+		}
+		line := p.scanner.Text()
+		line = strings.TrimSpace(line)
+		line = strings.ToLower(line)
+		p.line = line
+
+		if len(line) == 0 {
+			continue //blank line
+		}
+		if strings.HasPrefix(line, "#") {
+			continue //comment
+		}
+
+		return line, true
+	}
+	return "", false
+}
+
+func (p *Jk3doLineParser) getLineArgs(line string) []string {
+	return p.getLineArgsWithoutPrefix(line, "")
+}
+
+func (p *Jk3doLineParser) getLineArgsWithoutPrefix(line string, ignore string) []string {
+	if len(ignore) != 0 {
+		line = strings.TrimPrefix(line, ignore)
+	}
+	return strings.Fields(line)
+}
+
+func (p *Jk3doLineParser) processSection(callback func(string)) {
+	p.processNLines(-1, callback)
+}
+
+func (p *Jk3doLineParser) processNLines(numToProcess int, callback func(string)) {
+	if numToProcess == 0 {
+		return
+	}
+
+	numProcessed := 0
+	for {
+		if numToProcess > 0 && numProcessed == numToProcess {
+			break
+		}
+
+		line, ok := p.getNextLine()
+		if !ok {
+			break
+		}
+
+		if p.atEndOfSection() {
+			break
+		}
+
+		callback(line)
+
+		numProcessed++
+	}
+}
+
+func (p *Jk3doLineParser) parseModelResource() {
+	p.processSection(func(line string) {
+		var count int
+		var args int
+		if args, _ = fmt.Sscanf(line, "materials %d", &count); args == 1 {
+			p.processNLines(count, func(l string) {
+				var id int32
+				var matName string
+				n, err := fmt.Sscanf(l, "%d: %s", &id, &matName)
+				p.checkError(err)
+				if n != 2 {
+					panic("Unable to get material information")
+				}
+
+				material := GetLoader().LoadMAT(matName)
+				material.XTile = 1.0
+				material.YTile = 1.0
+
+				p.jk3do.Materials = append(p.jk3do.Materials, material)
+			})
+		}
+	})
+}
+
+func (p *Jk3doLineParser) parseGeometryDef() {
+	p.processSection(func(line string) {
+		var count int
+		var args int
+		if args, _ = fmt.Sscanf(line, "geosets %d", &count); args == 1 {
+			for g := 0; g < count; g++ {
+
+				geoset := GeoSet{}
+
+				p.getNextLine() // GEOSET %d
+				p.getNextLine() // MESHES %d
+
+				meshCount := 0
+				args, _ = fmt.Sscanf(p.line, "meshes %d", &meshCount)
+
+				geoset.Meshes = make([]Mesh, meshCount)
+				p.jk3do.GeoSets = append(p.jk3do.GeoSets, geoset)
+
+				for m := 0; m < meshCount; m++ {
+					mesh := &geoset.Meshes[m]
+
+					p.getNextLine() // MESH %d
+
+					p.getNextLine() // NAME %s
+					p.getNextLine() // RADIUS %f
+					p.getNextLine() // GEOMETRYMODE %d
+					p.getNextLine() // LIGHTINGMODE %d
+					p.getNextLine() // TEXTUREMODE %d
+
+					p.getNextLine() // VERTICES %d
+					vtxCount := 0
+					args, _ = fmt.Sscanf(p.line, "vertices %d", &vtxCount)
+					p.processNLines(vtxCount, func(l string) {
+						_, v := parseVec3(l)
+						mesh.Vertices = append(mesh.Vertices, v)
+					})
+
+					p.getNextLine() // TEXTURE VERTICES %d
+					texVtxCount := 0
+					args, _ = fmt.Sscanf(p.line, "texture vertices %d", &texVtxCount)
+					p.processNLines(texVtxCount, func(l string) {
+						_, v := parseVec2(l)
+						mesh.TextureVertices = append(mesh.TextureVertices, v)
+					})
+
+					p.getNextLine() // VERTEX NORMALS
+					p.processNLines(vtxCount, func(l string) {
+						_, v := parseVec3(l)
+						mesh.VertexNormals = append(mesh.VertexNormals, v)
+					})
+
+					p.getNextLine() // FACES %d
+					faceCount := 0
+					args, _ = fmt.Sscanf(p.line, "faces %d", &faceCount)
+					p.processNLines(faceCount, func(l string) {
+						args := strings.Fields(strings.Replace(l, ",", " ", -1))
+
+						surface := Face{}
+
+						materialID, _ := strconv.ParseInt(args[1], 10, 32)
+						surface.MaterialID = materialID
+
+						geoFlag, _ := strconv.ParseInt(args[3], 10, 32)
+						surface.GeometryMode = geoFlag
+
+						//TODO: WHAT DOES THIS VALUE MEAN?
+						//if components[4] != "3" {
+						//	fmt.Println("light != 3", components[5])
+						//}
+
+						numVertexIds, _ := strconv.ParseInt(args[7], 10, 32)
+						vertexIds := args[8 : 8+(numVertexIds*2)]
+						for v := 0; v < int(numVertexIds*2); v += 2 {
+							vertexID, _ := strconv.ParseInt(strings.TrimRight(vertexIds[v], ","), 10, 32)
+							texVertexID, _ := strconv.ParseInt(vertexIds[v+1], 10, 32)
+							surface.VertexIds = append(surface.VertexIds, vertexID)
+							surface.TextureVertexIds = append(surface.TextureVertexIds, texVertexID)
+
+							lightIntensity := 1.0
+							surface.LightIntensities = append(surface.LightIntensities, lightIntensity)
+						}
+						mesh.Faces = append(mesh.Faces, surface)
+					})
+
+					p.getNextLine() // FACE NORMALS
+					p.processNLines(faceCount, func(l string) {
+						_, v := parseVec3(l)
+						mesh.FaceNormals = append(mesh.FaceNormals, v)
+					})
+				}
+			}
+		}
+	})
+}
+
+func (p *Jk3doLineParser) parseHierarchyDef() {
+	p.processSection(func(line string) {
+		var count int
+		var args int
+		if args, _ = fmt.Sscanf(line, "hierarchy nodes %d", &count); args == 1 {
+			p.processNLines(count, func(l string) {
+				args := p.getLineArgs(l)
+
+				meshID, _ := strconv.ParseInt(args[3], 10, 32)
+				parentID, _ := strconv.ParseInt(args[4], 10, 32)
+				childID, _ := strconv.ParseInt(args[5], 10, 32)
+				siblingID, _ := strconv.ParseInt(args[6], 10, 32)
+				numChildren, _ := strconv.ParseInt(args[7], 10, 32)
+
+				x, _ := strconv.ParseFloat(args[8], 32)
+				y, _ := strconv.ParseFloat(args[9], 32)
+				z, _ := strconv.ParseFloat(args[10], 32)
+
+				pitch, _ := strconv.ParseFloat(args[11], 32)
+				yaw, _ := strconv.ParseFloat(args[12], 32)
+				roll, _ := strconv.ParseFloat(args[13], 32)
+
+				pivotX, _ := strconv.ParseFloat(args[14], 32)
+				pivotY, _ := strconv.ParseFloat(args[15], 32)
+				pivotZ, _ := strconv.ParseFloat(args[16], 32)
+
+				nodeName := args[17]
+
+				def := HierarchyDef{
+					MeshID:      meshID,
+					ParentID:    parentID,
+					ChildID:     childID,
+					SiblingID:   siblingID,
+					NumChildren: numChildren,
+					Position:    mgl32.Vec3{float32(x), float32(y), float32(z)},
+					Pitch:       pitch,
+					Yaw:         yaw,
+					Roll:        roll,
+					Pivot:       mgl32.Vec3{float32(pivotX), float32(pivotY), float32(pivotZ)},
+					NodeName:    nodeName,
+				}
+
+				p.jk3do.Hierarchy = append(p.jk3do.Hierarchy, def)
+			})
+		}
+	})
+}

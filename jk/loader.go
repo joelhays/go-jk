@@ -13,13 +13,17 @@ var (
 )
 
 type Loader struct {
-	cache map[string]interface{}
+	cache       map[string]interface{}
+	jklParser   JklParser
+	jk3doParser Jk3doParser
 }
 
 func GetLoader() *Loader {
 	once.Do(func() {
 		instance = &Loader{}
 		instance.cache = make(map[string]interface{})
+		instance.jklParser = NewJklLineParser()
+		instance.jk3doParser = NewJk3doLineParser2()
 	})
 	return instance
 }
@@ -50,14 +54,12 @@ func (l *Loader) Load3DOManifest() []string {
 }
 
 func (l *Loader) LoadJKL(filename string) Jkl {
-	parser := NewJklLineParser()
-
 	for _, gob := range episodeGobFiles {
 		fileBytes := loadFileFromGOB(gob, filename)
 		if fileBytes == nil {
 			continue
 		}
-		jklLevel := parser.ParseJKLFromString(string(fileBytes))
+		jklLevel := l.jklParser.ParseJKLFromString(string(fileBytes))
 		return jklLevel
 	}
 
@@ -66,7 +68,7 @@ func (l *Loader) LoadJKL(filename string) Jkl {
 		if fileBytes == nil {
 			continue
 		}
-		jklLevel := parser.ParseJKLFromString(string(fileBytes))
+		jklLevel := l.jklParser.ParseJKLFromString(string(fileBytes))
 		return jklLevel
 	}
 
@@ -74,8 +76,6 @@ func (l *Loader) LoadJKL(filename string) Jkl {
 }
 
 func (l *Loader) Load3DO(filename string) Jk3doFile {
-	parser := NewJk3doRegexParser()
-
 	var obj Jk3doFile
 
 	if obj, ok := l.cache[filename]; ok {
@@ -87,7 +87,7 @@ func (l *Loader) Load3DO(filename string) Jk3doFile {
 		if fileBytes == nil {
 			continue
 		}
-		obj = parser.Parse3doFromString(string(fileBytes))
+		obj = l.jk3doParser.Parse3doFromString(string(fileBytes))
 		l.cache[filename] = obj
 		return obj
 	}

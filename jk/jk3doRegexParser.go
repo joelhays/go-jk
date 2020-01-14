@@ -2,6 +2,7 @@ package jk
 
 import (
 	"bufio"
+	"io/ioutil"
 	"log"
 	"regexp"
 	"strconv"
@@ -16,6 +17,16 @@ type Jk3doRegexParser struct {
 
 func NewJk3doRegexParser() *Jk3doRegexParser {
 	return &Jk3doRegexParser{}
+}
+
+func (p *Jk3doRegexParser) Parse3doFromFile(filePath string) Jk3doFile {
+	bytes, err := ioutil.ReadFile(filePath)
+	if err != nil {
+		log.Fatal(err)
+	}
+	data := string(bytes)
+
+	return p.Parse3doFromString(data)
 }
 
 func (p *Jk3doRegexParser) Parse3doFromString(data string) Jk3doFile {
