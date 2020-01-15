@@ -1,0 +1,71 @@
+<html>
+<head>
+   <title>JediKnight Unofficial Specs</title>
+   <meta name="?" content="?"><!-- can fill in or leave out -->
+   </head>
+<body text="#000000" bgcolor="#FFFFFF" link="#0000EE" vlink="#551A8B" alink="#FF0000">
+
+<h1>PAR Files</h1>
+<HR SIZE=2 WIDTH=70%>
+<P>
+
+<STRONG><FONT SIZE="+1">PAR Files General</FONT></STRONG>
+<P>
+PAR files are particle cloud definitions. They have two sections: HEADER and GEOMETRYDEF
+<P>
+<P>
+<HR SIZE=2 WIDTH=70%>
+<B>SECTION: HEADER</B>
+<P>
+Contains basic information:
+<P> 
+<TABLE BORDER=3 BGCOLOR="#C0C0C0"CELLPADDING=5>
+<TR><TD><PRE>
+PAR 1.0                      # version
+
+SIZE .002                    # size (of each particle ?)
+
+MATERIAL 00teleport.mat      # MAT to use
+
+LIGHTINGMODE 0               # lighting mode (?)
+</PRE></TD></TR>
+</TABLE>
+<P>
+
+<HR SIZE=2 WIDTH=200 Align=left>
+<P>
+<B>SECTION: GEOMETRYDEF</B>
+<P>
+<TABLE BORDER=3 BGCOLOR="#C0C0C0"CELLPADDING=5>
+<TR><TD><PRE>
+RADIUS   0.109546                              # radius of particle cloud
+INSERT OFFSET   0.000000 0.000000 0.108216     # xyz coordinates of insertion point
+</PRE></TD></TR>
+</TABLE>
+<P>
+Then comes the coordinates of each particle.
+<P>
+<TABLE BORDER=3 BGCOLOR="#C0C0C0"CELLPADDING=5>
+<TR><TD><PRE>
+VERTICES N       # N is the number of particles
+
+# num:     x:         y:         z:         i:
+    0:  -0.000141  -0.096503   0.000141   0.000000
+    1:  -0.023951   0.033595  -0.088717   0.000000
+    2:  -0.065190   0.033595   0.065190   0.000000
+    3:   0.088717   0.033595   0.023951   0.000000
+    4:  -0.006949  -0.092891  -0.025265   0.000000
+
+. . .
+</PRE></TD></TR>
+</TABLE>
+<P>
+X:, Y:, and Z: are the spatial coordinates of the particle. i: is the light intensity of the particle (?)
+
+
+<P><!-- include from here down at bottom of all pages -->
+<BR> 
+<P>
+<HR SIZE=2>
+</body>
+</html>

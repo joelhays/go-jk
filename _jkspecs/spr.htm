@@ -1,0 +1,47 @@
+<html>
+<head>
+   <title>JediKnight Unofficial Specs</title>
+   <meta name="?" content="?"><!-- can fill in or leave out -->
+   </head>
+<body text="#000000" bgcolor="#FFFFFF" link="#0000EE" vlink="#551A8B" alink="#FF0000">
+
+<h1>SPR Files</h1>
+<HR SIZE=2 WIDTH=70%>
+<P>
+<A NAME="files">
+<STRONG><FONT SIZE="+1">SPR Files General</FONT></STRONG>
+<P>
+SPR files are simple text files which contain sprite information, for example bubbles, explosions and splashes.
+<P>
+<HR> 
+Each SPR file has only one line of information:
+<P>
+
+<TABLE BORDER=3 BGCOLOR="#C0C0C0"CELLPADDING=5>
+<TR><TD><PRE>
+#material   type  width  height  geo  light  tex  extralight  xoff  yoff  zoff
+debrisx.mat 0     0.05   0.05    4    0      0    0.0         0.0   0.00  0.0
+</PRE></TD></TR></TABLE>
+<P>
+
+<TABLE BORDER=0>
+<TR><TD WIDTH=100>material</TD><TD>MAT file to use for sprite</TD></TR>
+<TR><TD>type</TD><TD>always seems to equal 0</TD></TR>
+<TR><TD>width</TD><TD>width of sprite (float)</TD></TR>
+<TR><TD>height</TD><TD>height of sprite (float)</TD></TR>
+<TR><TD>geo</TD><TD>geometry mode ? (always = 4, except in twinkle.spr where = 3)</TD></TR>
+<TR><TD>light</TD><TD>lighting mode ? (integer, seems to always = 0)</TD></TR>
+<TR><TD>tex</TD><TD>texture mode ? (seems to always = 0)</TD></TR>
+<TR><TD>extralight</TD><TD>light intensity of sprite above surroundings (float)</TD></TR>
+<TR><TD>xoff, yoff, zoff</TD><TD>Probably the offsets of the insertion point</TD></TR>
+</TABLE>
+<P>
+Note: together, width and height seem to determine the size of the sprite. This probably means that each sprite is rectangular in shape, with the 4 corners of the MAT fitted to the sprite's 4 corners. Consider the 3 bubble sprites: each are identical except that they have different sizes.
+
+
+<P><!-- include from here down at bottom of all pages -->
+<BR> 
+<P>
+<HR SIZE=2>
+</body>
+</html>

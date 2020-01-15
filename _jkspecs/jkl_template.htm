@@ -1,0 +1,270 @@
+<html>
+<head>
+   <title>JediKnight Unofficial Specs</title>
+   <meta name="?" content="?"><!-- can fill in or leave out -->
+   </head>
+<body text="#000000" bgcolor="#FFFFFF" link="#0000EE" vlink="#551A8B" alink="#FF0000">
+
+<h1>Templates</h1>
+<HR SIZE=2 WIDTH=70%>
+<P>
+<A NAME="files">
+<STRONG><FONT SIZE="+1">World Templates In JKL</FONT></STRONG>
+<P>
+Depending on the use of a template there is a few conventions used in their naming. 
+<UL>
+<LI>"<B>_name</B>"  this is used to signify a template that will have more templates based on it. It is not directly used by cogs.
+<P>
+<LI>"<B>+name</B>"  this is used when something will be created by this template ie: an explosion ,item etc. There can be also more templates based on it.
+<P>
+<LI>"<B>name</B>"   an end use template
+</UL>
+<P>
+<B><FONT SIZE="+1"> Order</FONT></B>
+<P>
+<HR WIDTH=200 Align=Left> 
+<P>
+The order the templates are placed is important.Templates have what we refer to as a Parent and Childs. A parent template generaly would have a "Type=" and be based on none. Though you could say a parent is any template which has another template based on it.A child template is a template that is based on another one.It generaly either adds new adjectives or modifies existing attributes of the parent template.In the editing community templates are refered to as a tpl for short.
+<P>
+Example of proper ordering , templates that are used by other tpls are listed first
+<BR>
+<TABLE BORDER=3 BGCOLOR="#C0C0C0"CELLPADDING=5>
+<TR><TD><PRE>
+<B>Tpl Name</B>      <B>Tpl based on</B>        <B>Adjectives and values</B>
+_actor           none              orient=(0.000000/0.000000/0.000000) type=actor collide=1 
+walkplayer       _actor            type=player thingflags=0x20000401 light=0.200000 model3d=ky.3do 
+someactor        walkplayer         creatething=_actor 
+</PRE></TD></TR></TABLE>
+<P>
+Example of improper ordering , templates that are used by other tpls not are listed in proper order and will not function correctly
+<BR>
+<TABLE BORDER=3 BGCOLOR="#C0C0C0"CELLPADDING=5>
+<TR><TD><PRE>
+<B>Tpl Name</B>      <B>Tpl based on</B>        <B>Adjectives and values</B>
+someactor        walkplayer         creatething=_actor
+walkplayer       _actor            type=player thingflags=0x20000401 light=0.200000 model3d=ky.3do  
+_actor           none              orient=(0.000000/0.000000/0.000000) type=actor collide=1
+</PRE></TD></TR></TABLE>
+<P>
+
+<B><FONT SIZE="+1"> Types</FONT></B> 
+<P>
+<HR WIDTH=200 Align=Left> 
+<P>
+ Templates can be thought of as  a tree. They have a root and branches. The root template is always based on "<B>None</B>" When specifying a none template it needs to have a "<B>Type</B>" depending on the templates that will be based on the Root or Parent template. The branches could be thought of as the child templates. 
+<P>
+<B>Template Types:</B>
+<BR>
+<TABLE BORDER=3 BGCOLOR="#C0C0C0"CELLPADDING=5>
+<TR><TD><PRE>
+actor         -  droid,enemy,civilian 
+cog           -  class cogs
+corpse        -  dead things
+debris        -  throwable thingse etc
+explosion     -  explosions
+ghost         -  cameras
+item          -  pickup weapons,powerups
+particle      -  cloud effects,sparks
+player        -  the player
+weapon        -  force,weapon characteristics
+</PRE></TD></TR></TABLE>
+<P>
+There are quite a few adjectives that can be used in the template files depending upon
+the "<B>Type</B>" . Some of these are specific to one type and others are more for general use.
+<P>
+The adjectives are split into several groups. The <B>Types</B> use a mixture of these groups. In the list below 
+you will find the appropriate groups for use with the <B>TYPE</B>.
+<P>
+<TABLE BORDER=3 BGCOLOR="#C0C0C0"CELLPADDING=5>
+<TR><TD><PRE>
+actor         -  <A HREF="jkl_template.htm#general">General</A> + <A HREF="jkl_t_physics.htm">Physics</A> + <A HREF="jkl_t_actor.htm">Actor</A> 
+cog           -  <A HREF="jkl_template.htm#general">General</A> + <A HREF="jkl_t_physics.htm">Physics</A> + <A HREF="jkl_t_path.htm">Path</A>
+corpse        -  <A HREF="jkl_template.htm#general">General</A> + <A HREF="jkl_t_physics.htm">Physics</A>
+debris        -  <A HREF="jkl_template.htm#general">General</A> + <A HREF="jkl_t_physics.htm">Physics</A>
+explosion     -  <A HREF="jkl_template.htm#general">General</A> + <A HREF="jkl_t_explosion.htm">Explosion</A>
+ghost         -  <A HREF="jkl_template.htm#general">General</A> +
+item          -  <A HREF="jkl_template.htm#general">General</A> + <A HREF="jkl_t_item.htm">Item</A>
+particle      -  <A HREF="jkl_template.htm#general">General</A> + <A HREF="jkl_t_physics.htm">Physics</A> + <A HREF="jkl_t_particle.htm">Particle</A>
+player        -  <A HREF="jkl_template.htm#general">General</A> + <A HREF="jkl_t_physics.htm">Physics</A> + <A HREF="jkl_t_actor.htm">Actor</A>
+weapon        -  <A HREF="jkl_template.htm#general">General</A> + <A HREF="jkl_t_weapon.htm">Weapon</A>
+</PRE></TD></TR></TABLE>
+<P>
+
+
+
+<HR WIDTH=200 Align=left>
+<P><A NAME="general"></A>
+<B>General Adjectives</B>
+<P>
+<TABLE BORDER=3 BGCOLOR="#C0C0C0"CELLPADDING=5>
+<TR><TD><PRE>
+<A HREF="#aiclass">aiclass</A>
+<A HREF="#cog">cog</A>
+<A HREF="#collide">collide</A>
+<A HREF="#creatething">creatething</A>
+<A HREF="#light">light</A>
+<A HREF="#model3d">model3d</A>
+<A HREF="#move">move</A>
+<A HREF="#movesize">movesize</A>
+<A HREF="#orient">orient</A>
+<A HREF="#particle">particle</A>
+<A HREF="#puppet">puppet</A>
+<A HREF="#size">size</A>
+<A HREF="#soundclass">soundclass</A>
+<A HREF="#sprite">sprite</A>
+<A HREF="#thingflags">thingflags</A>
+<A HREF="#timer">timer</A>
+</PRE></TD></TR></TABLE>
+<P>
+<HR Size=2 WIDTH=200 Align=left>
+<P>
+<A NAME="aiclass"></A>
+<B>aiclass</B> General Adjective
+<P>
+Links an Ai file to this template.<!--  Need link to ai file when available -->
+<P>
+<B>Use: aiclass=somefile.ai</B>   
+<P>
+<HR Size=2 WIDTH=200 Align=left>
+<P>
+<A NAME="cog"></A>
+<B>cog</B> General Adjective
+<P>
+Specifies the class cog file <A HREF="cog.htm">COG File</A>
+<P>
+<B>Use: cog=somefile.cog</B>
+<P>
+<HR Size=2 WIDTH=200 Align=left>
+<P>
+<A NAME="collide"></A>
+<B>collide</B> General Adjective
+<P>
+Specifies the collide type . <A HREF="cog_flags.htm#collide_flags">Collide Flags</A>
+<P>
+<B>Use: collide=Int</B> 
+<P>
+<HR Size=2 WIDTH=200 Align=left>
+<P>
+<A NAME="creatething"></A>
+<B>creatething</B> General Adjective
+<P>
+Creates a thing based on named template.
+<P>
+<B>Use: creatething=template</B> When template is created also create this thing.
+<P>
+<HR Size=2 WIDTH=200 Align=left>
+<P>
+<A NAME="light"></A>
+<B>light</B> General Adjective
+<P>
+Specifies a dynamic light value 
+<P>
+<B>Use: light=flex</B>
+<P>
+<HR Size=2 WIDTH=200 Align=left>
+<P>
+<A NAME="model3d"></A>
+<B>model3d</B> General Adjective
+<P>
+Specifies the  3do to use for template <A HREF="3do.htm">3DO File</A>
+<P>
+<B>Use: model3d=somefile.3do</B>
+<P>
+<HR Size=2 WIDTH=200 Align=left>
+<P>
+<A NAME="move"></A>
+<B>move</B> General Adjective
+<P>
+Specifies the move type.
+<P>
+<B>Use: move=*</B>    can be one of : none | path | physics 
+<P>
+<HR Size=2 WIDTH=200 Align=left>
+<P>
+<A NAME="movesize"></A>
+<B>movesize</B> General Adjective
+<P>
+Specifies an area  for collision purposes
+<P>
+<B>Use: movesize=flex</B>
+<P>
+<HR Size=2 WIDTH=200 Align=left>
+<P>
+<A NAME="orient"></A>
+<B>orient</B> General Adjective
+<P>
+Provides an orientation for thing created by template 
+<P>
+<B>Use: orient=vector</B> [pitch,roll,yaw] [flex X ,flex Y ,flex Z]
+<P>
+<HR Size=2 WIDTH=200 Align=left>
+<P>
+<A NAME="particle"></A>
+<B>particle</B> General Adjective
+<P>
+Links a particle to the template  <A HREF="par.htm">PAR File</A>
+<P>
+<B>Use: particle=somefile.par</B>
+<P>
+<HR Size=2 WIDTH=200 Align=left>
+<P>
+<A NAME="puppet"></A>
+<B>puppet</B> General Adjective
+<P>
+Links a puppet to the template <A HREF="pup.htm">PUP File</A>
+<P>
+<B>Use puppet=somefile.pup</B>
+<P>
+<HR Size=2 WIDTH=200 Align=left>
+<P>
+<A NAME="size"></A>
+<B>size</B> General Adjective
+<P>
+Specifies how big a area the target will be.
+<P>
+<B>Use: size=flex</B>
+<P>
+<HR Size=2 WIDTH=200 Align=left>
+<P>
+<A NAME="soundclass"></A>
+<B>soundclass</B> General Adjective
+<P>
+Links a Sound Class to template <A HREF="snd.htm">SND File</A>
+<P>
+<B>Use: soundclass=somefile.snd</B>  Can also be "none" to overide a parent template.
+<P>
+<HR Size=2 WIDTH=200 Align=left>
+<P>
+<A NAME="sprite"></A>
+<B>sprite</B> General Adjective
+<P>
+Links a Sprite with the template <A HREF="spr.htm">SPR File</A>
+<P>
+<B>Use: sprite=somefile.spr</B>
+<P>
+<HR Size=2 WIDTH=200 Align=left>
+<P>
+<A NAME="thingflags"></A>
+<B>thingflags</B> General Adjective
+<P>
+Sets specific thingflags. <A HREF="cog_flags.htm#thing_flags">Thing Flags</A>
+<P>
+<B>Use: thingflags=int</B> Note a child template can reset the flags of a parent. Ie: the flags are  not cumlative.
+<P>
+<HR Size=2 WIDTH=200 Align=left>
+<P>
+<A NAME="timer"></A>
+<B>timer</B> General Adjective
+<P>
+Makes a timer available for this template.
+<P>
+<B>Use: timer=flex</B> Sets a life span for thing, thing is removed when timer elapses.
+<P><!-- include from here down at bottom of all pages -->
+<BR> 
+<P>
+<HR SIZE=2>
+</body>
+</html>
+
+
+  

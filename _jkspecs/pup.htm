@@ -1,0 +1,82 @@
+<html>
+<head>
+   <title>JediKnight Unofficial Specs</title>
+   <meta name="?" content="?"><!-- can fill in or leave out -->
+   </head>
+<body text="#000000" bgcolor="#FFFFFF" link="#0000EE" vlink="#551A8B" alink="#FF0000">
+
+<h1>PUP Files</h1>
+<HR SIZE=2 WIDTH=70%>
+<P>
+<A NAME="files">
+<STRONG><FONT SIZE="+1">PUP Files General</FONT></STRONG>
+<P>
+PUP files (or Puppet files) denote which KEY file is to be executed depending on an objects current state.  A PUP file consists of two parts: the MODES and the JOINTS (JOINTS is optional).
+
+<HR> 
+<B>Modes</B>
+<P>
+Modes are used to discriminate between which KEYs are used for each action.  Modes can have any number of submodes that more specifically define the state of the object.  Some of the more common submodes are:
+<P>
+<P>
+<TABLE BORDER=3 BGCOLOR="#C0C0C0"CELLPADDING=5>
+<TR><TD><PRE>
+stand walk run walkback strafeleft straferight death death2
+hit jump rising drop land fall choke leap turnleft turnright
+fire fire2 block block2
+</PRE></TD></TR></TABLE>
+<P>
+
+Each submode is made up of the following parts:
+<P>
+<TABLE BORDER=0>
+<TR><TD WIDTH=100>submode</TD><TD>This is the name of the submode</TD></TR>
+<TR><TD>keyframe</TD><TD>Which KEY file is to be used for this state</TD></TR>
+<TR><TD>flags</TD><TD>32-bit value specifying the properties of this submode</TD></TR>
+<TR><TD>lopri</TD><TD>Low-priority of this submode (0-5)</TD></TR>
+<TR><TD>hipri</TD><TD>High-priority of this submode (0-5)</TD></TR>
+</TABLE>
+<P>
+
+Modes can inherit submodes from any previously defined mode.  This is achievable through the <B>basedon</B> keyword in the mode declaration.
+<P>
+For example: Mode=2, BasedOn=0
+<P>
+Mode 2 inherits all of the submodes of Mode 0.  From here, Mode 2 can either override a previously defined submode by using the same name, or it can define new submodes by using different names.
+<P>
+Inheritance is used most commonly to differ between different styles of movement based on the physical attributes of the object or its environment (ie carrying the lightsaber, or swimming).
+<P>
+
+<A Name="joint"></a>
+<HR SIZE=2 WIDTH=200 Align=left> 
+<B>JOINTS</B>
+<P>
+This section is used for 3DOs that have several nodes, i.e. meshes that move separately. For example, different body parts of a stormtrooper. Joints are also used to create effects such as the Lambda Shuttle opening its wings when it takes off. It is ommitted from other objects, such as lifts and moving platforms.  It is used to associate primary "sections" with the Hierarchy Nodes of the 3DO.
+<P>
+For humanoid objects there are 7 of these sections (there are less for simpler creatures like the Octopus:
+<BR>0: head
+<BR>1: neck
+<BR>2: torso
+<BR>3: primary weapon fire
+<BR>4: secondard weapon fire
+<BR>5: primary weapon aiming joint
+<BR>6: secondary weapon aiming joint
+<P>
+
+Assignment is achieved through the use of the '=' character.  For instance:
+<P>
+<TABLE BORDER=3 BGCOLOR="#C0C0C0"CELLPADDING=5>
+<TR><TD><PRE>
+1=16
+</PRE></TD></TR></TABLE>
+<P>
+Means that the joint 1 of the object is contained in node 16 of the 3DO.
+<P>
+This section is begun with the <B>joints</B> keyword, and is ended with the <B>end</B> keyword.
+
+<P><!-- include from here down at bottom of all pages -->
+<BR> 
+<P>
+<HR SIZE=2>
+</body>
+</html>

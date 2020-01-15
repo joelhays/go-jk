@@ -1,0 +1,68 @@
+<html>
+<head>
+   <title>JediKnight Unofficial Specs</title>
+   <meta name="DL" content="sft">
+  </head>
+<body text="#000000" bgcolor="#FFFFFF" link="#0000EE" vlink="#551A8B" alink="#FF0000">
+
+<h1>SFT Files</h1>
+<HR SIZE=2 WIDTH=70%>
+<P>
+<A NAME="cmp">
+<STRONG><FONT SIZE="+1">SFT Files General</FONT></STRONG>
+<P>
+SFT files are the font files used in JediKnight and Mysteries of the Sith.
+<P>
+<B>The file is structured in four parts.</B>
+<P>
+<TABLE BORDER=3 BGCOLOR="#C0C0C0"CELLPADDING=5>
+<TR><TD><PRE><B>File structure:</B>
+  TSFTHeader
+  CharacterTables
+  TBMHeader
+  TImage 
+</PRE></TD></TR></TABLE>
+<P>
+<B>The header for an SFT file is:</B>
+<P>
+<TABLE BORDER=3 BGCOLOR="#C0C0C0"CELLPADDING=5>
+<TR><TD><PRE>
+TSFTHeader:
+  FileType      char[4]                 // 'SFNT'
+  unknown1      longint                 // =0x0A
+  unknown2      longint
+  unknown3      longint
+  unknown4      longint
+  NumTbls       longint                 // number of character tables
+  padding       longint[4]              // =0
+</PRE></TD></TR></TABLE>
+<P>
+<B>Then follows NumTbls Character Tables :</B>
+<P>
+<TABLE BORDER=3 BGCOLOR="#C0C0C0"CELLPADDING=5>
+<TR><TD><PRE>
+TCharacterTable:
+  FirstChar     word                    // ASCII value of first character in table
+  LastChar      word                    // ASCII value of last character in table
+  CharDefs      TCharDef[lastchar - firstchar + 1]
+</PRE></TD></TR></TABLE>
+<P>
+<B>Definition of the CharDefs is :</B>
+<P>
+<TABLE BORDER=3 BGCOLOR="#C0C0C0"CELLPADDING=5>
+<TR><TD><PRE>
+TCharDef:
+  XOff          longint // X offset of character in image (in pixels)
+  Width longint // width of character (in pixels)
+</PRE></TD></TR></TABLE>
+<P>
+<B>TBMHeader: See <A HREF="bm.htm>BM Files</A></B>
+<P>
+<P>
+<B>TImage: See <A HREF="bm.htm>BM Files</A></B>
+<P>
+<BR>
+<HR SIZE=2>
+<P>
+</body>
+</html>

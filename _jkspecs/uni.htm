@@ -1,0 +1,121 @@
+<html>
+<head>
+   <title>JediKnight Unofficial Specs</title>
+   <meta name="?" content="?"><!-- can fill in or leave out -->
+   </head>
+<body text="#000000" bgcolor="#FFFFFF" link="#0000EE" vlink="#551A8B" alink="#FF0000">
+
+<h1>UNI Files</h1>
+<HR SIZE=2 WIDTH=70%>
+<P>
+<A NAME="files">
+<STRONG><FONT SIZE="+1">UNI Files General</FONT></STRONG>
+<P>
+UNI files are very similar to DF MSG files. They contain messages that are displayed at various points in the game.
+<P>
+
+<TABLE BORDER=1>
+<TR><TD WIDTH=100>cogstrings.uni</TD><TD>Level names, mission objectives, and COG-triggered in-game messages. The most important UNI file for addon level designers.</TD></TR>
+<TR><TD>credits.uni</TD><TD>Game credits. Played when you complete the game.</TD></TR>
+<TR><TD>cutstrings.uni</TD><TD>Subtitles for cutscenes.</TD></TR>
+<TR><TD>jkstrings.uni</TD><TD>System messages (should not be modified), names of Jedi Ranks, cutscene names, model names, and COG strings (pickup messages etc.).</TD></TR>
+<TR><TD>sithstrings.uni</TD><TD>Special in-game messages and multiplayer messages.</TD></TR>
+</TABLE>
+
+<P>
+COGSTRINGS.UNI is located in the 'misc' subdirectory of the episode GOB, eg. jk1\misc\cogstrings.uni
+<P>
+SITHSTRINGS.UNI is located in the 'misc' subdirectory of the res2 GOB, eg. res2\misc\sithstrings.uni
+<P>
+The other three UNI files are located in the 'ui' (note it is spelled without an 'n') subdirectory of the res1 GOB, eg. res1hi\ui\credits.uni
+<P>
+<HR> 
+
+<P><A Name="major heading"></A>
+<B>Message Count</B>
+<P>
+<TABLE BORDER=3 BGCOLOR="#C0C0C0"CELLPADDING=5><TR><TD><PRE>
+MSGS 179
+</PRE></TD></TR></TABLE>
+<P>
+This states the total number of messages in the file. It should be updated every time a new message is added.
+<P>
+<BR>
+
+<P><A Name="major heading"></A>
+<B>Messages</B>
+<P>
+<TABLE BORDER=3 BGCOLOR="#C0C0C0"CELLPADDING=5><TR><TD><PRE>
+. . .
+
+   "COG_01005"    0  "No Luck! I must need a special tool of some sort!"
+   "COG_01006"    0  "My father's workshop! WeeGee has got to be in here!"
+
+. . .
+
+END                 # end of the UNI file
+</PRE></TD></TR></TABLE>
+<P>
+The first string is the message key, which identifies the message. The number after the key is unused. The following string is the message to be displayed.
+<P>
+<BR>
+
+<B>COGSTRINGS.UNI:</B>
+<P>
+<TABLE BORDER=3 BGCOLOR="#C0C0C0"CELLPADDING=5>
+<TR><TD><PRE>
+MSGS 179          # <--- DON'T FORGET TO UPDATE THIS COUNT
+
+#  "key"     unused number   "string"
+
+#***************************
+#  Names of Levels
+#***************************
+   "01NARSHADDA"     0  "1 - Double-Cross on Nar Shaddaa"
+   "02NARSHADDA"     0  "2 - The Lost Disk"
+   "03KATARN"        0  "3 - The Return Home to Sulon"
+   
+. . .
+
+# ***************************
+# Objective descriptions
+# ***************************
+
+#  Level 1 - Nar Shaddaa - messages.
+
+   "GOAL_01000"   0  "Find 8t88 before he escapes with your father's data disc."
+
+   "01NARSHADDA_TEXT_00"   0  "^Objectives"
+   "01NARSHADDA_TEXT_01"   0  "Find 8t88 before he escapes with your father's 
+data disc. His cronies are out there with blasters in hand and your name in 
+the clip. Tread lightly."
+
+. . .
+
+
+#***************************
+#  COG Strings
+#***************************
+
+   "COG_01001"    0  "Locked!"
+   "COG_01002"    0  "Hmm, locked."
+   "COG_01003"    0  "Jammed!"
+
+. . .
+ 
+END
+</PRE></TD></TR></TABLE>
+<P>
+
+When creating an addon level, you will want to patch the first two sections of COGSTRINGS.UNI, i.e. the "Names of Levels" section and the "Objective Descriptions" section. These messages appear in the savegame, level-loading and objective screens.
+<P>
+For level names, the message key is the name of the JKL file; for example, the key for 01NARSHADDA.JKL is "01NARSHADDA". The message keys for the text in the level-loading screen are "MYLEVEL_TEXT_00" and "MYLEVEL_TEXT_01" where "MYLEVEL" is the name of the JKL. The ^ changes the text to a larger font.
+<P>
+The third and final section ("COG Strings") are COG-triggered messages that appear in-game. This is the section to which you can add your own messages. Remember again to update the message count at the top of the file.
+
+<P><!-- include from here down at bottom of all pages -->
+<BR> 
+<P>
+<HR SIZE=2>
+</body>
+</html>

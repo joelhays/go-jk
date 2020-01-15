@@ -1,0 +1,43 @@
+<html>
+<head>
+   <title>JediKnight Unofficial Specs</title>
+   <meta name="?" content="?"><!-- can fill in or leave out -->
+   </head>
+<body text="#000000" bgcolor="#FFFFFF" link="#0000EE" vlink="#551A8B" alink="#FF0000">
+
+<h1>SND Files</h1>
+<HR SIZE=2 WIDTH=70%>
+<P>
+<STRONG><FONT SIZE="+1">SND Files General</FONT></STRONG>
+<P>
+SND files contain sound information for COG entities. That is, all enemies, lifts, doors, weapons etc.
+<P>
+<HR SIZE=2 WIDTH=70%>
+<P>
+The file simply consists of a list of definitions corresponding to particular actions.
+<P>
+Examples:
+<TABLE BORDER=3 BGCOLOR="#C0C0C0"CELLPADDING=5>
+<TR><TD><PRE>
+enterwater	splash1.wav            0x0	1.0	5.0
+lwalkmetal	PtclDroidWalk01.WAV    0x0	0.3	1.8	0.7
+fire1		RailChargeFire01.wav   0x0	1.0	4.0
+</PRE></TD></TR></TABLE>
+<P>
+First there is the action class, followed by the WAV file to play. The following parameters are as follows:
+<P>
+<TABLE BORDER=0>
+<TR><TD WIDTH=100>playflags</TD><TD>Hex value defining attributes for sound</TD></TR>
+<TR><TD>minRadius</TD><TD>Minimum distance from the source from which sound is audible</TD></TR>
+<TR><TD>maxRadius</TD><TD>Maximum distance from the source from which sound is audible</TD></TR>
+<TR><TD>maxVolume</TD><TD>Maximum volume of sound (range from 0.0 to 1.0) - optional</TD></TR>
+</TABLE>
+
+
+
+<P><!-- include from here down at bottom of all pages -->
+<BR> 
+<P>
+<HR SIZE=2>
+</body>
+</html>

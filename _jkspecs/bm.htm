@@ -1,0 +1,191 @@
+<html>
+
+<head>
+
+   <title>JediKnight Unofficial Specs</title>
+
+   <meta name="DL" content="bm">
+
+   </head>
+
+<body text="#000000" bgcolor="#FFFFFF" link="#0000EE" vlink="#551A8B" alink="#FF0000">
+
+
+
+<h1>BM Files</h1>
+
+<HR SIZE=2 WIDTH=70%>
+
+<P>
+
+<A NAME="bm">
+
+<STRONG><FONT SIZE="+1">BM Files General</FONT></STRONG>
+
+<P>
+
+BM files contain bitmaps for such things as the game status displays, main screen backgrounds, force and item icons. They may or may not contain mulitple images, palettes, and may be 8-bit or 16-bit images.
+
+<P>
+
+
+
+<B>The BM file is structured in two parts with a possible third for 8-bit BMs.</B>
+
+<P>
+
+<TABLE BORDER=3 BGCOLOR="#C0C0C0"CELLPADDING=5>
+
+<TR><TD><PRE><B>File structure:</B>
+
+
+
+TBMHeader
+
+TImages
+
+TPalette         // the palette is only present in some 8-bit files (Bk*.bm)
+
+
+
+</PRE></TD></TR></TABLE>
+
+<P>
+
+
+
+<B>The header for a BM file is:</B>
+
+<P>
+
+<TABLE BORDER=3 BGCOLOR="#C0C0C0"CELLPADDING=5>
+
+<TR><TD><PRE>BM:
+
+
+
+TBMHeader=record
+
+  FileType    : array[0..2] of char;     // 'BM ' - notice space after BM
+
+  Ver         : Byte;                    // Apparently version = $20 - 2.0?
+
+  Unknown1    : Longint;                 // = $46
+
+  Unknown2    : Longint;                 // = 0
+
+  PalInc      : Longint;                 // 0, 1 or 2 ;  2 = palette included
+
+  NumImages   : Longint;                 // number of images in file
+
+  XOffset     : Longint;                 // X-offset (for overlaying on other BMs)
+
+  YOffset     : Longint;                 // Y-offset (for overlaying on other BMs)
+
+  Transparent : Longint;                 // Transparent colour
+
+  Uk3         : Longint;                 // = 1 in 16-bit BMs, = 0 in 8-bit BMs
+
+  NumBits     : Longint;                 // 8 = 8-bit BM, 16 = 16-bit BM
+
+  BlueBits    : Longint;                 // = 5 for 16-bit BMs, else = 0
+
+  GreenBits   : Longint;                 // = 6 for 16-bit BMs, else = 0
+
+  RedBits     : Longint;                 // = 5 for 16-bit BMs, else = 0
+
+  Uk4         : Longint;                 // = 11 in 16-bit BMs, else = 0
+
+  Uk5         : Longint;                 // = 5 in 16-bit BMs, else = 0
+
+  Uk6         : Longint;                 // = 0
+
+  Uk7         : Longint;                 // = 3 in 16-bit BMs, else = 0
+
+  Uk8         : Longint;                 // = 2 in 16-bit BMs, else = 0
+
+  Uk9         : Longint;                 // = 2 in 16-bit BMs, else = 0
+
+  Padding     : Array[0..12] of Longint; // = 0
+
+ end;
+
+
+
+</PRE></TD></TR></TABLE>
+
+<P>
+
+<B>Notes:</B>
+
+<UL>
+
+<LI>If a palette isn't included, PalInc should be set to 1. It is set to 0 in a few of the 8-bit images, but setting it to 0 causes strange effects with some 16-bit BMs.
+
+<LI>X and Y offsets have their origin in the top-left corner of the BM being overlaid
+
+<LI>With 8-bit images, Transparent is an index into the palette. With 16-bit images, Transparent is a 16-bit RGB value.
+
+<LI>Uk4 and Uk5 seem to control the ratio between different colours. It is unknown exactly how.
+
+</UL>
+
+<P>
+
+<BR>
+
+
+
+
+
+<B>Next follows Image data </B>
+
+<P>
+
+<TABLE BORDER=3 BGCOLOR="#C0C0C0"CELLPADDING=5>
+
+<TR><TD><PRE>
+
+First Image always at offset 0x80 (128).
+
+
+
+TImage=record
+
+  SizeX  :  Longint;                       // Image horizontal size in pixels
+
+  SizeY  :  Longint;                       // Image vertical size in pixels
+
+  Data   :  Array[SizeX * SizeY] of byte;  // Image data for 8-bit image
+
+               or
+
+            Array[SizeX * SizeY] of word;  // Image data for 16-bit image
+
+ end;
+
+
+
+<B>Note:</B>  Repeated for the number of entrys in NumImages of header
+</PRE></TD></TR></TABLE>
+<P>
+The image data starts with the pixel in the top-left corner of the image, and defines pixels in rows going downwards. For 8-bit images, each byte in the Data array is an index into the palette. For 16-bit images, each word contains the RGB values for a pixel, where the least significant 5 bits are the blue intensity, followed by 6 bits for green intensity, and the most significant 5 bits are the red intensity.
+<P>
+<B>Followed by the optional palette information if BM is 8-bit, and PalInc = "2" in header.</B>
+<P>
+<TABLE BORDER=3 BGCOLOR="#C0C0C0"CELLPADDING=5>
+<TR><TD><PRE>
+TPalette=array[0..255] of record
+
+  r, g, b : byte;
+
+ end;
+</PRE></TD></TR></TABLE>
+<P>
+<BR>
+<P>
+<HR SIZE=2>
+<P>
+</body>
+</html>
+

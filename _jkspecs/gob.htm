@@ -1,0 +1,58 @@
+<html>
+<head>
+   <title>JediKnight Unofficial Specs</title>
+   <meta name="DL" content="gob">
+  </head>
+<body text="#000000" bgcolor="#FFFFFF" link="#0000EE" vlink="#551A8B" alink="#FF0000">
+
+<h1>GOB Files</h1>
+<HR SIZE=2 WIDTH=70%>
+<P>
+<A NAME="cmp">
+<STRONG><FONT SIZE="+1">GOB Files General</FONT></STRONG>
+<P>
+COB files are used for distributing many files in one easy to use file.Think of it as a container file for many others. These are not compatable with Dark Forces Gob files and vice versa. The new JK gob files may contain a directory path as well the actual file name.
+<P>
+<B>The file is structured in three parts.</B>
+<P>
+<TABLE BORDER=3 BGCOLOR="#C0C0C0"CELLPADDING=5>
+<TR><TD><PRE><B>File structure:</B>
+
+GobHeader
+Gob Item information
+Gob Data 
+</PRE></TD></TR></TABLE>
+<P>
+<B>The header for an GOB file is:</B>
+<P>
+<TABLE BORDER=3 BGCOLOR="#C0C0C0"CELLPADDING=5>
+<TR><TD><PRE>
+
+GOBHeader=record
+array[0..2] of char;    {'GOB '}
+byte;                   {Apparently - version= x20 }
+Longint;                {Offset to first file size from begining of file= x14 }
+Longint;                {Offset to #of GobItems from file beginning= x0C }
+Longint;                {# of items in gob file }
+
+</PRE></TD></TR></TABLE>
+<P>
+<B>Followed by the Item Information  .</B>
+<P>
+<TABLE BORDER=3 BGCOLOR="#C0C0C0"CELLPADDING=5>
+<TR><TD><PRE>
+GobItems =record
+Longint:              {offset from begining of file}
+Longint;              {Length of file}
+array[0..127] of char {path and name of file}
+</PRE></TD></TR></TABLE>
+<P>
+<B>Finaly followed by the file data</B>
+
+
+<P>
+<BR>
+<HR SIZE=2>
+
+</body>
+</html>

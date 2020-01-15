@@ -1,0 +1,40 @@
+<!DOCTYPE HTML PUBLIC "-//SoftQuad//DTD HTML 2.0 + extensions for HoTMetaL Light 3.0 19960703//EN"
+>
+<HTML>
+<HEAD>
+<TITLE>JediKnight Unofficial Specs</TITLE>
+<META NAME="DL" CONTENT="AI"></HEAD>
+<BODY
+TEXT="#000000" BGCOLOR="#FFFFFF" LINK="#0000EE" VLINK="#551A8B" ALINK="#FF0000">
+<H2>CircleStrafe</H2>
+<P></P>
+<P><B>Number of arguments: 5</B></P>
+<P><I>Example:</I></P>
+<TABLE BORDER="1" BGCOLOR="#C0C0C0">
+<TR>
+<TD>
+<PRE>CircleStrafe	5000.0, 30.0, 1.0, 1000.0, 1.0</PRE></TD></TR></TABLE>
+<P>This instinct works in association with other instincts like
+<A HREF="ai_lookf.htm">LookForTarget</A> and <A HREF="ai_follo.htm">Follow</A>.
+CircleStrafe tells the character to go around while attaking its target.
+Without, the character would stay still. Details are unclear yet though.</P>
+<P><I>Arguments:</I></P>
+<TABLE BORDER="1" BGCOLOR="#C0C0C0">
+<TR>
+<TD WIDTH="100" BGCOLOR="#808080"><FONT COLOR="#FFFFFF">Argument #</FONT></TD>
+<TD BGCOLOR="#808080"><FONT COLOR="#FFFFFF">Argument meaning</FONT></TD></TR>
+<TR>
+<TD>1</TD>
+<TD>Interval to check if to strafe (msec)</TD></TR>
+<TR>
+<TD>2</TD>
+<TD>Yaw change percentage on move (normal is 30 to 45)</TD></TR>
+<TR>
+<TD>3</TD>
+<TD>Maximal distance to attempt strafe</TD></TR>
+<TR>
+<TD>4</TD>
+<TD>Update interval in msec (usually 1000)</TD></TR>
+<TR>
+<TD>5</TD>
+<TD>0=single direction strafe; 1=random strafe</TD></TR></TABLE></BODY></HTML>

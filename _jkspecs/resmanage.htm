@@ -1,0 +1,64 @@
+<html>
+<head>
+   <title>JediKnight Unofficial Specs</title>
+   <meta name="DL" content="resmanage">
+ </head>
+<body text="#000000" bgcolor="#FFFFFF" link="#0000EE" vlink="#551A8B" alink="#FF0000">
+
+<h1>Resource Management</h1>
+<HR SIZE=2 WIDTH=70%>
+<P>
+<A NAME="cmp">
+<STRONG><FONT SIZE="+1">Resource Management General</FONT></STRONG>
+<P><BR>
+ A couple of words on resource management of JK. General JK data
+and resources used in all levels are kept in Resource\ directory. Level
+specific data and levels themselves are stored in Episode\ directory.
+JK can accept files in either subdirectories of Episode\ and Resorce\
+directories or inside GOB files in these directories. The files in
+subdirectories override those in GOBs (i.e. if you put a file in
+subdirectory and the file with the same name exists in GOB, the file from 
+the subdirectory is used).
+<P>
+<BR>
+        There are many different types of files in JK. Each type of files
+is kept in different directory. COG files - cog\ subdirectory in Resource\
+or Episode\, WAV files in "Sounds\", etc. GOB files also can contain
+directories inside them. So the files inside GOBs are also stored in
+subdirectories with same names as files outside GOBs. I.e. the sounds is
+Res2.gob are store in subdirectory Sounds\ inside Res2.Gob. The file
+Res2.Gob is located in Resource\ directory.
+<P><BR>
+        While for making patches subdirectories in Resource\ is OK, when
+it'll come to distributing levels, they will have to be distributed as
+GOBs.
+<P>
+<B>Typical add-on GOB should then contain:</B>
+<P>
+<TABLE  CELLPADDING=5>
+<TR><TD><PRE>
+levelname.txt   - Description of the level.
+levelname.gob   - level itself.
+</PRE></TD></TR></TABLE>
+<P>
+<B>The GOB must contain these files:</B>
+<P>
+<TABLE CELLPADDING=5>
+<TR><TD><PRE>
+episode.jk
+jkl\levelname.jkl
+</PRE></TD></TR></TABLE>
+<P>
+And you'll apparently have some COGs which will have to go to cog\
+subdirectory in your GOB. Well, you'll probably won't have to worry about
+it, because I'm adding automatic handling of all this to Jed, but knowing
+it wouldn't hurt.
+<P>
+        To run the level you would copy it to the Episode\ directory, run
+JK, pick "New Game" and select the espisode desired. 
+<P>
+<BR>
+<HR SIZE=2>
+
+</body>
+</html>

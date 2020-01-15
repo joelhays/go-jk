@@ -1,0 +1,88 @@
+<!DOCTYPE HTML PUBLIC "-//SoftQuad//DTD HTML 2.0 + extensions for HoTMetaL Light 3.0 19960703//EN"
+>
+<HTML>
+<HEAD>
+<TITLE>JediKnight Unofficial Specs</TITLE>
+<META NAME="DL" CONTENT="AI"></HEAD>
+<BODY
+TEXT="#000000" BGCOLOR="#FFFFFF" LINK="#0000EE" VLINK="#551A8B" ALINK="#FF0000">
+<H1>AI Files</H1>
+<HR SIZE="2" WIDTH="70%">
+<HR>
+<P><A NAME="a_gen"></A>
+<STRONG><FONT SIZE="+1">AI Files General</FONT></STRONG>
+</P>
+<P>AI files stand for &quot;Artificial Intelligence&quot; and mean what they
+stand for. These files actually determine the behavour of the things in the game
+(like, enemies, pedestrians, droids, smaller machines like AT-ST). In these
+files, it is definded how &quot;tough&quot; an opponent shoots, if he can open
+doors; if he wanders around or not.</P>
+<P>There are 3 types of AI files for 3 difficulty levels. If a level is played
+on Easy, JK automatically uses files with the &quot;.AI0&quot; extension. On
+Hard, the &quot;.AI2&quot; files are used. On Medium (and if there are no extra
+AI0 &amp; AI2 files), the .AI files are used.</P>
+<P>The AI files do not influence the outward appearence of an enemy, nor they
+define which weapons a character has . They only specify the character of the
+character (and his weapons).</P>
+<P>AI files consist of 2 parts. The first defines the character's basic
+properties like how far it can see or from how high a height he can jump down.
+The second one defines the &quot;Instincts&quot; of a character. This one is a
+list of certain instincts which all have specific arguments.</P>
+<HR>
+<P><A NAME="a_header"></A><STRONG><FONT SIZE="+1">AI Files Header</FONT></STRONG></P>
+<P>An AI file header is normally preceeded by a commented passage which
+describes whom this specific AI belongs to and who wrote it. You can create
+comments by putting the &quot;#&quot; character at the beginning of a line.</P>
+<P>Here is the example of how an AI header looks like. The only line used by JK
+is the last one.</P>
+<TABLE BORDER="1" BGCOLOR="#C0C0C0">
+<TR>
+<TD>
+<PRE># Jedi Knight AI File
+#
+# GONK.AI
+#
+# Droid AI
+# Flee only when damaged
+# All difficulty levels
+#
+# [CR]
+#
+# (C) 1997 LucasArts Entertainment Co. All Rights Reserved
+
+alignment=0.0, rank=0.5, fov=210, maxstep=0.0, sightdist=6.0, heardist=0.5
+</PRE></TD></TR></TABLE>
+<P>The last line is needed by JK. It determines the properties of the
+character. The properties are following each other, separated by a comma. In
+MotS, there is a further property: accuracy.</P>
+<TABLE WIDTH="400" BORDER="0">
+<TR>
+<TD><TT>alignment</TT></TD>
+<TD>Character's side. -1 means enemy, 0 means neutral, 1 means friend.</TD></TR>
+<TR>
+<TD><TT>rank</TT></TD>
+<TD>Specifies the rank of a character. Officers have higher rank as troopers.</TD></TR>
+<TR>
+<TD><TT>fov</TT></TD>
+<TD>the angle of front sight. 1 means can only look straight forward. 360 means
+full view around (like a Mon Calamari)</TD></TR>
+<TR>
+<TD><TT>maxstep</TT></TD>
+<TD>From what height in JKU can the person jump down</TD></TR>
+<TR>
+<TD><TT>sightdist</TT></TD>
+<TD>How far can he detect you by sight</TD></TR>
+<TR>
+<TD><TT>heardist</TT></TD>
+<TD>How far can he hear you walking/changing weapons etc</TD></TR>
+<TR>
+<TD><TT>accuracy</TT></TD>
+<TD>unknown. Only used in MotS.</TD></TR></TABLE>
+<HR>
+<P><STRONG><FONT SIZE="+1">AI Files Instincts</FONT></STRONG></P>
+<P>The header is followed by a list of the character's instincts. Instincts are
+the abilities of the character and also the specifications of his special
+behaviour like shooting, roaming or opening doors. Most instincts need a number
+of arguments which are numbers separated by commas. There are also instincts
+without arguments. The list of the instincts you will find in the menu to the
+left.</P></BODY></HTML>

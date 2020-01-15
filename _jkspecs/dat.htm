@@ -1,0 +1,106 @@
+<html>
+<head>
+   <title>JediKnight Unofficial Specs</title>
+   <meta name="?" content="?"><!-- can fill in or leave out -->
+   </head>
+<body text="#000000" bgcolor="#FFFFFF" link="#0000EE" vlink="#551A8B" alink="#FF0000">
+
+<h1>DAT Files</h1>
+<HR SIZE=2 WIDTH=70%>
+<P>
+<STRONG><FONT SIZE="+1">DAT Files General</FONT></STRONG>
+<P>
+There are 3 DAT files in JK which contain special information. They are located in the misc subdirectory of the res2.GOB
+<P>
+<HR SIZE=2 WIDTH=70%>
+
+<B>items.dat</B>
+<P>
+Contains information about all the items in JK - weapons, ammo, force stars, force powers, inventory items, etc.
+<P>
+<TABLE BORDER=3 BGCOLOR="#C0C0C0"CELLPADDING=5><TR><TD><PRE>
+# ========================================================================================
+# name                  id              min     max     flags   args
+# ========================================================================================
+
+###########
+# Weapons #
+###########
+
+# ========================================================================================
+none                    0               0       0       0x004
+fists                   1               0       1       0x024   cog=weap_fists.cog
+bryar_pistol            2               0       1       0x0a4   cog=weap_bryar.cog
+stormtrooper_rifle      3               0       1       0x0a4   cog=weap_strifle.cog
+thermal_detonator       4               0       30      0x0a4   cog=weap_thermdet.cog
+tusken_prod             5               0       1       0x0a4   cog=weap_crossbow.cog
+repeater                6               0       1       0x0a4   cog=weap_repeater.cog
+rail_detonator          7               0       1       0x0a4   cog=weap_raildet.cog
+sequencer_charge        8               0       30      0x0a4   cog=weap_seqcharge.cog
+concussion_rifle        9               0       1       0x0a4   cog=weap_concrifle.cog
+lightsaber              10              0       1       0x0a4   cog=weap_saber.cog
+# ========================================================================================
+
+
+###################
+# Ammo and Energy #
+###################
+
+# ========================================================================================
+#energy is used for bryar pistol and stormtrooper rifle.
+energy                  11              0       500     0x080
+
+#power is used for the the bowcaster, repeater and concussion rifle.
+power                   12              0       500     0x080
+
+#battery is used for other inventory items.
+battery                 13              0       200     0x020
+
+</PRE></TD></TR></TABLE>
+<P>
+<BR>
+
+<B>models.dat</B>
+<P>
+Contains information about the various models (characters) you can select for multiplayer.
+<P>
+<TABLE BORDER=3 BGCOLOR="#C0C0C0"CELLPADDING=5><TR><TD><PRE>
+numModels: 28		# total number of models in file
+
+#	   Model name
+0:		ky.3do		ky.snd		#"Katarn"
+1:		kyB3.3do	kyMP4.snd	#"Cyborg"
+2:		kyC5.3do	kyMP1.snd	#"Red1Eye"
+3:		kyD0.3do	kyMP3.snd	#"Trainer"
+
+. . .
+</PRE></TD></TR></TABLE>
+<P>
+For each model definition, there is the name of the model 3DO, followed by the SND file to use with the model.
+<P>
+<BR>
+
+
+<B>sabers.dat</B>
+<P>
+Contains information about the MATs to use for different lightsaber colors, and the BMs to use in the player configuration screen.
+<P>
+<TABLE BORDER=3 BGCOLOR="#C0C0C0"CELLPADDING=5><TR><TD><PRE>
+numSabers: 7		# total number of sabers in file
+
+#	BM		sideMat			tipMat
+0:	sabB2.BM	saberblue1.mat		saberblue0.mat
+1:	sabDR2.BM	saberdred1.mat		saberdred0.mat
+2:	sabG2.BM	sabergreen1.mat		sabergreen0.mat
+
+. . .
+</PRE></TD></TR></TABLE>
+<P>
+
+
+<P><!-- include from here down at bottom of all pages -->
+<BR> 
+<P>
+<HR SIZE=2>
+</body>
+</html>

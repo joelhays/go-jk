@@ -1,0 +1,104 @@
+<html>
+<head>
+   <title>JediKnight Unofficial Specs</title>
+   <meta name="?" content="?"><!-- can fill in or leave out -->
+   </head>
+<body text="#000000" bgcolor="#FFFFFF" link="#0000EE" vlink="#551A8B" alink="#FF0000">
+
+<h1>EPISODE.JK</h1>
+<HR SIZE=2 WIDTH=70%>
+<P>
+<A NAME="files">
+<STRONG><FONT SIZE="+1">General</FONT></STRONG>
+<P>
+EPISODE.JK is the equivalent of the DF files jedi.lvl and cutscene.lst. It contains a list of the levels and cutscenes to be played.
+<P>
+EPISODE.JK is located in the root directory of the episode GOB, eg. jk1\episode.jk
+<P>
+
+<TABLE BORDER=3 BGCOLOR="#C0C0C0"CELLPADDING=5>
+<TR><TD><PRE>
+"The Force Within"
+# Title must be first line.  A translated version is looked up in jkStrings.uni
+# Please use TABs for alignment!
+
+TYPE  1  # single-player
+
+SEQ   55
+
+# lightpow and darkpow are the inventory bin numbers for that power.
+
+# line   cd    level    type     file              lightpow    darkpow     gotoA gotoB
+
+10:      1     1        CUT      03-04a.smk        0           0           11    -1
+11:      1     1        LEVEL    01narshadda.jkl   0           0           12    -1    # Level 1: Narshadda
+12:      1     1        CUT      06a.smk           0           0           20    -1
+
+. . .
+
+end
+</PRE></TD></TR></TABLE>
+<P>
+<HR> 
+
+<P><A Name="major heading"></A>
+<B><FONT SIZE="+1">Header</FONT></B>
+<P>
+<TABLE BORDER=3 BGCOLOR="#C0C0C0"CELLPADDING=5><TR><TD><PRE>
+"The Force Within"
+
+TYPE  1  # single-player
+
+SEQ   55
+</PRE></TD></TR></TABLE>
+<P>
+The first line is the name of the episode. It appears in various screens, including the savegame screen.
+<BR>
+TYPE defines the type of episode. Type 1 is single-player, Type 2 is Jedi Training, and Type 8 is Capture the Flag.
+<BR>
+SEQ defines the number of cutscenes/levels listed in the file. Remember to update it when you add or remove a cutscene or level.
+<P>
+<BR>
+
+<P><A Name="major heading"></A>
+<B><FONT SIZE="+1">Cutscene/Level Definition</FONT></B>
+<P>
+<TABLE BORDER=3 BGCOLOR="#C0C0C0"CELLPADDING=5><TR><TD><PRE>
+# line   cd    level    type     file              lightpow    darkpow     gotoA gotoB
+10:      1     1        CUT      03-04a.smk        0           0           11    -1
+11:      1     1        LEVEL    01narshadda.jkl   0           0           12    -1    # Level 1: Narshadda
+</PRE></TD></TR></TABLE>
+<P>
+<UL>
+<LI>Line number labels the cutscene or level definition. Make sure that each definition has a unique line number. Note also that the first cutscene should have line number 10: because this will be played as soon as you start a new game.
+<LI>CD identifies which CD the level or cutscene is on (either 1 or 2). This is so the game knows where to look for the level or cutscene.
+<LI>Type is pretty obvious : CUT for a cutscene, or LEVEL for a level.
+<LI>File is the name of the cutscene's or level's file.
+<LI>Lightpow and Darkpow identify the powers that you will recieve upon successful completion of the level. See the list below
+<LI>gotoA and gotoB refer to the next line to go to after the current level or cutscene has finished. gotoB is used when there is more than one option - for example, when you have made the decision to join either the Light side or the Dark side. Otherwise, it's value is -1.
+</UL>
+<P>
+<TABLE Border=1>
+<TR><TH>Number</TH><TH>Force power</TH>
+<TR><TD>21</TD><TD>Jump</TD>
+<TR><TD>22</TD><TD>Speed</TD>
+<TR><TD>23</TD><TD>Seeing</TD>
+<TR><TD>24</TD><TD>Pull</TD>
+<TR><TD>25</TD><TD>Healing (Light)</TD>
+<TR><TD>26</TD><TD>Persuasion (Light)</TD>
+<TR><TD>27</TD><TD>Lightning (Dark)</TD>
+<TR><TD>28</TD><TD>Absorb (Light)</TD>
+<TR><TD>30</TD><TD>Throw (Dark)</TD>
+<TR><TD>31</TD><TD>Grip (Dark)</TD>
+<TR><TD>32</TD><TD>Blinding (Light)</TD>
+<TR><TD>33</TD><TD>Destruction (Dark)</TD>
+</TABLE>
+<P>
+
+
+<P><!-- include from here down at bottom of all pages -->
+<BR> 
+<P>
+<HR SIZE=2>
+</body>
+</html>
