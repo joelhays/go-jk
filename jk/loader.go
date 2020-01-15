@@ -23,7 +23,7 @@ func GetLoader() *Loader {
 		instance = &Loader{}
 		instance.cache = make(map[string]interface{})
 		instance.jklParser = NewJklLineParser()
-		instance.jk3doParser = NewJk3doLineParser2()
+		instance.jk3doParser = NewJk3doLineParser()
 	})
 	return instance
 }
@@ -53,13 +53,21 @@ func (l *Loader) Load3DOManifest() []string {
 	return l.getGobFiles(resourceGobFiles, "3do\\", "3do")
 }
 
+func (l *Loader) LoadResourceManifest(prefix string, suffix string) []string {
+	return l.getGobFiles(resourceGobFiles, prefix, suffix)
+}
+
+func (l *Loader) LoadEpisodeManifest(prefix string, suffix string) []string {
+	return l.getGobFiles(episodeGobFiles, prefix, suffix)
+}
+
 func (l *Loader) LoadJKL(filename string) Jkl {
 	for _, gob := range episodeGobFiles {
 		fileBytes := loadFileFromGOB(gob, filename)
 		if fileBytes == nil {
 			continue
 		}
-		jklLevel := l.jklParser.ParseJKLFromString(string(fileBytes))
+		jklLevel := l.jklParser.ParseFromString(string(fileBytes))
 		return jklLevel
 	}
 
@@ -68,7 +76,7 @@ func (l *Loader) LoadJKL(filename string) Jkl {
 		if fileBytes == nil {
 			continue
 		}
-		jklLevel := l.jklParser.ParseJKLFromString(string(fileBytes))
+		jklLevel := l.jklParser.ParseFromString(string(fileBytes))
 		return jklLevel
 	}
 
@@ -87,7 +95,7 @@ func (l *Loader) Load3DO(filename string) Jk3doFile {
 		if fileBytes == nil {
 			continue
 		}
-		obj = l.jk3doParser.Parse3doFromString(string(fileBytes))
+		obj = l.jk3doParser.ParseFromString(string(fileBytes))
 		l.cache[filename] = obj
 		return obj
 	}
@@ -173,4 +181,16 @@ func (l *Loader) LoadSFT(filename string) SFTFile {
 	}
 
 	return SFTFile{}
+}
+
+func (l *Loader) LoadResource(filename string) []byte {
+	for _, gob := range resourceGobFiles {
+		fileBytes := loadFileFromGOB(gob, filename)
+		if fileBytes == nil {
+			continue
+		}
+		return fileBytes
+	}
+
+	return nil
 }

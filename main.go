@@ -31,6 +31,12 @@ func main() {
 	runtime.LockOSThread()
 	defer runtime.UnlockOSThread()
 
+	//testPupParser()
+	//testKeyParser()
+	//testJklParser()
+	//test3doParser()
+	//return
+
 	sceneManager := scene.NewSceneManager()
 	defer sceneManager.Unload()
 	inputManager := NewInputManager(sceneManager)

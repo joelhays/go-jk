@@ -24,17 +24,17 @@ func NewJklLineParser() *JklLineParser {
 	return p
 }
 
-func (p *JklLineParser) ParseJKLFromFile(filePath string) Jkl {
+func (p *JklLineParser) ParseFromFile(filePath string) Jkl {
 	bytes, err := ioutil.ReadFile(filePath)
 	if err != nil {
 		log.Fatal(err)
 	}
 	data := string(bytes)
 
-	return p.ParseJKLFromString(data)
+	return p.ParseFromString(data)
 }
 
-func (p *JklLineParser) ParseJKLFromString(jklString string) Jkl {
+func (p *JklLineParser) ParseFromString(jklString string) Jkl {
 	p.init(jklString)
 
 	p.scanner.Text()

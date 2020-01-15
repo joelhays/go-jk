@@ -4,11 +4,6 @@ import (
 	"github.com/go-gl/mathgl/mgl32"
 )
 
-type JklParser interface {
-	ParseJKLFromFile(filePath string) Jkl
-	ParseJKLFromString(jklString string) Jkl
-}
-
 // Jkl contains the information extracted from the Jedi Knight Level (.jkl) file
 type Jkl struct {
 	Model          *JkMesh
