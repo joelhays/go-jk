@@ -1,38 +1,25 @@
 package jk
 
-type SFTFile struct {
-	Header          TSFTHeader
-	CharacterTables []TCharacterTable
-	BMFile          BMFile
+import "github.com/joelhays/go-jk/jk/jktypes"
+
+type SftParser struct {
 }
 
-type TSFTHeader struct {
-	FileType  [4]byte
-	_         [4]int32
-	NumTables int32
-	Padding   [4]int32
+func NewSftParser() *SftParser {
+	return &SftParser{}
 }
 
-type TCharacterTable struct {
-	FirstChar int16
-	LastChar  int16
-	CharDefs  []TCharDef
-}
-
-type TCharDef struct {
-	XOffset int32
-	Width   int32
-}
-
-func parseSFTFile(data []byte) SFTFile {
-	result := SFTFile{}
+func (p *SftParser) ParseFromBytes(data []byte) jktypes.SFTFile {
+	result := jktypes.SFTFile{}
 
 	cursor := 0
-	var header TSFTHeader
+	var header jktypes.TSFTHeader
 	cursor += readBytes(data, cursor, &header)
 
 	result.Header = header
-	result.CharacterTables = make([]TCharacterTable, header.NumTables)
+	result.CharacterTables = make([]jktypes.TCharacterTable, header.NumTables)
+
+	bmParser := NewBmParser()
 
 	for i := int32(0); i < header.NumTables; i++ {
 		//fmt.Println("reading table", i+1, "of", header.NumTables)
@@ -46,13 +33,13 @@ func parseSFTFile(data []byte) SFTFile {
 		}
 		cursor += readBytes(data, cursor, &tableInfo)
 
-		var table TCharacterTable
+		var table jktypes.TCharacterTable
 		table.FirstChar = tableInfo.FirstChar
 		table.LastChar = tableInfo.LastChar
-		table.CharDefs = make([]TCharDef, table.LastChar-table.FirstChar+1)
+		table.CharDefs = make([]jktypes.TCharDef, table.LastChar-table.FirstChar+1)
 
 		for j := 0; j < len(table.CharDefs); j++ {
-			var def TCharDef
+			var def jktypes.TCharDef
 			cursor += readBytes(data, cursor, &def)
 			table.CharDefs[j] = def
 		}
@@ -60,7 +47,7 @@ func parseSFTFile(data []byte) SFTFile {
 		result.CharacterTables[i] = table
 	}
 
-	bm := parseBmFile(data[cursor:])
+	bm := bmParser.ParseFromBytes(data[cursor:])
 	if bm.Header.PaletteIncluded != 2 {
 		cmp := GetLoader().LoadCMP("uicolormap.cmp")
 		bm.Palette.Palette = cmp.Palette

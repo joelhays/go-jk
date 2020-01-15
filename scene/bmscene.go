@@ -5,6 +5,7 @@ import (
 	"github.com/go-gl/mathgl/mgl32"
 	"github.com/joelhays/go-jk/camera"
 	"github.com/joelhays/go-jk/jk"
+	"github.com/joelhays/go-jk/jk/jktypes"
 	"github.com/joelhays/go-jk/opengl"
 )
 
@@ -15,7 +16,7 @@ type BMScene struct {
 	cam           *camera.Camera
 	window        *glfw.Window
 	bmRenderer    opengl.Renderer
-	bm            *jk.BMFile
+	bm            *jktypes.BMFile
 }
 
 func NewBMScene(bmName string, window *glfw.Window, cam *camera.Camera, shaderProgram *opengl.ShaderProgram) *BMScene {

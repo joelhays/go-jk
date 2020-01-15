@@ -2,22 +2,22 @@ package opengl
 
 import (
 	"fmt"
+	"github.com/joelhays/go-jk/jk/jktypes"
 
 	"github.com/go-gl/mathgl/mgl32"
 
 	"github.com/go-gl/gl/v3.2-core/gl"
-	"github.com/joelhays/go-jk/jk"
 )
 
 type OpenGlBmRenderer struct {
-	bm       *jk.BMFile
+	bm       *jktypes.BMFile
 	program  *ShaderProgram
 	vao      uint32
 	textures []uint32
 	scale    mgl32.Vec2
 }
 
-func NewOpenGlBmRenderer(bm *jk.BMFile, scale mgl32.Vec2, program *ShaderProgram) Renderer {
+func NewOpenGlBmRenderer(bm *jktypes.BMFile, scale mgl32.Vec2, program *ShaderProgram) Renderer {
 	r := &OpenGlBmRenderer{bm: bm, scale: scale, program: program}
 
 	r.setupMesh()

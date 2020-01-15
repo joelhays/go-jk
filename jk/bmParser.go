@@ -1,54 +1,23 @@
 package jk
 
-type BMFile struct {
-	Header  TBMHeader
-	Images  []TImage
-	Palette TPalette
+import "github.com/joelhays/go-jk/jk/jktypes"
+
+type BmParser struct {
 }
 
-type TBMHeader struct {
-	FileType        [3]byte
-	Ver             byte
-	Unknown1        int32
-	Unknown2        int32
-	PaletteIncluded int32
-	NumImages       int32
-	XOffset         int32
-	YOffset         int32
-	Transparent     int32
-	Unknown3        int32
-	NumBits         int32
-	BlueBits        int32
-	GreenBits       int32
-	RedBits         int32
-	Unknown4        int32
-	Unknown5        int32
-	Unknown6        int32
-	Unknown7        int32
-	Unknown8        int32
-	Unknown9        int32
-	Padding         [13]int32
+func NewBmParser() *BmParser {
+	return &BmParser{}
 }
 
-type TImage struct {
-	SizeX int32
-	SizeY int32
-	Data  []byte
-}
-
-type TPalette struct {
-	Palette [256]Vec3Byte
-}
-
-func parseBmFile(data []byte) BMFile {
-	result := BMFile{}
+func (p *BmParser) ParseFromBytes(data []byte) jktypes.BMFile {
+	result := jktypes.BMFile{}
 
 	cursor := 0
-	var header TBMHeader
+	var header jktypes.TBMHeader
 	cursor += readBytes(data, cursor, &header)
 
 	result.Header = header
-	result.Images = make([]TImage, header.NumImages)
+	result.Images = make([]jktypes.TImage, header.NumImages)
 
 	for i := int32(0); i < header.NumImages; i++ {
 		//fmt.Printf("reading image %d of %d\n", i+1, header.NumImages)
@@ -62,7 +31,7 @@ func parseBmFile(data []byte) BMFile {
 		}
 		cursor += readBytes(data, cursor, &imageSize)
 
-		var image TImage
+		var image jktypes.TImage
 		image.SizeX = imageSize.SizeX
 		image.SizeY = imageSize.SizeY
 
@@ -84,7 +53,7 @@ func parseBmFile(data []byte) BMFile {
 	}
 
 	if header.PaletteIncluded == 2 {
-		var palette TPalette
+		var palette jktypes.TPalette
 		readBytes(data, cursor, &palette)
 		result.Palette = palette
 	}

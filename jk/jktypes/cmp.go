@@ -1,4 +1,4 @@
-package jk
+package jktypes
 
 type TCMPHeader struct {
 	Name         [4]byte
@@ -16,12 +16,4 @@ type Vec3Byte struct {
 
 type ColorMap struct {
 	Palette [256]Vec3Byte
-}
-
-func parseCmpFile(data []byte) ColorMap {
-	cursor := 0
-	var header TCMPHeader
-	cursor += readBytes(data, cursor, &header)
-
-	return ColorMap{Palette: header.Palette}
 }

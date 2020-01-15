@@ -42,7 +42,7 @@ func testJklParser() {
 	manifest := jk.GetLoader().LoadEpisodeManifest("jkl\\", "jkl")
 	for _, file := range manifest {
 		fmt.Println(file)
-		fileBytes := jk.GetLoader().LoadResource(file)
+		fileBytes := jk.GetLoader().LoadEpisode(file)
 		r = p.ParseFromString(string(fileBytes))
 	}
 }

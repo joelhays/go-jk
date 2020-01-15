@@ -2,12 +2,11 @@ package convert
 
 import (
 	"fmt"
+	"github.com/joelhays/go-jk/jk/jktypes"
 	"os"
-
-	"github.com/joelhays/go-jk/jk"
 )
 
-func From3do2obj(mesh *jk.JkMesh) {
+func From3do2obj(mesh *jktypes.JkMesh) {
 	file, err := os.OpenFile("./test.obj", os.O_CREATE|os.O_RDWR, 0666)
 	if err != nil {
 		panic(err)

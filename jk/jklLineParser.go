@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"fmt"
 	"github.com/go-gl/mathgl/mgl32"
+	"github.com/joelhays/go-jk/jk/jktypes"
 	"io/ioutil"
 	"log"
 	"strconv"
@@ -11,7 +12,7 @@ import (
 )
 
 type JklLineParser struct {
-	jkl     Jkl
+	jkl     jktypes.Jkl
 	scanner *bufio.Scanner
 	line    string
 	done    bool
@@ -24,7 +25,7 @@ func NewJklLineParser() *JklLineParser {
 	return p
 }
 
-func (p *JklLineParser) ParseFromFile(filePath string) Jkl {
+func (p *JklLineParser) ParseFromFile(filePath string) jktypes.Jkl {
 	bytes, err := ioutil.ReadFile(filePath)
 	if err != nil {
 		log.Fatal(err)
@@ -34,7 +35,7 @@ func (p *JklLineParser) ParseFromFile(filePath string) Jkl {
 	return p.ParseFromString(data)
 }
 
-func (p *JklLineParser) ParseFromString(jklString string) Jkl {
+func (p *JklLineParser) ParseFromString(jklString string) jktypes.Jkl {
 	p.init(jklString)
 
 	p.scanner.Text()
@@ -67,10 +68,10 @@ func (p *JklLineParser) ParseFromString(jklString string) Jkl {
 }
 
 func (p *JklLineParser) init(jklString string) {
-	p.jkl = Jkl{
-		Model:          &JkMesh{},
-		Jk3dos:         make(map[string]Jk3doFile),
-		Jk3doTemplates: make(map[string]Template),
+	p.jkl = jktypes.Jkl{
+		Model:          &jktypes.JkMesh{},
+		Jk3dos:         make(map[string]jktypes.Jk3doFile),
+		Jk3doTemplates: make(map[string]jktypes.Template),
 		Things:         nil,
 	}
 	p.scanner = bufio.NewScanner(strings.NewReader(jklString))
@@ -238,7 +239,7 @@ func (p *JklLineParser) parseGeoResourceWorldColormap(line string) {
 func (p *JklLineParser) parseGeoResourceWorldSurface(line string) {
 	args := p.getLineArgs(line)
 
-	surface := surface{}
+	surface := jktypes.Surface{}
 
 	materialID, _ := strconv.ParseInt(args[1], 10, 32)
 	surface.MaterialID = materialID
@@ -350,7 +351,7 @@ func (p *JklLineParser) parseTemplatesWorldTemplate(line string) {
 	}
 
 	if modelName != "" {
-		tmp := Template{}
+		tmp := jktypes.Template{}
 		tmp.Name = name
 		tmp.Jk3doName = modelName
 		tmp.Size = size
@@ -382,7 +383,7 @@ func (p *JklLineParser) parseThingsWorldThing(line string) {
 	yaw, _ := strconv.ParseFloat(args[7], 64)
 	Roll, _ := strconv.ParseFloat(args[8], 64)
 
-	t := Thing{}
+	t := jktypes.Thing{}
 	t.TemplateName = templateName
 	t.Position = mgl32.Vec3{float32(x), float32(y), float32(z)}
 	t.Pitch = pitch

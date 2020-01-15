@@ -1,4 +1,4 @@
-package jk
+package jktypes
 
 import "github.com/go-gl/mathgl/mgl32"
 

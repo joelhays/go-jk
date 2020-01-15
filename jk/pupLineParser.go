@@ -3,13 +3,14 @@ package jk
 import (
 	"bufio"
 	"fmt"
+	"github.com/joelhays/go-jk/jk/jktypes"
 	"io/ioutil"
 	"log"
 	"strings"
 )
 
 type PupLineParser struct {
-	pup     Pup
+	pup     jktypes.Pup
 	scanner *bufio.Scanner
 	line    string
 	done    bool
@@ -17,11 +18,11 @@ type PupLineParser struct {
 
 func NewPupLineParser() *PupLineParser {
 	return &PupLineParser{
-		pup: Pup{},
+		pup: jktypes.Pup{},
 	}
 }
 
-func (p *PupLineParser) ParseFromFile(filePath string) Pup {
+func (p *PupLineParser) ParseFromFile(filePath string) jktypes.Pup {
 	bytes, err := ioutil.ReadFile(filePath)
 	if err != nil {
 		log.Fatal(err)
@@ -31,12 +32,12 @@ func (p *PupLineParser) ParseFromFile(filePath string) Pup {
 	return p.ParseFromString(data)
 }
 
-func (p *PupLineParser) ParseFromString(objString string) Pup {
-	p.pup = Pup{}
+func (p *PupLineParser) ParseFromString(objString string) jktypes.Pup {
+	p.pup = jktypes.Pup{}
 	p.scanner = bufio.NewScanner(strings.NewReader(objString))
 	p.done = false
 
-	var mode *PupMode
+	var mode *jktypes.PupMode
 	for {
 		p.getNextLine()
 		if p.done {
@@ -48,10 +49,10 @@ func (p *PupLineParser) ParseFromString(objString string) Pup {
 			var modeNum int32
 			var basedon int32
 			args, _ = fmt.Sscanf(p.line, "mode=%d, basedon=%d colormaps %d", &modeNum, &basedon)
-			p.pup.Modes = append(p.pup.Modes, PupMode{
-				SubModes:    make([]PupSubMode, 0),
+			p.pup.Modes = append(p.pup.Modes, jktypes.PupMode{
+				SubModes:    make([]jktypes.PupSubMode, 0),
 				BasedOn:     basedon,
-				isInherited: args == 2,
+				IsInherited: args == 2,
 			})
 			mode = &p.pup.Modes[len(p.pup.Modes)-1]
 			continue
@@ -61,7 +62,7 @@ func (p *PupLineParser) ParseFromString(objString string) Pup {
 				if p.line == "end" {
 					break
 				}
-				joint := PupJoint{}
+				joint := jktypes.PupJoint{}
 				_, _ = fmt.Sscanf(p.line, "%d=%d", &joint.Joint, &joint.Node)
 				p.pup.Joints = append(p.pup.Joints, joint)
 			}
@@ -69,7 +70,7 @@ func (p *PupLineParser) ParseFromString(objString string) Pup {
 			if mode == nil {
 				panic("Processing submode without a mode")
 			}
-			subMode := PupSubMode{}
+			subMode := jktypes.PupSubMode{}
 			_, _ = fmt.Sscanf(p.line, "%s %s %v %d %d", &subMode.Name, &subMode.Keyframe, &subMode.Flags,
 				&subMode.LoPri, &subMode.HiPri)
 			mode.SubModes = append(mode.SubModes, subMode)

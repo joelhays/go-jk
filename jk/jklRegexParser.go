@@ -2,6 +2,7 @@ package jk
 
 import (
 	"bufio"
+	"github.com/joelhays/go-jk/jk/jktypes"
 	"io/ioutil"
 	"log"
 	"regexp"
@@ -12,7 +13,7 @@ import (
 )
 
 type JklRegexParser struct {
-	jkl     Jkl
+	jkl     jktypes.Jkl
 	scanner *bufio.Scanner
 	line    string
 	done    bool
@@ -20,17 +21,17 @@ type JklRegexParser struct {
 
 func NewJklRegexParser() *JklRegexParser {
 	return &JklRegexParser{
-		jkl: Jkl{
-			Model:          &JkMesh{},
-			Jk3dos:         make(map[string]Jk3doFile),
-			Jk3doTemplates: make(map[string]Template),
+		jkl: jktypes.Jkl{
+			Model:          &jktypes.JkMesh{},
+			Jk3dos:         make(map[string]jktypes.Jk3doFile),
+			Jk3doTemplates: make(map[string]jktypes.Template),
 			Things:         nil,
 		},
 	}
 }
 
 // ReadJKLFromFile will read a .jkl file and return a struct containing all necessary information
-func (p *JklRegexParser) ParseJKLFromFile(filePath string) Jkl {
+func (p *JklRegexParser) ParseJKLFromFile(filePath string) jktypes.Jkl {
 	bytes, err := ioutil.ReadFile(filePath)
 	if err != nil {
 		log.Fatal(err)
@@ -41,14 +42,14 @@ func (p *JklRegexParser) ParseJKLFromFile(filePath string) Jkl {
 }
 
 // ReadJKLFromString will parse a string as a .jkl file
-func (p *JklRegexParser) ParseJKLFromString(jklString string) Jkl {
+func (p *JklRegexParser) ParseJKLFromString(jklString string) jktypes.Jkl {
 	data := jklString
 
-	jklResult := Jkl{}
-	jklResult.Model = &JkMesh{}
+	jklResult := jktypes.Jkl{}
+	jklResult.Model = &jktypes.JkMesh{}
 
-	jklResult.Jk3dos = make(map[string]Jk3doFile)
-	jklResult.Jk3doTemplates = make(map[string]Template)
+	jklResult.Jk3dos = make(map[string]jktypes.Jk3doFile)
+	jklResult.Jk3doTemplates = make(map[string]jktypes.Template)
 
 	p.parseVertices(data, &jklResult)
 	p.parseTextureVertices(data, &jklResult)
@@ -85,7 +86,7 @@ func (p *JklRegexParser) parseSection(data string, regex string, componentRegex 
 	}
 }
 
-func (p *JklRegexParser) parseVertices(data string, jklResult *Jkl) {
+func (p *JklRegexParser) parseVertices(data string, jklResult *jktypes.Jkl) {
 	p.parseSection(data, `(?s)World vertices.*World texture vertices`, "\\d+:.*",
 		func(components []string) {
 			var err error
@@ -107,7 +108,7 @@ func (p *JklRegexParser) parseVertices(data string, jklResult *Jkl) {
 		})
 }
 
-func (p *JklRegexParser) parseTextureVertices(data string, jklResult *Jkl) {
+func (p *JklRegexParser) parseTextureVertices(data string, jklResult *jktypes.Jkl) {
 	p.parseSection(data, `(?s)World texture vertices.*World adjoins`, "\\d+:.*",
 		func(components []string) {
 			var err error
@@ -125,7 +126,7 @@ func (p *JklRegexParser) parseTextureVertices(data string, jklResult *Jkl) {
 		})
 }
 
-func (p *JklRegexParser) parseMaterials(data string, jklResult *Jkl) {
+func (p *JklRegexParser) parseMaterials(data string, jklResult *jktypes.Jkl) {
 	p.parseSection(data, `(?s)World materials.*SECTION: GEORESOURCE`, "\\d+:.*",
 		func(components []string) {
 			var err error
@@ -151,7 +152,7 @@ func (p *JklRegexParser) parseMaterials(data string, jklResult *Jkl) {
 		})
 }
 
-func (p *JklRegexParser) parseColormaps(data string, jklResult *Jkl) {
+func (p *JklRegexParser) parseColormaps(data string, jklResult *jktypes.Jkl) {
 	p.parseSection(data, `(?s)World Colormaps.*World vertices`, "\\d+:.*",
 		func(components []string) {
 			var cmpName string
@@ -167,10 +168,10 @@ func (p *JklRegexParser) parseColormaps(data string, jklResult *Jkl) {
 		})
 }
 
-func (p *JklRegexParser) parseSurfaces(data string, jklResult *Jkl) {
+func (p *JklRegexParser) parseSurfaces(data string, jklResult *jktypes.Jkl) {
 	p.parseSection(data, `(?s)World surfaces.*\#--- Surface normals ---`, "\\d+:.*",
 		func(components []string) {
-			surface := surface{}
+			surface := jktypes.Surface{}
 
 			materialID, _ := strconv.ParseInt(components[1], 10, 32)
 			surface.MaterialID = materialID
@@ -211,7 +212,7 @@ func (p *JklRegexParser) parseSurfaces(data string, jklResult *Jkl) {
 		})
 }
 
-func (p *JklRegexParser) parse3dos(data string, jklResult *Jkl) {
+func (p *JklRegexParser) parse3dos(data string, jklResult *jktypes.Jkl) {
 	p.parseSection(data, `(?s)World models.*Section: SPRITES`, "\\d+:.*",
 		func(components []string) {
 			jk3doName := components[1]
@@ -224,7 +225,7 @@ func (p *JklRegexParser) parse3dos(data string, jklResult *Jkl) {
 		})
 }
 
-func (p *JklRegexParser) parse3doTemplates(data string, jklResult *Jkl) {
+func (p *JklRegexParser) parse3doTemplates(data string, jklResult *jktypes.Jkl) {
 	p.parseSection(data, `(?s)World templates.*Section: Things`, ".*",
 		func(components []string) {
 			if len(components) < 3 {
@@ -244,7 +245,7 @@ func (p *JklRegexParser) parse3doTemplates(data string, jklResult *Jkl) {
 			}
 
 			if modelName != "" {
-				tmp := Template{}
+				tmp := jktypes.Template{}
 				tmp.Name = name
 				tmp.Jk3doName = modelName
 				tmp.Size = size
@@ -254,7 +255,7 @@ func (p *JklRegexParser) parse3doTemplates(data string, jklResult *Jkl) {
 		})
 }
 
-func (p *JklRegexParser) parseThings(data string, jklResult *Jkl) {
+func (p *JklRegexParser) parseThings(data string, jklResult *jktypes.Jkl) {
 	p.parseSection(data, `(?s)World things.*end`, "\\d+:.*",
 		func(components []string) {
 			templateName := components[1]
@@ -267,7 +268,7 @@ func (p *JklRegexParser) parseThings(data string, jklResult *Jkl) {
 			yaw, _ := strconv.ParseFloat(components[7], 64)
 			Roll, _ := strconv.ParseFloat(components[8], 64)
 
-			t := Thing{}
+			t := jktypes.Thing{}
 			t.TemplateName = templateName
 			t.Position = mgl32.Vec3{float32(x), float32(y), float32(z)}
 			t.Pitch = pitch

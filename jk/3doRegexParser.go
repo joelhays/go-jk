@@ -2,6 +2,7 @@ package jk
 
 import (
 	"bufio"
+	"github.com/joelhays/go-jk/jk/jktypes"
 	"io/ioutil"
 	"log"
 	"regexp"
@@ -19,7 +20,7 @@ func NewJk3doRegexParser() *Jk3doRegexParser {
 	return &Jk3doRegexParser{}
 }
 
-func (p *Jk3doRegexParser) Parse3doFromFile(filePath string) Jk3doFile {
+func (p *Jk3doRegexParser) Parse3doFromFile(filePath string) jktypes.Jk3doFile {
 	bytes, err := ioutil.ReadFile(filePath)
 	if err != nil {
 		log.Fatal(err)
@@ -29,8 +30,8 @@ func (p *Jk3doRegexParser) Parse3doFromFile(filePath string) Jk3doFile {
 	return p.Parse3doFromString(data)
 }
 
-func (p *Jk3doRegexParser) Parse3doFromString(data string) Jk3doFile {
-	result := Jk3doFile{}
+func (p *Jk3doRegexParser) Parse3doFromString(data string) jktypes.Jk3doFile {
+	result := jktypes.Jk3doFile{}
 
 	p.parse3doFileMaterials(data, &result)
 	p.parse3doFileHierarchy(data, &result)
@@ -43,8 +44,8 @@ func (p *Jk3doRegexParser) Parse3doFromString(data string) Jk3doFile {
 	for _, geosetMatch := range geosetMatches {
 		meshMatches := meshRegex.Split(geosetMatch, -1)[1:]
 
-		geoset := GeoSet{}
-		geoset.Meshes = make([]Mesh, len(meshMatches))
+		geoset := jktypes.GeoSet{}
+		geoset.Meshes = make([]jktypes.Mesh, len(meshMatches))
 
 		result.GeoSets = append(result.GeoSets, geoset)
 
@@ -75,7 +76,7 @@ func (p *Jk3doRegexParser) Parse3doFromString(data string) Jk3doFile {
 	return result
 }
 
-func (p *Jk3doRegexParser) parse3doFileMaterials(data string, obj *Jk3doFile) {
+func (p *Jk3doRegexParser) parse3doFileMaterials(data string, obj *jktypes.Jk3doFile) {
 	p.parse3doFileSection(data, `(?s)MATERIALS.*?SECTION: GEOMETRYDEF`, "\\d+:.*",
 		func(components []string) {
 			matName := components[1]
@@ -89,7 +90,7 @@ func (p *Jk3doRegexParser) parse3doFileMaterials(data string, obj *Jk3doFile) {
 		})
 }
 
-func (p *Jk3doRegexParser) parse3doFileHierarchy(data string, obj *Jk3doFile) {
+func (p *Jk3doRegexParser) parse3doFileHierarchy(data string, obj *jktypes.Jk3doFile) {
 	p.parse3doFileSection(data, `(?s)SECTION: HIERARCHYDEF.*`, "\\d+:.*",
 		func(components []string) {
 
@@ -118,7 +119,7 @@ func (p *Jk3doRegexParser) parse3doFileHierarchy(data string, obj *Jk3doFile) {
 
 			nodeName := components[17]
 
-			def := HierarchyDef{
+			def := jktypes.HierarchyDef{
 				MeshID:      meshID,
 				ParentID:    parentID,
 				ChildID:     childID,
@@ -169,7 +170,7 @@ func (p *Jk3doRegexParser) parse3doFileSection(data string, regex string, compon
 	}
 }
 
-func (p *Jk3doRegexParser) parse3doFileVertices(data string, obj *Mesh) {
+func (p *Jk3doRegexParser) parse3doFileVertices(data string, obj *jktypes.Mesh) {
 	p.parse3doFileSection(data, `(?s)VERTICES.*?TEXTURE VERTICES`, "\\d+:.*",
 		func(components []string) {
 			var err error
@@ -191,7 +192,7 @@ func (p *Jk3doRegexParser) parse3doFileVertices(data string, obj *Mesh) {
 		})
 }
 
-func (p *Jk3doRegexParser) parse3doFileTextureVertices(data string, obj *Mesh) {
+func (p *Jk3doRegexParser) parse3doFileTextureVertices(data string, obj *jktypes.Mesh) {
 	p.parse3doFileSection(data, `(?s)TEXTURE VERTICES.*?VERTEX NORMALS`, "\\d+:.*",
 		func(components []string) {
 			var err error
@@ -209,10 +210,10 @@ func (p *Jk3doRegexParser) parse3doFileTextureVertices(data string, obj *Mesh) {
 		})
 }
 
-func (p *Jk3doRegexParser) parse3doFileSurfaces(data string, obj *Mesh) {
+func (p *Jk3doRegexParser) parse3doFileSurfaces(data string, obj *jktypes.Mesh) {
 	p.parse3doFileSection(data, `(?s)FACES.*?FACE NORMALS`, "\\d+:.*",
 		func(components []string) {
-			surface := Face{}
+			surface := jktypes.Face{}
 
 			materialID, _ := strconv.ParseInt(components[1], 10, 32)
 			surface.MaterialID = materialID

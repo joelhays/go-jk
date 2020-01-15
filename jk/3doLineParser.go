@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"fmt"
 	"github.com/go-gl/mathgl/mgl32"
+	"github.com/joelhays/go-jk/jk/jktypes"
 	"io/ioutil"
 	"log"
 	"strconv"
@@ -11,7 +12,7 @@ import (
 )
 
 type Jk3doLineParser struct {
-	jk3do   Jk3doFile
+	jk3do   jktypes.Jk3doFile
 	scanner *bufio.Scanner
 	line    string
 	done    bool
@@ -20,11 +21,11 @@ type Jk3doLineParser struct {
 
 func NewJk3doLineParser() *Jk3doLineParser {
 	return &Jk3doLineParser{
-		jk3do: Jk3doFile{},
+		jk3do: jktypes.Jk3doFile{},
 	}
 }
 
-func (p *Jk3doLineParser) ParseFromFile(filePath string) Jk3doFile {
+func (p *Jk3doLineParser) ParseFromFile(filePath string) jktypes.Jk3doFile {
 	bytes, err := ioutil.ReadFile(filePath)
 	if err != nil {
 		log.Fatal(err)
@@ -34,8 +35,8 @@ func (p *Jk3doLineParser) ParseFromFile(filePath string) Jk3doFile {
 	return p.ParseFromString(data)
 }
 
-func (p *Jk3doLineParser) ParseFromString(objString string) Jk3doFile {
-	p.jk3do = Jk3doFile{}
+func (p *Jk3doLineParser) ParseFromString(objString string) jktypes.Jk3doFile {
+	p.jk3do = jktypes.Jk3doFile{}
 	p.scanner = bufio.NewScanner(strings.NewReader(objString))
 	p.line = ""
 	p.done = false
@@ -98,7 +99,7 @@ func (p *Jk3doLineParser) parseMaterials() {
 	_, err := fmt.Sscanf(p.line, "materials %d", &count)
 	p.checkError(err)
 
-	p.jk3do.Materials = make([]Material, count)
+	p.jk3do.Materials = make([]jktypes.Material, count)
 
 	for i := 0; i < count; i++ {
 		p.getNextLine()
@@ -121,7 +122,7 @@ func (p *Jk3doLineParser) parseGeoSets() {
 	_, err := fmt.Sscanf(p.line, "geosets %d", &count)
 	p.checkError(err)
 
-	p.jk3do.GeoSets = make([]GeoSet, count)
+	p.jk3do.GeoSets = make([]jktypes.GeoSet, count)
 
 	for i := 0; i < count; i++ {
 		geoset := &p.jk3do.GeoSets[i]
@@ -132,12 +133,12 @@ func (p *Jk3doLineParser) parseGeoSets() {
 	}
 }
 
-func (p *Jk3doLineParser) parseMeshes(geoset *GeoSet) {
+func (p *Jk3doLineParser) parseMeshes(geoset *jktypes.GeoSet) {
 	var count int
 	_, err := fmt.Sscanf(p.line, "meshes %d", &count)
 	p.checkError(err)
 
-	geoset.Meshes = make([]Mesh, count)
+	geoset.Meshes = make([]jktypes.Mesh, count)
 
 	for i := 0; i < count; i++ {
 		mesh := &geoset.Meshes[i]
@@ -165,7 +166,7 @@ func (p *Jk3doLineParser) parseMeshes(geoset *GeoSet) {
 	}
 }
 
-func (p *Jk3doLineParser) parseVertices(mesh *Mesh) {
+func (p *Jk3doLineParser) parseVertices(mesh *jktypes.Mesh) {
 	var count int
 	_, err := fmt.Sscanf(p.line, "vertices %d", &count)
 	p.checkError(err)
@@ -180,7 +181,7 @@ func (p *Jk3doLineParser) parseVertices(mesh *Mesh) {
 	}
 }
 
-func (p *Jk3doLineParser) parseTextureVertices(mesh *Mesh) {
+func (p *Jk3doLineParser) parseTextureVertices(mesh *jktypes.Mesh) {
 	var count int
 	_, err := fmt.Sscanf(p.line, "texture vertices %d", &count)
 	p.checkError(err)
@@ -195,7 +196,7 @@ func (p *Jk3doLineParser) parseTextureVertices(mesh *Mesh) {
 	}
 }
 
-func (p *Jk3doLineParser) parseVertexNormals(mesh *Mesh) {
+func (p *Jk3doLineParser) parseVertexNormals(mesh *jktypes.Mesh) {
 	numVerts := len(mesh.Vertices)
 	mesh.VertexNormals = make([]mgl32.Vec3, numVerts)
 
@@ -207,19 +208,19 @@ func (p *Jk3doLineParser) parseVertexNormals(mesh *Mesh) {
 	}
 }
 
-func (p *Jk3doLineParser) parseFaces(mesh *Mesh) {
+func (p *Jk3doLineParser) parseFaces(mesh *jktypes.Mesh) {
 	var count int
 	_, err := fmt.Sscanf(p.line, "faces %d", &count)
 	p.checkError(err)
 
-	mesh.Faces = make([]Face, count)
+	mesh.Faces = make([]jktypes.Face, count)
 
 	for i := 0; i < count; i++ {
 		p.getNextLine()
 
 		args := strings.Fields(strings.Replace(p.line, ",", " ", -1))
 
-		surface := Face{}
+		surface := jktypes.Face{}
 
 		materialID, _ := strconv.ParseInt(args[1], 10, 32)
 		surface.MaterialID = materialID
@@ -248,7 +249,7 @@ func (p *Jk3doLineParser) parseFaces(mesh *Mesh) {
 	}
 }
 
-func (p *Jk3doLineParser) parseFaceNormals(mesh *Mesh) {
+func (p *Jk3doLineParser) parseFaceNormals(mesh *jktypes.Mesh) {
 	numFaces := len(mesh.Faces)
 	mesh.FaceNormals = make([]mgl32.Vec3, numFaces)
 
@@ -265,7 +266,7 @@ func (p *Jk3doLineParser) parseHierarchyNodes() {
 	_, err := fmt.Sscanf(p.line, "hierarchy nodes %d", &count)
 	p.checkError(err)
 
-	p.jk3do.Hierarchy = make([]HierarchyDef, count)
+	p.jk3do.Hierarchy = make([]jktypes.HierarchyDef, count)
 
 	for i := 0; i < count; i++ {
 		p.getNextLine()
@@ -292,7 +293,7 @@ func (p *Jk3doLineParser) parseHierarchyNodes() {
 
 		nodeName := args[17]
 
-		def := HierarchyDef{
+		def := jktypes.HierarchyDef{
 			MeshID:      meshID,
 			ParentID:    parentID,
 			ChildID:     childID,

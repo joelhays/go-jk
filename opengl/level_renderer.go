@@ -3,21 +3,21 @@ package opengl
 import (
 	"fmt"
 	"github.com/go-gl/mathgl/mgl32"
+	"github.com/joelhays/go-jk/jk/jktypes"
 
 	"github.com/go-gl/gl/v3.2-core/gl"
-	"github.com/joelhays/go-jk/jk"
 )
 
 type OpenGlLevelRenderer struct {
-	thing    *jk.Thing
-	template *jk.Template
-	object   *jk.JkMesh
+	thing    *jktypes.Thing
+	template *jktypes.Template
+	object   *jktypes.JkMesh
 	program  *ShaderProgram
 	vao      uint32
 	textures []uint32
 }
 
-func NewOpenGlLevelRenderer(thing *jk.Thing, template *jk.Template, object *jk.JkMesh, program *ShaderProgram) Renderer {
+func NewOpenGlLevelRenderer(thing *jktypes.Thing, template *jktypes.Template, object *jktypes.JkMesh, program *ShaderProgram) Renderer {
 	r := &OpenGlLevelRenderer{thing: thing, template: template, object: object, program: program}
 	r.setupMesh()
 	return r
@@ -69,7 +69,7 @@ func (r *OpenGlLevelRenderer) setupMesh() {
 func (r *OpenGlLevelRenderer) makePoints() []float32 {
 	var points []float32
 	for _, surface := range r.object.Surfaces {
-		var mat jk.Material
+		var mat jktypes.Material
 		if surface.MaterialID != -1 {
 			mat = r.object.Materials[surface.MaterialID]
 		}

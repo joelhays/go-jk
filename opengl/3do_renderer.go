@@ -3,22 +3,22 @@ package opengl
 import (
 	"fmt"
 	"github.com/go-gl/mathgl/mgl32"
+	"github.com/joelhays/go-jk/jk/jktypes"
 
 	"github.com/go-gl/gl/v3.2-core/gl"
-	"github.com/joelhays/go-jk/jk"
 )
 
 type OpenGl3doRenderer struct {
-	thing    *jk.Thing
-	template *jk.Template
-	object   *jk.Jk3doFile
+	thing    *jktypes.Thing
+	template *jktypes.Template
+	object   *jktypes.Jk3doFile
 	program  *ShaderProgram
 	vao      uint32
 	textures []uint32
 	lod      int32
 }
 
-func NewOpenGl3doRenderer(thing *jk.Thing, template *jk.Template, object *jk.Jk3doFile, program *ShaderProgram) Renderer {
+func NewOpenGl3doRenderer(thing *jktypes.Thing, template *jktypes.Template, object *jktypes.Jk3doFile, program *ShaderProgram) Renderer {
 	if thing == nil {
 		panic("Thing is nil!")
 	}
@@ -59,7 +59,7 @@ func (r *OpenGl3doRenderer) Render() {
 		_ = meshIdx
 		model := mgl32.Ident4()
 
-		var hierarchy jk.HierarchyDef
+		var hierarchy jktypes.HierarchyDef
 		for i := 0; i < len(r.object.Hierarchy); i++ {
 			h := r.object.Hierarchy[i]
 			if h.MeshID == int64(meshIdx) {
@@ -135,7 +135,7 @@ func (r *OpenGl3doRenderer) makePoints() []float32 {
 
 	for _, mesh := range r.object.GeoSets[r.lod].Meshes {
 		for surfaceIdx, surface := range mesh.Faces {
-			var mat jk.Material
+			var mat jktypes.Material
 			if surface.MaterialID != -1 {
 				mat = r.object.Materials[surface.MaterialID]
 			}

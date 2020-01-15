@@ -3,13 +3,14 @@ package jk
 import (
 	"bufio"
 	"fmt"
+	"github.com/joelhays/go-jk/jk/jktypes"
 	"io/ioutil"
 	"log"
 	"strings"
 )
 
 type KeyLineParser struct {
-	key     Key
+	key     jktypes.Key
 	scanner *bufio.Scanner
 	line    string
 	done    bool
@@ -19,7 +20,7 @@ func NewKeyLineParser() *KeyLineParser {
 	return &KeyLineParser{}
 }
 
-func (p *KeyLineParser) ParseFromFile(filePath string) Key {
+func (p *KeyLineParser) ParseFromFile(filePath string) jktypes.Key {
 	bytes, err := ioutil.ReadFile(filePath)
 	if err != nil {
 		log.Fatal(err)
@@ -29,8 +30,8 @@ func (p *KeyLineParser) ParseFromFile(filePath string) Key {
 	return p.ParseFromString(data)
 }
 
-func (p *KeyLineParser) ParseFromString(objString string) Key {
-	p.key = Key{}
+func (p *KeyLineParser) ParseFromString(objString string) jktypes.Key {
+	p.key = jktypes.Key{}
 	p.scanner = bufio.NewScanner(strings.NewReader(objString))
 	p.line = ""
 	p.done = false
@@ -120,7 +121,7 @@ func (p *KeyLineParser) parseNodes() {
 	p.checkError(err)
 
 	for i := 0; i < count; i++ {
-		node := KeyframeNode{}
+		node := jktypes.KeyframeNode{}
 
 		p.getNextLine() // NODE %d
 		p.getNextLine() // MESH NAME %s
@@ -134,13 +135,13 @@ func (p *KeyLineParser) parseNodes() {
 	}
 }
 
-func (p *KeyLineParser) parseNodeEntries(node *KeyframeNode) {
+func (p *KeyLineParser) parseNodeEntries(node *jktypes.KeyframeNode) {
 	var count int
 	_, err := fmt.Sscanf(p.line, "entries %d", &count)
 	p.checkError(err)
 
 	for i := 0; i < count; i++ {
-		entry := KeyframeNodeEntry{}
+		entry := jktypes.KeyframeNodeEntry{}
 
 		var id int32
 		p.getNextLine()

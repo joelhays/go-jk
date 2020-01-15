@@ -1,6 +1,9 @@
 package jk
 
 import (
+	"fmt"
+	"github.com/joelhays/go-jk/jk/jktypes"
+	"log"
 	"strings"
 	"sync"
 )
@@ -16,6 +19,10 @@ type Loader struct {
 	cache       map[string]interface{}
 	jklParser   JklParser
 	jk3doParser Jk3doParser
+	cmpParser   *CmpParser
+	bmParser    *BmParser
+	matParser   *MatParser
+	sftParser   *SftParser
 }
 
 func GetLoader() *Loader {
@@ -24,6 +31,10 @@ func GetLoader() *Loader {
 		instance.cache = make(map[string]interface{})
 		instance.jklParser = NewJklLineParser()
 		instance.jk3doParser = NewJk3doLineParser()
+		instance.cmpParser = NewCmpParser()
+		instance.bmParser = NewBmParser()
+		instance.matParser = NewMatParser()
+		instance.sftParser = NewSftParser()
 	})
 	return instance
 }
@@ -61,126 +72,95 @@ func (l *Loader) LoadEpisodeManifest(prefix string, suffix string) []string {
 	return l.getGobFiles(episodeGobFiles, prefix, suffix)
 }
 
-func (l *Loader) LoadJKL(filename string) Jkl {
-	for _, gob := range episodeGobFiles {
-		fileBytes := loadFileFromGOB(gob, filename)
-		if fileBytes == nil {
-			continue
-		}
-		jklLevel := l.jklParser.ParseFromString(string(fileBytes))
-		return jklLevel
+func (l *Loader) LoadJKL(filename string) jktypes.Jkl {
+	fileBytes := l.LoadEpisode(filename)
+	if fileBytes == nil {
+		return jktypes.Jkl{}
 	}
 
-	for _, gob := range resourceGobFiles {
-		fileBytes := loadFileFromGOB(gob, filename)
-		if fileBytes == nil {
-			continue
-		}
-		jklLevel := l.jklParser.ParseFromString(string(fileBytes))
-		return jklLevel
-	}
-
-	return Jkl{}
+	jklLevel := l.jklParser.ParseFromString(string(fileBytes))
+	return jklLevel
 }
 
-func (l *Loader) Load3DO(filename string) Jk3doFile {
-	var obj Jk3doFile
+func (l *Loader) Load3DO(filename string) jktypes.Jk3doFile {
+	var obj jktypes.Jk3doFile
 
 	if obj, ok := l.cache[filename]; ok {
-		return obj.(Jk3doFile)
+		return obj.(jktypes.Jk3doFile)
 	}
 
-	for _, gob := range resourceGobFiles {
-		fileBytes := loadFileFromGOB(gob, filename)
-		if fileBytes == nil {
-			continue
-		}
-		obj = l.jk3doParser.ParseFromString(string(fileBytes))
-		l.cache[filename] = obj
-		return obj
-	}
-
-	return Jk3doFile{}
+	fileBytes := l.LoadResource(filename)
+	obj = l.jk3doParser.ParseFromString(string(fileBytes))
+	l.cache[filename] = obj
+	return obj
 }
 
-func (l *Loader) LoadMAT(filename string) Material {
-	var mat Material
+func (l *Loader) LoadMAT(filename string) jktypes.Material {
+	var mat jktypes.Material
 
 	if mat, ok := l.cache[filename]; ok {
-		return mat.(Material)
+		return mat.(jktypes.Material)
 	}
 
-	for _, gob := range resourceGobFiles {
-		fileBytes := loadFileFromGOB(gob, filename)
-		if fileBytes == nil {
-			continue
-		}
-		mat = parseMatFile(fileBytes)
-		l.cache[filename] = mat
-		return mat
+	fileBytes := l.LoadResource(filename)
+	if fileBytes == nil {
+		return jktypes.Material{}
 	}
 
-	return Material{}
+	mat = l.matParser.ParseFromBytes(fileBytes)
+	l.cache[filename] = mat
+	return mat
 }
 
-func (l *Loader) LoadCMP(filename string) ColorMap {
-	var cmp ColorMap
+func (l *Loader) LoadCMP(filename string) jktypes.ColorMap {
+	var cmp jktypes.ColorMap
 
 	if cmp, ok := l.cache[filename]; ok {
-		return cmp.(ColorMap)
+		return cmp.(jktypes.ColorMap)
 	}
 
-	for _, gob := range resourceGobFiles {
-		fileBytes := loadFileFromGOB(gob, filename)
-		if fileBytes == nil {
-			continue
-		}
-		cmp = parseCmpFile(fileBytes)
-		l.cache[filename] = cmp
-		return cmp
+	fileBytes := l.LoadResource(filename)
+	if fileBytes == nil {
+		return jktypes.ColorMap{}
 	}
 
-	return ColorMap{}
+	cmp = l.cmpParser.ParseFromBytes(fileBytes)
+	l.cache[filename] = cmp
+	return cmp
 }
 
-func (l *Loader) LoadBM(filename string) BMFile {
-	var bm BMFile
+func (l *Loader) LoadBM(filename string) jktypes.BMFile {
+	var bm jktypes.BMFile
 
 	if bm, ok := l.cache[filename]; ok {
-		return bm.(BMFile)
+		return bm.(jktypes.BMFile)
 	}
 
-	for _, gob := range resourceGobFiles {
-		fileBytes := loadFileFromGOB(gob, filename)
-		if fileBytes == nil {
-			continue
-		}
-		bm = parseBmFile(fileBytes)
-		l.cache[filename] = bm
-		return bm
+	fileBytes := l.LoadResource(filename)
+	if fileBytes == nil {
+		return jktypes.BMFile{}
 	}
 
-	return BMFile{}
+	bm = l.bmParser.ParseFromBytes(fileBytes)
+	l.cache[filename] = bm
+	return bm
 }
 
-func (l *Loader) LoadSFT(filename string) SFTFile {
-	var sft SFTFile
+func (l *Loader) LoadSFT(filename string) jktypes.SFTFile {
+	var sft jktypes.SFTFile
 
 	if sft, ok := l.cache[filename]; ok {
-		return sft.(SFTFile)
+		return sft.(jktypes.SFTFile)
 	}
 
-	for _, gob := range resourceGobFiles {
-		fileBytes := loadFileFromGOB(gob, filename)
-		if fileBytes == nil {
-			continue
-		}
-		sft = parseSFTFile(fileBytes)
-		l.cache[filename] = sft
-		return sft
+	fileBytes := l.LoadResource(filename)
+	if fileBytes == nil {
+		return jktypes.SFTFile{}
 	}
 
-	return SFTFile{}
+	sft = l.sftParser.ParseFromBytes(fileBytes)
+	l.cache[filename] = sft
+	return sft
 }
 
 func (l *Loader) LoadResource(filename string) []byte {
@@ -192,5 +172,19 @@ func (l *Loader) LoadResource(filename string) []byte {
 		return fileBytes
 	}
 
+	log.Println(fmt.Errorf("unable to find %s", filename))
+	return nil
+}
+
+func (l *Loader) LoadEpisode(filename string) []byte {
+	for _, gob := range episodeGobFiles {
+		fileBytes := loadFileFromGOB(gob, filename)
+		if fileBytes == nil {
+			continue
+		}
+		return fileBytes
+	}
+
+	log.Println(fmt.Errorf("unable to find %s", filename))
 	return nil
 }

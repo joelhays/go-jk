@@ -1,4 +1,4 @@
-package jk
+package jktypes
 
 import (
 	"github.com/go-gl/mathgl/mgl32"
@@ -12,7 +12,7 @@ type Jkl struct {
 	Things         []Thing
 }
 
-type surface struct {
+type Surface struct {
 	VertexIds        []int64
 	TextureVertexIds []int64
 	LightIntensities []float64
@@ -40,7 +40,7 @@ type JkMesh struct {
 	Vertices        []mgl32.Vec3
 	TextureVertices []mgl32.Vec2
 	VertexNormals   []mgl32.Vec3
-	Surfaces        []surface
+	Surfaces        []Surface
 	Materials       []Material
 	ColorMaps       []ColorMap
 }

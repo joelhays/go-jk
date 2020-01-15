@@ -1,4 +1,4 @@
-package jk
+package jktypes
 
 type Pup struct {
 	Modes  []PupMode
@@ -8,7 +8,7 @@ type Pup struct {
 type PupMode struct {
 	SubModes    []PupSubMode
 	BasedOn     int32
-	isInherited bool
+	IsInherited bool
 }
 
 type PupSubMode struct {

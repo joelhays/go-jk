@@ -4,6 +4,7 @@ import (
 	"github.com/go-gl/glfw/v3.2/glfw"
 	"github.com/joelhays/go-jk/camera"
 	"github.com/joelhays/go-jk/jk"
+	"github.com/joelhays/go-jk/jk/jktypes"
 	"github.com/joelhays/go-jk/opengl"
 )
 
@@ -14,7 +15,7 @@ type JklScene struct {
 	cam           *camera.Camera
 	window        *glfw.Window
 	levelRenderer opengl.Renderer
-	level         *jk.Jkl
+	level         *jktypes.Jkl
 }
 
 func NewJklScene(jklName string, window *glfw.Window, cam *camera.Camera, shaderProgram *opengl.ShaderProgram) *JklScene {
