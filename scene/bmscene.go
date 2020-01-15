@@ -5,6 +5,7 @@ import (
 	"github.com/go-gl/mathgl/mgl32"
 	"github.com/joelhays/go-jk/camera"
 	"github.com/joelhays/go-jk/jk"
+	"github.com/joelhays/go-jk/jk/jkparsers"
 	"github.com/joelhays/go-jk/jk/jktypes"
 	"github.com/joelhays/go-jk/opengl"
 )
@@ -24,7 +25,11 @@ func NewBMScene(bmName string, window *glfw.Window, cam *camera.Camera, shaderPr
 }
 
 func (s *BMScene) Load() {
-	bm := jk.GetLoader().LoadBM(s.bmName)
+	var bm jktypes.BMFile
+	fileBytes := jk.GetLoader().LoadResource(s.bmName)
+	if fileBytes != nil {
+		bm = jkparsers.NewBmParser().ParseFromBytes(fileBytes)
+	}
 	s.bm = &bm
 }
 

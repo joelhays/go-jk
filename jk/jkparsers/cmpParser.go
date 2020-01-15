@@ -1,6 +1,8 @@
-package jk
+package jkparsers
 
-import "github.com/joelhays/go-jk/jk/jktypes"
+import (
+	"github.com/joelhays/go-jk/jk/jktypes"
+)
 
 type CmpParser struct {
 }

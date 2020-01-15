@@ -3,14 +3,15 @@ package main
 import (
 	"fmt"
 	"github.com/joelhays/go-jk/jk"
+	"github.com/joelhays/go-jk/jk/jkparsers"
 )
 
 func testPupParser() {
-	p := jk.NewPupLineParser()
+	p := jkparsers.NewPupLineParser()
 	pup := p.ParseFromFile("./_testfiles/rystr.pup")
 	fmt.Println(fmt.Sprintf("%+v", pup))
 
-	manifest := jk.GetLoader().LoadResourceManifest("misc\\pup\\", "pup")
+	manifest := jk.GetLoader().LoadManifest("pup")
 	for _, file := range manifest {
 		fmt.Println(file)
 		fileBytes := jk.GetLoader().LoadResource(file)
@@ -20,11 +21,11 @@ func testPupParser() {
 }
 
 func testKeyParser() {
-	p := jk.NewKeyLineParser()
+	p := jkparsers.NewKeyLineParser()
 	r := p.ParseFromFile("./_testfiles/8twalk.key")
 	fmt.Println(fmt.Sprintf("%+v", r))
 
-	manifest := jk.GetLoader().LoadResourceManifest("3do\\key\\", "key")
+	manifest := jk.GetLoader().LoadManifest("key")
 	for _, file := range manifest {
 		fmt.Println(file)
 		fileBytes := jk.GetLoader().LoadResource(file)
@@ -34,12 +35,12 @@ func testKeyParser() {
 }
 
 func testJklParser() {
-	p := jk.NewJklLineParser()
+	p := jkparsers.NewJklLineParser()
 	r := p.ParseFromFile("./_testfiles/jkl/01narshadda.jkl")
 	_ = r
 	//fmt.Println(fmt.Sprintf("%+v", r))
 
-	manifest := jk.GetLoader().LoadEpisodeManifest("jkl\\", "jkl")
+	manifest := jk.GetLoader().LoadManifest("jkl")
 	for _, file := range manifest {
 		fmt.Println(file)
 		fileBytes := jk.GetLoader().LoadEpisode(file)
@@ -48,12 +49,12 @@ func testJklParser() {
 }
 
 func test3doParser() {
-	p := jk.NewJk3doLineParser()
+	p := jkparsers.NewJk3doLineParser()
 	r := p.ParseFromFile("./_testfiles/3do/rystr.3do")
 	_ = r
 	//fmt.Println(fmt.Sprintf("%+v", r))
 
-	manifest := jk.GetLoader().LoadResourceManifest("3do\\", "3do")
+	manifest := jk.GetLoader().LoadManifest("3do")
 	for _, file := range manifest {
 		fmt.Println(file)
 		fileBytes := jk.GetLoader().LoadResource(file)

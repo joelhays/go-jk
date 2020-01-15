@@ -1,4 +1,4 @@
-package jk
+package jkparsers
 
 import "github.com/joelhays/go-jk/jk/jktypes"
 

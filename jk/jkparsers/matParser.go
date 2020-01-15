@@ -1,4 +1,4 @@
-package jk
+package jkparsers
 
 import (
 	"encoding/binary"

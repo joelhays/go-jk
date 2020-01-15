@@ -5,6 +5,8 @@ import (
 	"github.com/go-gl/mathgl/mgl32"
 	"github.com/joelhays/go-jk/camera"
 	"github.com/joelhays/go-jk/jk"
+	"github.com/joelhays/go-jk/jk/jkparsers"
+	"github.com/joelhays/go-jk/jk/jktypes"
 	"github.com/joelhays/go-jk/opengl"
 )
 
@@ -21,7 +23,11 @@ func NewSFTScene(sftName string, window *glfw.Window, cam *camera.Camera, shader
 }
 
 func (s *SFTScene) Load() {
-	sft := jk.GetLoader().LoadSFT(s.sftName)
+	var sft jktypes.SFTFile
+	fileBytes := jk.GetLoader().LoadResource(s.sftName)
+	if fileBytes != nil {
+		sft = jkparsers.NewSftParser().ParseFromBytes(fileBytes)
+	}
 	//fmt.Printf("%+v\n", sft)
 
 	w, h := s.window.GetSize()

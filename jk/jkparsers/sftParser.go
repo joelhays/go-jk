@@ -1,6 +1,9 @@
-package jk
+package jkparsers
 
-import "github.com/joelhays/go-jk/jk/jktypes"
+import (
+	"github.com/joelhays/go-jk/jk"
+	"github.com/joelhays/go-jk/jk/jktypes"
+)
 
 type SftParser struct {
 }
@@ -49,7 +52,11 @@ func (p *SftParser) ParseFromBytes(data []byte) jktypes.SFTFile {
 
 	bm := bmParser.ParseFromBytes(data[cursor:])
 	if bm.Header.PaletteIncluded != 2 {
-		cmp := GetLoader().LoadCMP("uicolormap.cmp")
+		var cmp jktypes.ColorMap
+		fileBytes := jk.GetLoader().LoadResource("uicolormap.cmp")
+		if fileBytes != nil {
+			cmp = NewCmpParser().ParseFromBytes(fileBytes)
+		}
 		bm.Palette.Palette = cmp.Palette
 	}
 

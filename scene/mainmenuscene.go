@@ -5,6 +5,8 @@ import (
 	"github.com/go-gl/mathgl/mgl32"
 	"github.com/golang-ui/nuklear/nk"
 	"github.com/joelhays/go-jk/jk"
+	"github.com/joelhays/go-jk/jk/jkparsers"
+	"github.com/joelhays/go-jk/jk/jktypes"
 	"github.com/joelhays/go-jk/menu"
 	"github.com/joelhays/go-jk/opengl"
 	"log"
@@ -40,7 +42,11 @@ func (m *MainMenuScene) Load() {
 		nk.NkStyleSetFont(m.context, m.fontHandle)
 	}
 
-	bmFile := jk.GetLoader().LoadBM("bkmain.bm")
+	var bmFile jktypes.BMFile
+	fileBytes := jk.GetLoader().LoadResource("bkmain.bm")
+	if fileBytes != nil {
+		bmFile = jkparsers.NewBmParser().ParseFromBytes(fileBytes)
+	}
 
 	bmRenderer := opengl.NewOpenGlBmRenderer(&bmFile, mgl32.Vec2{1, 1}, nil)
 	original, ok := bmRenderer.(*opengl.OpenGlBmRenderer)
@@ -59,19 +65,19 @@ func (m *MainMenuScene) Load() {
 	m.window.SetInputMode(glfw.CursorMode, glfw.CursorNormal)
 
 	if len(m.levels) == 0 {
-		for _, gobFileName := range jk.GetLoader().LoadJKLManifest() {
+		for _, gobFileName := range jk.GetLoader().LoadManifest("jkl") {
 			m.levels = append(m.levels, gobFileName)
 		}
 	}
 
 	if len(m.objs) == 0 {
-		for _, gobFileName := range jk.GetLoader().Load3DOManifest() {
+		for _, gobFileName := range jk.GetLoader().LoadManifest("3do") {
 			m.objs = append(m.objs, gobFileName)
 		}
 	}
 
 	if len(m.bms) == 0 {
-		for _, gobFileName := range jk.GetLoader().LoadBMManifest() {
+		for _, gobFileName := range jk.GetLoader().LoadManifest("bm") {
 			m.bms = append(m.bms, gobFileName)
 		}
 	}

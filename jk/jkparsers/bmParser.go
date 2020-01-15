@@ -1,6 +1,9 @@
-package jk
+package jkparsers
 
-import "github.com/joelhays/go-jk/jk/jktypes"
+import (
+	"github.com/joelhays/go-jk/jk"
+	"github.com/joelhays/go-jk/jk/jktypes"
+)
 
 type BmParser struct {
 }
@@ -59,7 +62,12 @@ func (p *BmParser) ParseFromBytes(data []byte) jktypes.BMFile {
 	}
 
 	if header.PaletteIncluded != 2 {
-		cmp := GetLoader().LoadCMP("dflt.cmp")
+		var cmp jktypes.ColorMap
+		fileBytes := jk.GetLoader().LoadResource("dflt.cmp")
+		if fileBytes != nil {
+			cmp = NewCmpParser().ParseFromBytes(fileBytes)
+		}
+
 		result.Palette.Palette = cmp.Palette
 	}
 

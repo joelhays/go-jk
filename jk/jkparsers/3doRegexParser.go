@@ -1,7 +1,8 @@
-package jk
+package jkparsers
 
 import (
 	"bufio"
+	"github.com/joelhays/go-jk/jk"
 	"github.com/joelhays/go-jk/jk/jktypes"
 	"io/ioutil"
 	"log"
@@ -70,8 +71,9 @@ func (p *Jk3doRegexParser) Parse3doFromString(data string) jktypes.Jk3doFile {
 		meshwg.Wait()
 	}
 
-	cmpName := "dflt.cmp"
-	result.ColorMap = GetLoader().LoadCMP(cmpName)
+	fileBytes := jk.GetLoader().LoadResource("dflt.cmp")
+	cmp := NewCmpParser().ParseFromBytes(fileBytes)
+	result.ColorMap = cmp
 
 	return result
 }
@@ -81,7 +83,11 @@ func (p *Jk3doRegexParser) parse3doFileMaterials(data string, obj *jktypes.Jk3do
 		func(components []string) {
 			matName := components[1]
 
-			material := GetLoader().LoadMAT(matName)
+			var material jktypes.Material
+			fileBytes := jk.GetLoader().LoadResource(matName)
+			if fileBytes != nil {
+				material = NewMatParser().ParseFromBytes(fileBytes)
+			}
 
 			material.XTile = 1.0
 			material.YTile = 1.0

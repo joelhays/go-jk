@@ -1,9 +1,10 @@
-package jk
+package jkparsers
 
 import (
 	"bufio"
 	"fmt"
 	"github.com/go-gl/mathgl/mgl32"
+	"github.com/joelhays/go-jk/jk"
 	"github.com/joelhays/go-jk/jk/jktypes"
 	"io/ioutil"
 	"log"
@@ -231,7 +232,11 @@ func (p *JklLineParser) parseGeoResourceWorldColormap(line string) {
 		panic("Unable to get colormap information")
 	}
 
-	colorMap := GetLoader().LoadCMP(cmpName)
+	var colorMap jktypes.ColorMap
+	fileBytes := jk.GetLoader().LoadResource(cmpName)
+	if fileBytes != nil {
+		colorMap = NewCmpParser().ParseFromBytes(fileBytes)
+	}
 
 	p.jkl.Model.ColorMaps = append(p.jkl.Model.ColorMaps, colorMap)
 }
@@ -289,7 +294,11 @@ func (p *JklLineParser) parseMaterialsWorldMaterial(line string) {
 		panic("Unable to get world material information")
 	}
 
-	material := GetLoader().LoadMAT(matName)
+	var material jktypes.Material
+	fileBytes := jk.GetLoader().LoadResource(matName)
+	if fileBytes != nil {
+		material = NewMatParser().ParseFromBytes(fileBytes)
+	}
 
 	material.XTile = xTile
 	material.YTile = yTile
@@ -316,7 +325,12 @@ func (p *JklLineParser) parseModelsWorldModel(line string) {
 		panic("Unable to get world model information")
 	}
 
-	jk3do := GetLoader().Load3DO(jk3doName)
+	var jk3do jktypes.Jk3doFile
+	fileBytes := jk.GetLoader().LoadResource(jk3doName)
+	if fileBytes != nil {
+		jk3do = NewJk3doLineParser().ParseFromString(string(fileBytes))
+	}
+
 	if len(p.jkl.Model.ColorMaps) > 0 {
 		jk3do.ColorMap = p.jkl.Model.ColorMaps[0]
 	}

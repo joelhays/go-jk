@@ -1,9 +1,10 @@
-package jk
+package jkparsers
 
 import (
 	"bufio"
 	"fmt"
 	"github.com/go-gl/mathgl/mgl32"
+	"github.com/joelhays/go-jk/jk"
 	"github.com/joelhays/go-jk/jk/jktypes"
 	"io/ioutil"
 	"log"
@@ -58,8 +59,10 @@ func (p *Jk3doLineParser) ParseFromString(objString string) jktypes.Jk3doFile {
 	p.getNextLine() // HIERARCHY NODES %d
 	p.parseHierarchyNodes()
 
-	cmpName := "dflt.cmp"
-	p.jk3do.ColorMap = GetLoader().LoadCMP(cmpName)
+	fileBytes := jk.GetLoader().LoadResource("dflt.cmp")
+	cmp := NewCmpParser().ParseFromBytes(fileBytes)
+
+	p.jk3do.ColorMap = cmp
 
 	return p.jk3do
 }
@@ -109,7 +112,11 @@ func (p *Jk3doLineParser) parseMaterials() {
 		_, err := fmt.Sscanf(p.line, "%d:%s", &id, &matName)
 		p.checkError(err)
 
-		material := GetLoader().LoadMAT(matName)
+		var material jktypes.Material
+		fileBytes := jk.GetLoader().LoadResource(matName)
+		if fileBytes != nil {
+			material = NewMatParser().ParseFromBytes(fileBytes)
+		}
 		material.XTile = 1.0
 		material.YTile = 1.0
 

@@ -5,6 +5,7 @@ import (
 	"github.com/go-gl/mathgl/mgl32"
 	"github.com/joelhays/go-jk/camera"
 	"github.com/joelhays/go-jk/jk"
+	"github.com/joelhays/go-jk/jk/jkparsers"
 	"github.com/joelhays/go-jk/jk/jktypes"
 	"github.com/joelhays/go-jk/opengl"
 )
@@ -24,7 +25,12 @@ func NewJk3doScene(jk3doName string, window *glfw.Window, cam *camera.Camera, sh
 }
 
 func (s *Jk3doScene) Load() {
-	obj := jk.GetLoader().Load3DO(s.jk3doName)
+	var obj jktypes.Jk3doFile
+	fileBytes := jk.GetLoader().LoadResource(s.jk3doName)
+	if fileBytes != nil {
+		obj = jkparsers.NewJk3doLineParser().ParseFromString(string(fileBytes))
+	}
+
 	s.obj = &obj
 	s.cam.Position = mgl32.Vec3{0, 1, 0}
 	s.cam.Up = mgl32.Vec3{0, 0, 1}

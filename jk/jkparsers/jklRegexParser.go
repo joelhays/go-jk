@@ -1,7 +1,8 @@
-package jk
+package jkparsers
 
 import (
 	"bufio"
+	"github.com/joelhays/go-jk/jk"
 	"github.com/joelhays/go-jk/jk/jktypes"
 	"io/ioutil"
 	"log"
@@ -143,7 +144,11 @@ func (p *JklRegexParser) parseMaterials(data string, jklResult *jktypes.Jkl) {
 				log.Fatal(err)
 			}
 
-			material := GetLoader().LoadMAT(matName)
+			var material jktypes.Material
+			fileBytes := jk.GetLoader().LoadResource(matName)
+			if fileBytes != nil {
+				material = NewMatParser().ParseFromBytes(fileBytes)
+			}
 
 			material.XTile = float32(xTile)
 			material.YTile = float32(yTile)
@@ -162,7 +167,11 @@ func (p *JklRegexParser) parseColormaps(data string, jklResult *jktypes.Jkl) {
 				cmpName = components[1]
 			}
 
-			colorMap := GetLoader().LoadCMP(cmpName)
+			var colorMap jktypes.ColorMap
+			fileBytes := jk.GetLoader().LoadResource(cmpName)
+			if fileBytes != nil {
+				colorMap = NewCmpParser().ParseFromBytes(fileBytes)
+			}
 
 			jklResult.Model.ColorMaps = append(jklResult.Model.ColorMaps, colorMap)
 		})
@@ -217,7 +226,12 @@ func (p *JklRegexParser) parse3dos(data string, jklResult *jktypes.Jkl) {
 		func(components []string) {
 			jk3doName := components[1]
 
-			jk3do := GetLoader().Load3DO(jk3doName)
+			var jk3do jktypes.Jk3doFile
+			fileBytes := jk.GetLoader().LoadResource(jk3doName)
+			if fileBytes != nil {
+				jk3do = NewJk3doLineParser().ParseFromString(string(fileBytes))
+			}
+
 			if len(jklResult.Model.ColorMaps) > 0 {
 				jk3do.ColorMap = jklResult.Model.ColorMaps[0]
 			}

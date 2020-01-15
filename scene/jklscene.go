@@ -4,6 +4,7 @@ import (
 	"github.com/go-gl/glfw/v3.2/glfw"
 	"github.com/joelhays/go-jk/camera"
 	"github.com/joelhays/go-jk/jk"
+	"github.com/joelhays/go-jk/jk/jkparsers"
 	"github.com/joelhays/go-jk/jk/jktypes"
 	"github.com/joelhays/go-jk/opengl"
 )
@@ -24,7 +25,11 @@ func NewJklScene(jklName string, window *glfw.Window, cam *camera.Camera, shader
 
 func (s *JklScene) Load() {
 	if s.level == nil {
-		level := jk.GetLoader().LoadJKL(s.jklName)
+		var level jktypes.Jkl
+		fileBytes := jk.GetLoader().LoadEpisode(s.jklName)
+		if fileBytes != nil {
+			level = jkparsers.NewJklLineParser().ParseFromString(string(fileBytes))
+		}
 		s.level = &level
 	}
 }
