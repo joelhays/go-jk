@@ -1,6 +1,8 @@
 package jk
 
 import (
+	"fmt"
+	"log"
 	"strings"
 	"sync"
 )
@@ -13,22 +15,20 @@ var (
 )
 
 type Loader struct {
-	cache map[string]interface{}
 }
 
 func GetLoader() *Loader {
 	once.Do(func() {
 		instance = &Loader{}
-		instance.cache = make(map[string]interface{})
 	})
 	return instance
 }
 
-func (l *Loader) getGobFiles(gobFiles []string, prefix string, suffix string) []string {
+func (l *Loader) getGobFiles(gobFiles []string, suffix string) []string {
 	var files []string
 	for _, gob := range gobFiles {
 		for _, gobData := range loadGOBManifest(gob).Items {
-			if strings.HasPrefix(gobData.FileName, prefix) && strings.HasSuffix(gobData.FileName, suffix) {
+			if strings.HasSuffix(gobData.FileName, suffix) {
 				files = append(files, gobData.FileName)
 			}
 		}
@@ -37,140 +37,32 @@ func (l *Loader) getGobFiles(gobFiles []string, prefix string, suffix string) []
 	return files
 }
 
-func (l *Loader) LoadJKLManifest() []string {
-	return l.getGobFiles(episodeGobFiles, "jkl\\", "jkl")
+func (l *Loader) LoadManifest(resourceType string) []string {
+	return l.getGobFiles(resourceGobFiles, "."+resourceType)
 }
 
-func (l *Loader) LoadBMManifest() []string {
-	return l.getGobFiles(resourceGobFiles, "ui\\bm\\", "bm")
+func (l *Loader) LoadResource(filename string) []byte {
+	for _, gob := range resourceGobFiles {
+		fileBytes := loadFileFromGOB(gob, filename)
+		if fileBytes == nil {
+			continue
+		}
+		return fileBytes
+	}
+
+	log.Println(fmt.Errorf("unable to find %s", filename))
+	return nil
 }
 
-func (l *Loader) Load3DOManifest() []string {
-	return l.getGobFiles(resourceGobFiles, "3do\\", "3do")
-}
-
-func (l *Loader) LoadJKL(filename string) Jkl {
-	parser := NewJklLineParser()
-
+func (l *Loader) LoadEpisode(filename string) []byte {
 	for _, gob := range episodeGobFiles {
 		fileBytes := loadFileFromGOB(gob, filename)
 		if fileBytes == nil {
 			continue
 		}
-		jklLevel := parser.ParseJKLFromString(string(fileBytes))
-		return jklLevel
+		return fileBytes
 	}
 
-	for _, gob := range resourceGobFiles {
-		fileBytes := loadFileFromGOB(gob, filename)
-		if fileBytes == nil {
-			continue
-		}
-		jklLevel := parser.ParseJKLFromString(string(fileBytes))
-		return jklLevel
-	}
-
-	return Jkl{}
-}
-
-func (l *Loader) Load3DO(filename string) Jk3doFile {
-	parser := NewJk3doRegexParser()
-
-	var obj Jk3doFile
-
-	if obj, ok := l.cache[filename]; ok {
-		return obj.(Jk3doFile)
-	}
-
-	for _, gob := range resourceGobFiles {
-		fileBytes := loadFileFromGOB(gob, filename)
-		if fileBytes == nil {
-			continue
-		}
-		obj = parser.Parse3doFromString(string(fileBytes))
-		l.cache[filename] = obj
-		return obj
-	}
-
-	return Jk3doFile{}
-}
-
-func (l *Loader) LoadMAT(filename string) Material {
-	var mat Material
-
-	if mat, ok := l.cache[filename]; ok {
-		return mat.(Material)
-	}
-
-	for _, gob := range resourceGobFiles {
-		fileBytes := loadFileFromGOB(gob, filename)
-		if fileBytes == nil {
-			continue
-		}
-		mat = parseMatFile(fileBytes)
-		l.cache[filename] = mat
-		return mat
-	}
-
-	return Material{}
-}
-
-func (l *Loader) LoadCMP(filename string) ColorMap {
-	var cmp ColorMap
-
-	if cmp, ok := l.cache[filename]; ok {
-		return cmp.(ColorMap)
-	}
-
-	for _, gob := range resourceGobFiles {
-		fileBytes := loadFileFromGOB(gob, filename)
-		if fileBytes == nil {
-			continue
-		}
-		cmp = parseCmpFile(fileBytes)
-		l.cache[filename] = cmp
-		return cmp
-	}
-
-	return ColorMap{}
-}
-
-func (l *Loader) LoadBM(filename string) BMFile {
-	var bm BMFile
-
-	if bm, ok := l.cache[filename]; ok {
-		return bm.(BMFile)
-	}
-
-	for _, gob := range resourceGobFiles {
-		fileBytes := loadFileFromGOB(gob, filename)
-		if fileBytes == nil {
-			continue
-		}
-		bm = parseBmFile(fileBytes)
-		l.cache[filename] = bm
-		return bm
-	}
-
-	return BMFile{}
-}
-
-func (l *Loader) LoadSFT(filename string) SFTFile {
-	var sft SFTFile
-
-	if sft, ok := l.cache[filename]; ok {
-		return sft.(SFTFile)
-	}
-
-	for _, gob := range resourceGobFiles {
-		fileBytes := loadFileFromGOB(gob, filename)
-		if fileBytes == nil {
-			continue
-		}
-		sft = parseSFTFile(fileBytes)
-		l.cache[filename] = sft
-		return sft
-	}
-
-	return SFTFile{}
+	log.Println(fmt.Errorf("unable to find %s", filename))
+	return nil
 }

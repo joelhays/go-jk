@@ -1,0 +1,55 @@
+#puppet file for ReeYees with gun (rystr.3do)
+Mode=0					# Idle
+stand           ryidleg.key	0x00	0	0	# stand
+walk            rystroll.key	0x01	2	2	# walk
+run        	ryrun.key	0x01	2	2	# run
+walkback        rystroll.key	0x01	2	2
+strafeleft      rystroll.key	0x01	2	2
+straferight     rystroll.key	0x01	2	2
+death           rycrumpg.key	0x14	5	5	# death
+death2          rydieg.key	0x14	5	5	# alt death
+hit             ryhitg.key	0x28	1	4	# hit
+jump		ryjumpa.key	0x38	2	2
+rising		ryjumpb.key	0x04	2	2
+drop  		ryjumpb.key	0x04	2	2
+land  		ryjumpc.key	0x38	3	3
+fall  		ryfall.key	0x00	2	2	# fall
+choke    	rychoke.key	0x28	4	4	# choke
+turnleft 	ryshuflg.key	0x00	2	2	# shufflin' left
+turnright	ryshuflg.key	0x00	2	2	# shufflin' right
+
+Mode=1, basedon=0			# alert mode
+stand       	rystandg.key	0x00	0	0	# stand
+walk        	rywalk.key	0x01	2	2 	# walk
+walkback    	rywalk.key	0x01	2	2
+strafeleft  	rywalk.key	0x01	2	2
+straferight 	rywalk.key	0x01	2	2
+fire		ryfire.key	0x28	1	4	# fire
+
+Mode=3, basedon=0
+stand           ryfall.key      0x00    0       0
+walk            ryfall.key      0x00    2       2
+run        	ryfall.key      0x00    2       2
+walkback        ryfall.key      0x00    2       2
+strafeleft      ryfall.key      0x00    2       2
+straferight     ryfall.key      0x00    2       2
+rising		ryfall.key      0x00    2       2
+drop  		ryfall.key      0x00    2       2
+land  		ryfall.key      0x00    2       2
+fall  		ryfall.key      0x00    2       2
+turnleft 	ryfall.key      0x00    2       2
+turnright	ryfall.key      0x00    2       2
+
+Mode=4, basedon=3
+
+joints
+0=14	# 0 = head
+1=17	# 1 = neck
+2=20	# 2 = torso
+3=23	# 3 = primary weapon fire
+4=23	# 4 = secondard weapon fire
+5=5	# 5 = primary weapon aiming joint
+6=5	# 6 = secondary weapon aiming joint
+end
+
+

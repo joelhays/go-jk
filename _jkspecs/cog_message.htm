@@ -1,0 +1,344 @@
+<html>
+<head>
+   <title>JediKnight Unofficial Specs</title>
+   <meta name="DL" content="cog">
+   
+</head>
+<body text="#000000" bgcolor="#FFFFFF" link="#0000EE" vlink="#551A8B" alink="#FF0000">
+<h1>Cog Files</h1>
+<HR SIZE=2 WIDTH=70%>
+<P>
+<A NAME="c_message"></A>
+<STRONG><FONT SIZE="+1">Cog Message</FONT></STRONG>
+<P>
+<HR SIZE=2 WIDTH=200 Align=left>
+<P>
+This is a list of messages that can be used in cog files. They are defined in the symbols section of a COG file, and can have handlers in the code section (i.e. routines which are carried out when the message is sent).
+<P>
+<TABLE BORDER=3 BGCOLOR="#C0C0C0"CELLPADDING=5>
+<TR><TD><PRE>
+<!-- <A HREF="#activate">activate</A> -->
+<A HREF="#activated">activated</A>
+<A HREF="#aievent">aievent</A>
+<A HREF="#arrived">arrived</A>
+<A HREF="#autoselect">autoselect</A>
+<A HREF="#blocked">blocked</A>
+<A HREF="#changed">changed</A>
+<A HREF="#created">created</A>
+<A HREF="#crossed">crossed</A>
+<A HREF="#damaged">damaged</A>
+<A HREF="#deactivated">deactivated</A>
+<A HREF="#deselected">deselected</A>
+<A HREF="#entered">entered</A>
+<A HREF="#exited">exited</A>
+<A HREF="#fire">fire</A>
+<A HREF="#join">join</A>
+<A HREF="#killed">killed</A>
+<A HREF="#leave">leave</A>
+<A HREF="#loading">loading</A>
+<A HREF="#newplayer">newplayer</A>
+<A HREF="#pulse">pulse</A>
+<A HREF="#removed">removed</A>
+<A HREF="#respawn">respawn</A>
+<A HREF="#selected">selected</A>
+<A HREF="#shutdown">shutdown</A>
+<A HREF="#sighted">sighted</A>
+<A HREF="#skill">skill</A>
+<A HREF="#splash">splash</A>
+<A HREF="#startup">startup</A>
+<A HREF="#taken">taken</A>
+<A HREF="#timer">timer</A>
+<A HREF="#touched">touched</A>
+<A HREF="#trigger">trigger</A>
+<A HREF="#user0">user0</A>
+</PRE></TD></TR></TABLE>
+<!-- <P>
+<HR SIZE=2 WIDTH=200 Align=left>
+<P>
+
+<A NAME="activate"></A>
+<B>Activate</B>
+<P>
+Sent by a surface or thing when nudged (the player is next to it and presses spacebar).
+<P> -->
+<P>
+<HR SIZE=2 WIDTH=200 Align=left>
+<P>
+
+<A NAME="activated"></A>
+<B>Activated</B>
+<P>
+Sent by a force power or usable item (eg. bacta tank, IR goggles) when its hotkey is pressed.
+<BR>
+ Or
+<BR>
+ Sent by a surface or thing when nudged (the player is next to it and presses spacebar)
+<P>
+ Sometimes found as "Activate" too.
+<P>
+<HR SIZE=2 WIDTH=200 Align=left>
+<P>
+
+<A NAME="aievent"></A>
+<B>Aievent</B>
+<P>
+Found only in Jk.exe, not found in use in cogs.
+<P>
+<HR SIZE=2 WIDTH=200 Align=left>
+<P>
+
+<A NAME="arrived"></A>
+<B>Arrived</B>
+<P>
+Sent by a path-controlled thing when it arrives at a frame.
+<P>
+<HR SIZE=2 WIDTH=200 Align=left>
+<P>
+
+<A NAME="autoselect"></A>
+<B>Autoselect</B>
+<P>
+Sent by a weapon when it is autoselected.
+<P>
+<HR SIZE=2 WIDTH=200 Align=left>
+<P>
+
+<A NAME="blocked"></A>
+<B>Blocked</B>
+<P>
+Sent by a path-controlled thing when something is blocking the path.
+<P>
+<HR SIZE=2 WIDTH=200 Align=left>
+<P>
+
+<A NAME="changed"></A>
+<B>Changed</B>
+<P>
+Found only in Jk.exe ,not found in use in cogs.
+<P>
+<HR SIZE=2 WIDTH=200 Align=left>
+<P>
+
+<A NAME="created"></A>
+<B>Created</B>
+<P>
+Sent by a thing when it has been created.
+<P>
+<HR SIZE=2 WIDTH=200 Align=left>
+<P>
+
+<A NAME="crossed"></A>
+<B>Crossed</B>
+<P>
+Sent by an adjoined surface when it is crossed.
+<P>
+<HR SIZE=2 WIDTH=200 Align=left>
+<P>
+
+<A NAME="damaged"></A>
+<B>Damaged</B>
+<P>
+Sent by a surface or thing when hit by a weapon.
+<P>
+<HR SIZE=2 WIDTH=200 Align=left>
+<P>
+
+<A NAME="deactivated"></A>
+<B>Deactivated</B>
+<P>
+Sent by a surface or thing when nudge is finished (the player is next to it and releases spacebar)
+<BR> 
+OR
+<BR>
+Sent by a force power or usable item (eg. bacta tank, IR goggles) when its hotkey is released. 
+
+<P>
+
+<HR SIZE=2 WIDTH=200 Align=left>
+<P>
+
+<A NAME="deselected"></A>
+<B>Deselected</B>
+<P>
+Sent by a force power or weapon when it is deselected.
+<P>
+<HR SIZE=2 WIDTH=200 Align=left>
+<P>
+
+<A NAME="entered"></A>
+<B>Entered</B>
+<P>
+Sent by a sector when the player enters it, or by a surface when a player steps onto it.
+<P>
+<HR SIZE=2 WIDTH=200 Align=left>
+<P>
+
+<A NAME="exited"></A>
+<B>Exited</B>
+<P>
+Sent by a sector when the player exits it, or by a surface when a player steps off it.
+<P>
+<HR SIZE=2 WIDTH=200 Align=left>
+<P>
+
+<A NAME="fire"></A>
+<B>Fire</B>
+<P>
+Sent by a force power or weapon when fired.
+<P>
+<HR SIZE=2 WIDTH=200 Align=left>
+<P>
+
+<A NAME="join"></A>
+<B>Join</B>
+<P>
+Sent in multiplayer when a player joins
+<P>
+<HR SIZE=2 WIDTH=200 Align=left>
+<P>
+
+<A NAME="killed"></A>
+<B>Killed</B>
+<P>
+Sent by an actor thing when it is killed.
+<P>
+<HR SIZE=2 WIDTH=200 Align=left>
+<P>
+
+<A NAME="leave"></A>
+<B>Leave</B>
+<P>
+Sent in multiplayer when player leaves.
+<P>
+<HR SIZE=2 WIDTH=200 Align=left>
+<P>
+
+<A NAME="loading"></A>
+<B>Loading</B>
+<P>
+Unknown, used only in 10_powercore.cog
+<P>
+<HR SIZE=2 WIDTH=200 Align=left>
+<P>
+
+<A NAME="newplayer"></A>
+<B>Newplayer</B>
+<P>
+Sent by player thing when it respawns.
+<P>
+<HR SIZE=2 WIDTH=200 Align=left>
+<P>
+<A NAME="pulse"></A>
+<B>Pulse</B>
+<P>
+Sent when a repetitive delay set by SetPulse() or SetThingPulse() elapses.
+<P>
+<HR SIZE=2 WIDTH=200 Align=left>
+<P>
+
+<A NAME="removed"></A>
+<B>Removed</B>
+<P>
+Sent by a thing when removed from the world.
+<P>
+<HR SIZE=2 WIDTH=200 Align=left>
+<P>
+
+<A NAME="respawn"></A>
+<B>Respawn</B>
+<P>
+Sent by an item thing when it respawns.
+<P>
+<HR SIZE=2 WIDTH=200 Align=left>
+<P>
+
+<A NAME="selected"></A>
+<B>Selected</B>
+<P>
+Sent by weapon or force power when selected.
+<P>
+<HR SIZE=2 WIDTH=200 Align=left>
+<P>
+
+<A NAME="shutdown"></A>
+<B>Shutdown</B>
+<P>
+Sent when level ended.
+<P>
+<HR SIZE=2 WIDTH=200 Align=left>
+<P>
+
+<A NAME="sighted"></A>
+<B>Sighted</B>
+<P>
+Sent by a thing when it enters the player's fov.
+<P>
+<HR SIZE=2 WIDTH=200 Align=left>
+<P>
+
+<A NAME="skill"></A>
+<B>Skill</B>
+<P>
+Sent when a force power is used on an actor.
+<P>
+<HR SIZE=2 WIDTH=200 Align=left>
+<P>
+
+<A NAME="splash"></A>
+<B>Splash</B>
+<P>
+Sent by player thing when enters or leaves water.
+<P>
+<HR SIZE=2 WIDTH=200 Align=left>
+<P>
+
+<A NAME="startup"></A>
+<B>Startup</B>
+<P>
+Sent at level startup
+<P>
+<HR SIZE=2 WIDTH=200 Align=left>
+<P>
+
+<A NAME="taken"></A>
+<B>Taken</B>
+<P>
+Sent by an item thing when it is taken
+<P>
+<HR SIZE=2 WIDTH=200 Align=left>
+<P>
+
+<A NAME="timer"></A>
+<B>Timer</B>
+<P>
+Sent when a delay set by SetTimer(), SetTimerEx() or SetThingTimer() elapses.
+<P>
+<HR SIZE=2 WIDTH=200 Align=left>
+<P>
+
+<A NAME="touched"></A>
+<B>Touched</B>
+<P>
+Sent by a surface or thing when player collides with it.
+<P>
+<HR SIZE=2 WIDTH=200 Align=left>
+<P>
+
+<A NAME="trigger"></A>
+<B>Trigger</B>
+<P>
+Sent by SendTrigger()
+<P>
+<HR SIZE=2 WIDTH=200 Align=left>
+<P>
+
+<A NAME="user0"></A>
+<B>User0 to User 7</B>
+<P>
+User defined message, sent by SendMessage()
+<P>
+<BR>
+<HR SIZE=2>
+
+</body>
+</html>

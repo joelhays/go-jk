@@ -1,0 +1,53 @@
+<!DOCTYPE HTML PUBLIC "-//SoftQuad//DTD HTML 2.0 + extensions for HoTMetaL Light 3.0 19960703//EN"
+>
+<HTML>
+<HEAD>
+<TITLE>JediKnight Unofficial Specs</TITLE>
+<META NAME="DL" CONTENT="AI"></HEAD>
+<BODY
+TEXT="#000000" BGCOLOR="#FFFFFF" LINK="#0000EE" VLINK="#551A8B" ALINK="#FF0000">
+<H2>PrimaryFire</H2>
+<P></P>
+<P><B>Number of arguments: 10</B></P>
+<P><I>Example:</I></P>
+<TABLE BORDER="1" BGCOLOR="#C0C0C0">
+<TR>
+<TD>
+<PRE>PrimaryFire     	1500.0, 0.6, 0.15, 0.00, 0.0, 200.0, 0.0, 1.00, 0.00, 0.00</PRE></TD></TR></TABLE>
+<P>Default behaviour for firing primary weapon.</P>
+<P><I>Arguments:</I></P>
+<TABLE BORDER="1" BGCOLOR="#C0C0C0">
+<TR>
+<TD WIDTH="100" BGCOLOR="#808080"><FONT COLOR="#FFFFFF">Argument #</FONT></TD>
+<TD BGCOLOR="#808080"><FONT COLOR="#FFFFFF">Argument meaning</FONT></TD></TR>
+<TR>
+<TD>1</TD>
+<TD>Time interval between shots (msec)</TD></TR>
+<TR>
+<TD>2</TD>
+<TD>Min fire dot. 1.0=must be facing exactly, 0.0=180 degrees arc, -1.0=full
+360 degrees arc.</TD></TR>
+<TR>
+<TD>3</TD>
+<TD>Max distance. If target too far, won't shoot.</TD></TR>
+<TR>
+<TD>4</TD>
+<TD>Error. 0=perfect aim, 1=random shot</TD></TR>
+<TR>
+<TD>5</TD>
+<TD>MinDistance. If target closer, won't shoot.</TD></TR>
+<TR>
+<TD>6</TD>
+<TD>ReadyTime: time between waking up and taking first shot</TD></TR>
+<TR>
+<TD>7</TD>
+<TD>Lead %. Percent of trying to lead a moving target</TD></TR>
+<TR>
+<TD>8</TD>
+<TD>Secondary %. Percent of using secondary fire mode (1=always)</TD></TR>
+<TR>
+<TD>9</TD>
+<TD>BurstCount. Burst is 1 more than specified here. If 0, no burst shooting</TD></TR>
+<TR>
+<TD>10</TD>
+<TD>Burst Interval (msec). Time between single bursts.</TD></TR></TABLE></BODY></HTML>

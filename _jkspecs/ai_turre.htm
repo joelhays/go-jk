@@ -1,0 +1,51 @@
+<!DOCTYPE HTML PUBLIC "-//SoftQuad//DTD HTML 2.0 + extensions for HoTMetaL Light 3.0 19960703//EN"
+>
+<HTML>
+<HEAD>
+<TITLE>JediKnight Unofficial Specs</TITLE>
+<META NAME="DL" CONTENT="AI"></HEAD>
+<BODY
+TEXT="#000000" BGCOLOR="#FFFFFF" LINK="#0000EE" VLINK="#551A8B" ALINK="#FF0000">
+<H2>TurretFire</H2>
+<P></P>
+<P><B>Number of arguments: 9</B></P>
+<P><I>Example:</I></P>
+<TABLE BORDER="1" BGCOLOR="#C0C0C0">
+<TR>
+<TD>
+<PRE>TurretFire      	600.0, 75.0, 160.0, 160.0, 5.0, 0.20, 500.0, 10000.0, 0.0
+</PRE></TD></TR></TABLE>
+<P>The AI will swivel its joints in order to fire in directions other than
+forward.  Also causes the &quot;berserk&quot; mode when damaged.</P>
+<P><I>Arguments:</I></P>
+<TABLE BORDER="1" BGCOLOR="#C0C0C0">
+<TR>
+<TD WIDTH="100" BGCOLOR="#808080"><FONT COLOR="#FFFFFF">Argument #</FONT></TD>
+<TD BGCOLOR="#808080"><FONT COLOR="#FFFFFF">Argument meaning</FONT></TD></TR>
+<TR>
+<TD>1</TD>
+<TD>Fire rate (milliseconds between shots)</TD></TR>
+<TR>
+<TD>2</TD>
+<TD>Turn rate for Pitch &amp; Yaw</TD></TR>
+<TR>
+<TD>3</TD>
+<TD>Yaw range of motion, 0 to 180</TD></TR>
+<TR>
+<TD>4</TD>
+<TD>Pitch range of motion, 0 to 180</TD></TR>
+<TR>
+<TD>5</TD>
+<TD>Max distance to take shot</TD></TR>
+<TR>
+<TD>6</TD>
+<TD>Min. health % to cause berserk (0 to 1)</TD></TR>
+<TR>
+<TD>7</TD>
+<TD>Fire rate (berserk) in msecs</TD></TR>
+<TR>
+<TD>8</TD>
+<TD>How long between berserk and blowing up (msecs)</TD></TR>
+<TR>
+<TD>9</TD>
+<TD>Percentage of leading a moving target (0=never, 1= always)</TD></TR></TABLE></BODY></HTML>

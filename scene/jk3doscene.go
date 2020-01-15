@@ -5,6 +5,8 @@ import (
 	"github.com/go-gl/mathgl/mgl32"
 	"github.com/joelhays/go-jk/camera"
 	"github.com/joelhays/go-jk/jk"
+	"github.com/joelhays/go-jk/jk/jkparsers"
+	"github.com/joelhays/go-jk/jk/jktypes"
 	"github.com/joelhays/go-jk/opengl"
 )
 
@@ -14,7 +16,7 @@ type Jk3doScene struct {
 	renderers     []opengl.Renderer
 	cam           *camera.Camera
 	window        *glfw.Window
-	obj           *jk.Jk3doFile
+	obj           *jktypes.Jk3doFile
 	objRenderer   opengl.Renderer
 }
 
@@ -23,7 +25,12 @@ func NewJk3doScene(jk3doName string, window *glfw.Window, cam *camera.Camera, sh
 }
 
 func (s *Jk3doScene) Load() {
-	obj := jk.GetLoader().Load3DO(s.jk3doName)
+	var obj jktypes.Jk3doFile
+	fileBytes := jk.GetLoader().LoadResource(s.jk3doName)
+	if fileBytes != nil {
+		obj = jkparsers.NewJk3doLineParser().ParseFromString(string(fileBytes))
+	}
+
 	s.obj = &obj
 	s.cam.Position = mgl32.Vec3{0, 1, 0}
 	s.cam.Up = mgl32.Vec3{0, 0, 1}
@@ -40,7 +47,7 @@ func (s *Jk3doScene) Update() {
 	if s.obj != nil && s.objRenderer == nil {
 		s.window.SetInputMode(glfw.CursorMode, glfw.CursorDisabled)
 
-		s.objRenderer = opengl.NewOpenGl3doRenderer(&jk.Thing{Position: mgl32.Vec3{float32(0), float32(0), float32(0)}, Yaw: 0, Pitch: 0, Roll: 0}, nil, s.obj, s.shaderProgram)
+		s.objRenderer = opengl.NewOpenGl3doRenderer(&jktypes.Thing{Position: mgl32.Vec3{float32(0), float32(0), float32(0)}, Yaw: 0, Pitch: 0, Roll: 0}, nil, s.obj, s.shaderProgram)
 		s.renderers = append(s.renderers, s.objRenderer)
 	}
 

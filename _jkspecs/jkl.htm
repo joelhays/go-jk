@@ -1,0 +1,650 @@
+<html>
+<head>
+   <title>JediKnight Unofficial Specs</title>
+   <meta name="DL" content="jkl">
+  </head>
+<body text="#000000" bgcolor="#FFFFFF" link="#0000EE" vlink="#551A8B" alink="#FF0000">
+
+<h1>JKL Files</h1>
+<HR SIZE=2 WIDTH=70%>
+<P>
+<UL>
+<DT><A HREF="#jkl">General</A>
+<DT><A HREF="#s_jk">Section: JK</A>
+<DT><A HREF="#s_copy">Section: COPYRIGHT</A>
+<DT><A HREF="#s_head">Section: HEADER</A>
+<DT><A HREF="#s_snd">Section: SOUNDS</A>
+<DT><A HREF="#s_mat">Section: MATERIALS</A>
+<DT><A HREF="#s_geo">Section: GEORESOURCE</A>
+<DT><A HREF="#s_sec">Section: SECTORS</A>
+<DT><A HREF="#s_ai">Section: AICLASS</A>
+<DT><A HREF="#s_mod">Section: MODELS</A>
+<DT><A HREF="#s_spr">Section: SPRITES</A>
+<DT><A HREF="#s_key">Section: KEYFRAMES</A>
+<DT><A HREF="#s_anim">Section: ANIMCLASS</A>
+<DT><A HREF="#s_sndcls">Section: SOUNDCLASS</A>
+<DT><A HREF="#s_cogspt">Section: COGSCRIPTS</A>
+<DT><A HREF="#s_cogs">Section: COGS</A>
+<DT><A HREF="#s_temp">Section: TEMPLATES</A>
+<DT><A HREF="#s_thg">Section: THINGS</A>
+<DT><A HREF="#s_arch">Section: ARCHLIGHTING</A>
+</UL>
+<P>
+<HR SIZE=2 WIDTH=70%>
+<P>
+<A NAME="jkl"></A>
+<STRONG><FONT SIZE="+1">JKL Files General</FONT></STRONG>
+<P>
+JKL is a simple DOS text file. Comments are accepted - everything
+from character '<B>#</B>' to the end of the line is ignored.
+<P>
+For example:
+<P>
+# version and global constant settings
+<P>
+JKL file is made up of sections. The start of a section is 
+marked by "<B>SECTION:</B>" keyword at the beginning of the line, followed by 
+the name of the section. Section end is marked by "<B>end</B>" keyword or 
+beginning of a new section.
+<P>
+These are the following sections (in the order they appear in JKL file}:
+<P>
+<HR SIZE=2 WIDTH=70%>
+<P>
+<A NAME="s_jk"></A><B>SECTION: JK</B>
+<P>
+This section is empty.
+<P>
+<HR SIZE=2 WIDTH=200 Align=LEFT>
+<P>
+<A NAME="s_copy"></A><B>SECTION: COPYRIGHT</B>
+<P>
+This section contains LEC logo in ASCII art. Apparently for copyright 
+purposes. It <B>must</B> be included with  Jkl file
+<P>
+<HR SIZE=2 WIDTH=200 Align=LEFT>
+<P>
+
+<A NAME="s_head"></A><B>SECTION: HEADER</B>
+<P>
+This section contains level attributes.
+<P>
+<TABLE BORDER=3 BGCOLOR="#C0C0C0"CELLPADDING=5>
+<TR><TD><PRE>
+Version                2                # Level version
+World Gravity          4.00             # Gravity. 4 = normal.
+Ceiling Sky Z          15.000000        # How high above you ceiling skies appear
+Horizon Distance       100.000000       # How distant horizon skies appear
+Horizon Pixels per Rev 768.0            # Pixels of horizon texture seen per revolution
+Horizon Sky Offset     0.0 0.0          # x,y offsets of horizon sky texture
+Ceiling Sky Offset     0.0 0.0          # x,y offsets of ceiling sky texture
+MipMap Distances       1.0 2.0 3.0 4.0  # Distances to change Mip-maps
+LOD Distances          0.3 0.6 0.9 1.2  # Distances to change 3DO detail levels
+Perspective distance   2.00             # ?
+Gouraud distance       2.00             # ?
+</PRE></TD></TR></TABLE>
+<P>
+<HR SIZE=2 WIDTH=200 Align=LEFT>
+<P>
+<A NAME="s_snd"></A><B>SECTION: SOUNDS</B>
+<P>
+This section contains the list of all sounds, used directly or 
+indirectly. I.e. - referenced in sectors, templates, SNDs and COGs.
+<P>
+World sounds N
+<BR>
+# N is number of sounds in the list.
+<P>
+<TABLE BORDER=3 BGCOLOR="#C0C0C0"CELLPADDING=5>
+<TR><TD><PRE>
+df_door2-1.wav    # List of sounds
+df_door2-3.wav
+....
+end               # End of section
+</PRE></TD></TR></TABLE>
+<P>
+<HR SIZE=2 WIDTH=200 Align=LEFT>
+<P>
+<A NAME="s_mat"></A><B>SECTION: MATERIALS</B>
+<P>
+This section contains the list of materials used in the level.
+<P>
+World materials N
+<BR>
+# N is number of materials in the list
+<P>
+<TABLE BORDER=3 BGCOLOR="#C0C0C0"CELLPADDING=5>
+<TR><TD><PRE>
+0:	hdback.mat      1.000000    1.000000
+1:	hdbottom.mat    1.000000    1.000000
+....
+end		# End of section
+</PRE></TD></TR></TABLE>
+<P>
+<HR SIZE=2 WIDTH=200 Align=LEFT>
+<P>
+
+<A NAME="s_geo"></A><B>SECTION: GEORESOURCE</B>
+<P>
+This section contains the information about all vertices, texture 
+vertices, surfaces, normals and adjoins of the level, but not sectors.
+Surfaces must all be convex.
+<P>
+World Colormaps	N
+<BR>
+# Number of colormaps used in the level.
+<P>
+<TABLE BORDER=3 BGCOLOR="#C0C0C0"CELLPADDING=5>
+<TR><TD><PRE>
+0:	09Fuel.cmp	# List of colormaps
+...
+</PRE></TD></TR></TABLE>
+<P>
+
+World vertices N
+<BR>
+# Number of vertices in the level
+<P>
+<TABLE BORDER=3 BGCOLOR="#C0C0C0"CELLPADDING=5>
+<TR><TD><PRE>
+#vertex:  X         Y          Z
+0:       11.499995  7.575000  -5.200000	
+1:       11.499979  7.275014  -5.200001
+.....
+</PRE></TD></TR></TABLE>
+<P>
+
+World texture vertices N
+<BR>
+# Number of texture vertices in the level
+<P>
+<TABLE BORDER=3 BGCOLOR="#C0C0C0"CELLPADDING=5>
+<TR><TD><PRE>
+#num:  u:          v:       # U V - texture coordinates
+0:     0.000000    0.999980	
+1:     640.001221  0.999980
+....
+</PRE></TD></TR></TABLE>
+<P>
+Texture vertices are specified in texels and not dependant on texture size (unlike usual texture coordinates 
+accepted by 3d libraries). So to translate them to U,V accepted by OpenGl or Direct3D, you need to divide them by the width/height of the texrure. IE::
+<BR>
+d3dU=u/texture_width;
+d3dV=v/texture_height;
+<P>
+
+World adjoins N
+<BR>
+# N is number of adjoins in the level
+<P>
+<TABLE BORDER=3 BGCOLOR="#C0C0C0"CELLPADDING=5>
+<TR><TD><PRE>
+#num:	flags:	mirror:	 dist:
+0:      0x7     999      0.29
+1:      0x7     2        0.90
+999:    0x7     0        0.57
+....
+</PRE></TD></TR></TABLE>
+<P>
+"Mirror" field is is the number of Adjoin (in the list of Adjoins).
+<BR>
+"Dist" is a distance from the surface to the center of the sector
+<P>
+
+World surfaces N
+<BR>
+# Number of surfaces in the level
+<P>
+<TABLE BORDER=3 BGCOLOR="#C0C0C0"CELLPADDING=5>
+<TR><TD><PRE>
+#num:   mat:  surfflags:  faceflags: geo: light: tex: adjoin: extralight: nverts: vertices:               intensities:
+0:      -1    0x0         0x0        0    3      1    0       0.00        4       16,-1 17,-1 20,-1 0,-1  0.159676   0.422598   0.127744  0.005013	
+1:      307   0x24        0x4        4    3      1    -1      0.00        4       17,4  22,5  23,6  20,7  0.664690   0.459507   0.419392  0.395703	
+2:      2     0x0         0x4        4    3      1    999     0.00        4       75,3  76,17 77,18 79,19 0.325678   0.456224   0.234435  0.253744           
+<FONT COLOR="#000080">3:      253    0x4        0x4        4    3      1    -1      0           4       4,14  5,15  6,16  7,17   .137614    .137614    .137614   .137614   .128789   .128789   .128789   .128789   .148912   .148912   .148912   .148912   .264894   .264894   .264894   .264894</FONT>
+</PRE></TD></TR></TABLE>
+<P>
+"mat" is index of material in the list of materials. -1 means none.<BR> 
+"adjoin" is the index of adjoin in the list of adjoins. -1 means none.<BR>
+"Nverts" is a number of vertices in this surface.
+<P>
+Then go indices of vertices as:
+<P>
+vertex,texture_vertex
+<P>
+followed by intensities of light at the corresponding vertices.Intensities go from 0 to 1.0 , 0 being pitch black ,1.0 being max brightness,values over 1.0 are treated as 1.0.
+<BR><FONT COLOR="#000080"><B>MOTS:</B> Intensities now have the format of four values for each vertice .Each four value set equates to  (mono,red,green,blue).This is for colored lighting</FONT>
+<P>
+After the list of surfaces directly follows the list of corresponding normals:
+<P>
+<TABLE BORDER=3 BGCOLOR="#C0C0C0"CELLPADDING=5>
+<TR><TD><PRE>
+#--- Surface normals ---
+0:   0.000000   -1.000000   0.000000
+1:   0.976194    0.000011   0.216900
+....
+</PRE></TD></TR></TABLE>
+<P>
+<HR SIZE=2 WIDTH=200 Align=LEFT>
+<P>
+<A NAME="s_sec"></A><B>Section: SECTORS</B>
+<P>
+This section contains sectors of the level. Sector is a closed polyhedron.
+All sectors must be convex.
+<P>
+World sectors N
+<BR>
+# N is number of sectors in the level.
+<P>
+Each sector is the following:
+<P>
+<TABLE BORDER=3 BGCOLOR="#C0C0C0"CELLPADDING=5>
+<TR><TD><PRE>
+SECTOR        0                     # Number of sector
+FLAGS         0x1004
+AMBIENT LIGHT 0.35                  # Ambient light in the sector. 1=full light?
+EXTRA LIGHT   0.00
+COLORMAP      0                     # Index of colormap in the list of colormaps
+TINT          0.00      0.00       0.00      # r g b values of the tint?
+BOUNDBOX      9.599991  7.275000  -5.200001  11.599995  7.575000  -4.250000    # Sector's bounding box
+COLLIDEBOX    9.690434  7.288570  -5.157030  11.509529  7.561431  -4.250062    # unclear how different it is from BBOX
+SOUND         09fueltanksfilling01.wav  0.500000        # Ambient sound in the sector?
+CENTER        10.599993 7.425000  -4.725000             # Center of the sector
+RADIUS        1.117197				# Radius of the circle sector is inscribed in?
+VERTICES      26                    # Number of vertices this sector uses
+0:            0                     # Index of the vertex in the list of vertices
+1:            1
+....
+
+SURFACES      0          23         # Index of first surface. Then number of surfaces in the sector.
+</PRE></TD></TR></TABLE>
+<P>
+COLLIDEBOX - maximum box that fits in the sector completely.This is optional , but required to be there if the sector flag "Has collidebox" is set. Jk also sets the flag automaticly if the COLLIDEBOX line is present.
+<P>
+<HR SIZE=2 WIDTH=200 Align=LEFT>
+<P>
+<A NAME="s_ai"></A><B>Section: AICLASS</B>
+<P>
+This section is a list of .AI files used in the level, directly and 
+indirectly.
+<P>
+World AIClasses N
+<BR>
+# N is number of AI classes in the list
+<P>
+<TABLE BORDER=3 BGCOLOR="#C0C0C0"CELLPADDING=5>
+<TR><TD><PRE>
+0:  turbdefault.ai
+1:  peddefault.ai
+....
+end            # End of section
+</PRE></TD></TR></TABLE>
+<P>
+<HR SIZE=2 WIDTH=200 Align=LEFT>
+<P>
+<A NAME="s_mod"></A><B>Section: MODELS</B>
+<P>
+This section is the list of 3DO files used in the level, directly and 
+indirectly.
+<P>
+World models N
+<BR>
+# N is a number of 3DOs in the list
+<P>
+<TABLE BORDER=3 BGCOLOR="#C0C0C0"CELLPADDING=5>
+<TR><TD><PRE>
+0:	 bryv.3do
+1:	 sabv.3do
+....
+end			# End of section
+</PRE></TD></TR></TABLE>
+<P>
+<HR SIZE=2 WIDTH=200 Align=LEFT>
+<P>
+<A NAME="s_spr"></A><B>Section: SPRITES</B>
+<P>
+This section is the list of SPR files used in the level, directly and 
+indirectly.
+<P>
+World sprites N
+<BR>
+# N is a number of SPR files in the list
+<P>
+<TABLE BORDER=3 BGCOLOR="#C0C0C0"CELLPADDING=5>
+<TR><TD><PRE>
+0:   detx.spr
+1:   debrisx.spr
+....
+end			# End of section
+</PRE></TD></TR></TABLE>
+<P>
+<HR SIZE=2 WIDTH=200 Align=LEFT>
+<P>
+<A NAME="s_key"></A><B>Section: KEYFRAMES</B>
+<P>
+This section is the list of KEY files used in the level, directly and 
+indirectly.
+<P>
+World keyframes N
+<BR>
+# N is a number of KEY files in the list
+<P>
+<TABLE BORDER=3 BGCOLOR="#C0C0C0"CELLPADDING=5>
+<TR><TD><PRE>
+0:	fistvmnt.key
+1:	fistvdis.key
+...
+end			# End of section
+</PRE></TD></TR></TABLE>
+<P>
+<HR SIZE=2 WIDTH=200 Align=LEFT>
+<P>
+<A NAME="s_anim"></A><B>Section: ANIMCLASS</B>
+<P>
+This section is the list of PUP files used in the level, directly and 
+indirectly.
+<P>
+World puppets N
+<BR>
+# N is a number of PUP files in the list
+<P>
+<TABLE BORDER=3 BGCOLOR="#C0C0C0"CELLPADDING=5>
+<TR><TD><PRE>
+0:	 ky.pup
+1:	 cr.pup
+...
+end			# End of section
+</PRE></TD></TR></TABLE>
+<P>
+<HR SIZE=2 WIDTH=200 Align=LEFT>
+<P>
+<A NAME="s_sndcls"></A><B>Section: Soundclass</B>
+<P>
+This section is the list of PUP files used in the level, directly and 
+indirectly.
+<P>
+World soundclasses N
+<BR>
+# N is a number of SND files in the list
+<P>
+<TABLE BORDER=3 BGCOLOR="#C0C0C0"CELLPADDING=5>
+<TR><TD><PRE>
+0:	med_door.snd
+1:	sm_elev.snd
+...
+end			# End of section
+</PRE></TD></TR></TABLE>
+<P>
+<HR SIZE=2 WIDTH=200 Align=LEFT>
+<P>
+<A NAME="s_cogspt"></A><B>Section: cogscripts</B>
+<P>
+This section is the list of COG files used in the level, directly and 
+indirectly.
+<P>
+World scripts N
+<BR>
+# N is a number of COG files in the list
+<P>
+<TABLE BORDER=3 BGCOLOR="#C0C0C0"CELLPADDING=5>
+<TR><TD><PRE>
+0:	 kyle.cog
+1:	 class_boxturret.cog
+...
+end			# End of section
+</PRE></TD></TR></TABLE>
+<P>
+<HR SIZE=2 WIDTH=200 Align=LEFT>
+<P>
+<A NAME="s_cogs"></A><B>Section: cogs</B>
+<P>
+This section lists COGs you assigned to objects (sectors, surfaces, things)
+ in your level.
+<P>
+World cogs	N
+<BR>
+# N is a number of entries in the list. This should be the number of cogs in this section + number of cogs in COGSCRIPTS SECTION.
+<P>
+<TABLE BORDER=3 BGCOLOR="#C0C0C0"CELLPADDING=5>
+<TR><TD><PRE>
+#Num	Script          Symbol values
+0:	00_door.cog         2    -1   -1   -1      8.000000 2.000000 0.500000
+1:	09_secr_elev.cog    163  122  148  9701  3 0.250000 5.000000 4.000000
+...
+end		# End of section
+</PRE></TD></TR></TABLE>
+<P>
+After the name of the COG go the parameters of the cog, in exactly same 
+order you declared them in COG. For instance, if you have the following
+in the "<B>Symbols</B>" section of your COG:
+<P>
+<TABLE>
+<TR><TD WIDTH=100>sector</TD><TD>mysec</TD></TR>
+<TR><TD WIDTH=100>thing</TD><TD>mything</TD></TR>
+<TR><TD WIDTH=100>sound</TD><TD>mysound=mysound.wav</TD></TR>
+</TABLE>
+<P>
+Then you'll have 
+<P>
+<TABLE BORDER=3 BGCOLOR="#C0C0C0"CELLPADDING=5>
+<TR><TD><PRE>
+0: mycog.cog  10 15 mysound.wav
+</PRE></TD></TR></TABLE>
+<P>
+Where 10 would be the index of sector in the sector list, 15 - index of 
+thing in thing list and mysound.wav - name of sound to use. Note that
+if you specify
+<P>
+<TABLE BORDER=3 BGCOLOR="#C0C0C0"CELLPADDING=5>
+<TR><TD><PRE>
+0: mycog.cog  10 15 mysound1.wav
+</PRE></TD></TR></TABLE>
+<P>
+the sound that will be used will be mysound1.wav, even though it says
+mysound.wav in COG. Also note that if you declare something in COG as:
+<P>
+<TABLE>
+<TR><TD WIDTH=100>sector</TD><TD width=200>mysec</TD><TD>local</TD></TR>
+<TR><TD WIDTH=100>thing</TD><TD>mything</TD><TD>local</TD></TR>
+<TR><TD WIDTH=100>sound</TD><TD>mysound=mysound.wav</TD><TD>local</TD></TR>
+</TABLE>
+<P>
+You can't override those values from JKL.
+<P>
+<HR SIZE=2 WIDTH=200 Align=LEFT>
+<P>
+<A NAME="s_temp"></a><B>Section: TEMPLATES</B>
+<P>
+This section declares templates for level things.  See  <A HREF="jkl_template.htm">Template section</a> for more information.
+<P>
+World templates N
+<BR>
+# N is number of items in the list.
+<P>
+<TABLE BORDER=3 BGCOLOR="#C0C0C0"CELLPADDING=5>
+<TR><TD><PRE>
+#Name:           Based On:        Params:
+_decor           none             orient=(0.000000/0.000000/0.000000) type=cog collide=1 move=path
+_structure       _decor           collide=3 thingflags=0x8
+...
+end		# End of section
+</PRE></TD></TR></TABLE>
+<P>
+The base template is "<B>none</B>". You declare other templates based on it, 
+overriding the values of some fields. You can further declare templates
+based on templates you declared, etc, etc. This is done for convenience.
+Templates starting with _ seem to be templates that are only declared to 
+be used to declare other templates. Templates starting with + seem to be
+templates for the things that are created at gameplay time (projectiles,
+ etc.).
+ <P>
+ Templates must also be placed in order. Ie any template referencing another , that referenced template must be in the list of templates first.
+ <P> 
+ This would work 
+ <BR>
+ <TABLE BORDER=3 BGCOLOR="#C0C0C0"CELLPADDING=5>
+<TR><TD><PRE>
+walkthing   none  type=actor  etc etc ......
+flything    none  type=actor  creathing=walkthing etc etc ....
+</PRE></TD></TR></TABLE>
+ <P> 
+ This would  not work 
+ <BR>
+ <TABLE BORDER=3 BGCOLOR="#C0C0C0"CELLPADDING=5>
+<TR><TD><PRE>
+flything    none  type=actor  creathing=walkthing etc etc ....
+walkthing   none  type=actor  etc etc ......
+</PRE></TD></TR></TABLE>
+<P>
+ Here's the list of fields you can set in templates (with types):
+ 
+<P>
+<TABLE BORDER=3 BGCOLOR="#C0C0C0"CELLPADDING=5>
+<TR><TD><PRE>
+type	- can be: actor, weapon, item, explosion, cog, ghost, corpse, player, particle
+aiclass             - string. Name of AI file.
+airdrag             - float
+angvel              - vector
+blasttime           - float
+buoyancy            - float
+chance              - float  
+cog                 - string. Name of COG file.
+collide             - integer
+count               - int
+creatething         - string. Name of template
+damage              - float
+damageclass         - hex int
+debris              - string. Name of template.
+elementsize         - float
+error               - float
+explode             - string. Name of template
+eyeoffset           - vector
+fireoffset          - vector
+flashrgb            - vector  
+fleshhit            - String. Name of template. 
+force               - float
+fov                 - float 
+health              - float
+height              - float
+jumpspeed           - float
+light               - float
+lightintensity      - vector
+lightoffset         - vector
+mass                - float
+material            - string. Name of MAT file
+maxheadpitch        - float
+maxhealth           - float
+maxlight            - float
+maxrotthrust        - float
+maxrotvel           - float
+maxthrust           - float
+maxvel              - float
+mindamage           - float
+minheadpitch        - float
+minsize             - float
+model3d             - string. Name of 3DO file.
+move                - can be: none, physics, path
+movesize            - float
+orient              - vector
+particle            - string. Name of PAR file.
+physflags           - hex int
+pitchrange          - float
+puppet              - string. Name of PUP file.
+range               - float
+rate                - float
+respawn             - float
+size                - float
+soundclass          - string. Name of SND file.
+sprite              - string. Name of SPR file
+staticdrag          - float
+surfdrag            - float
+thingflags          - int in hex form
+timer               - float
+trailthing          - string. Name of template
+trailcylradius      - float
+trailrandangle      - float
+typeflags           - hex int
+vel                 - vector: 3 floats in form (1.0/1.0/1.0)
+weapon              - string. Name of template
+weapon2             - string. Name of template
+yawrange            - float
+</PRE></TD></TR></TABLE>
+<P>
+<HR SIZE=2 WIDTH=200 Align=LEFT>
+<P>
+<A NAME="s_thg"></a><B>Section: Things</B>
+<P>
+This section lists the things of the level.
+<P>
+World things N
+<BR>
+# N is number of items in the list + 200 (usualy) to allow for things created at run time. Maximum things allowed is 640.
+<P>
+<TABLE BORDER=3 BGCOLOR="#C0C0C0"CELLPADDING=5>
+<TR><TD><PRE>
+#num  template:  name:      X:          Y:          Z:          Pitch:      Yaw:        Roll:       Sector:    <FONT COLOR="#000080">Arch Intensities:</FONT>
+0:    c3x10e     c3x10e     11.100000   7.425000    -4.712306   0.000000    90.000000   0.000000    0                    thingflags=0x400448 numframes=2 frame=(11.100000/7.425000/-4.712306:0.000000/90.000000/0.000000) frame=(11.605581/7.425000/-4.710963:0.000000/0.000000/-27.000000)
+1:    c3x10e     c3x10e     10.100000   7.425000    -4.712306   0.000000    90.000000   0.000000    0                     numframes=2 frame=(10.100000/7.425000/-4.712306:0.000000/90.000000/0.000000) frame=(9.594408/7.425000/-4.710963:0.000000/0.000000/26.999992)
+<FONT COLOR="#000080">9:    console5   console5   5.563745    36.574875   2.979841    0           180         0           7          0</FONT>
+....
+end			# end of section
+</PRE></TD></TR></TABLE>
+<P>
+The name of object and name of template seem to be always the same. 
+Template is the name of template that is the base for this object.
+X, Y, Z and PCH, YAW, ROL are position and orientation of the object.
+Then follows the variable number of values. These are the same field
+values, in the same format as in "<B>templates</B>" section. An addition seems
+to be two fields:
+<P>
+<TABLE BORDER=3 BGCOLOR="#C0C0C0"CELLPADDING=5>
+<TR><TD><PRE>
+numframes   - int
+frame       - value in format (float/float/float) or (float/float/float:float/float/float). Which is (X,Y,Z:Pitch,Yaw,Roll).
+</PRE></TD></TR></TABLE>
+<P>
+These two appear to control elevator, door, etc. behavior. It looks 
+like that they are functionally similar to "<B>stops</B>" in Dark Forces 
+INF files.
+<P>
+ <FONT COLOR="#000080"><B>MOTS:</B> Arch Intensities: is the number of the ArchObject in the ARCHLIGHTING SECTION. A " -1 " indicates the Archlighting is not used.
+<P>
+<HR SIZE=2 WIDTH=200 Align=LEFT>
+<P>
+<A NAME="s_arch"></a><B>Section: ARCHLIGHTING</B>
+<P>
+Num ArchObjects 25
+<P>
+Number of records in this section.
+<P>
+<TABLE BORDER=3 BGCOLOR="#C0C0C0"CELLPADDING=5>
+<TR><TD><PRE>
+<FONT COLOR="#000080">archobject 0            
+nummeshes: 1            
+# then go meshes
+mesh 0                  
+numvertices: 10         
+#num:   mono:           red:            green:          blue:   ? - not checked.
+  0:    0.000000        0.000000        0.000000        0.000000
+  1:    0.000000        0.000000        0.000000        0.000000
+  2:    0.000000        0.000000        0.000000        0.000000
+  3:    0.000000        0.000000        0.000000        0.000000
+....</FONT>
+</PRE></TD></TR></TABLE>
+<P>
+And so on for all meshes and records.
+<P>
+archobject 0  = the number of the record refered to from WORLD THINGS.
+<P>
+nummeshes: 1 =  the number of meshes (corresponds to number of meshes of 3DO it lights?)
+<P>
+mesh 0 = the 3do mesh number
+<P>
+numvertices: 10 = number of vertices in it.
+</FONT>
+<P>
+<BR>
+<HR SIZE=2>
+
+</body>
+</html>

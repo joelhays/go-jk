@@ -1,0 +1,74 @@
+<html>
+<head>
+   <title>JediKnight Unofficial Specs</title>
+   <meta name="DL" content="Cmp">
+  </head>
+<body text="#000000" bgcolor="#FFFFFF" link="#0000EE" vlink="#551A8B" alink="#FF0000">
+
+<h1>CMP Files</h1>
+<HR SIZE=2 WIDTH=70%>
+<P>
+<A NAME="cmp">
+<STRONG><FONT SIZE="+1">CMP Files General</FONT></STRONG>
+<P>
+CMP files contain information to change the viewed color depending on light level and/or if it's viewed through
+another color . Making oddly-colored areas is just one use of them.
+
+<P>
+<B>The file is structured in three parts with a possible fourth .</B>
+<P>
+<TABLE BORDER=3 BGCOLOR="#C0C0C0"CELLPADDING=5>
+<TR><TD><PRE><B>File structure:</B>
+
+TCMPHeader
+TPalette
+64 TTables - light levels 0-63
+256 TTables - transparency tables. May not be present
+(TCMPHeader.HasTransparency determines this).
+
+</PRE></TD></TR></TABLE>
+<P>
+<B>The header for an CMP file is:</B>
+<P>
+<TABLE BORDER=3 BGCOLOR="#C0C0C0"CELLPADDING=5>
+<TR><TD><PRE>CMP:
+
+TCMPHeader=record
+array[0..3] of char;    {'CMP ' - notice space after CMP}
+longint;                {Apparently - version = 20 - 2.0?}
+Longint;                {Transparency - If Not 0 then 256 more TTables - transparency tables }
+array[1..52] of byte; {zeros - padding?}
+end;
+</PRE></TD></TR></TABLE>
+<P>
+<B>Followed by the palette information.</B>
+<P>
+<TABLE BORDER=3 BGCOLOR="#C0C0C0"CELLPADDING=5>
+<TR><TD><PRE>
+TPalette=array[0..255] of record
+r,g,b:byte;
+</PRE></TD></TR></TABLE>
+<P>
+<B>Finaly followed by the light level table(s).</B>
+<P>
+<TABLE BORDER=3 BGCOLOR="#C0C0C0"CELLPADDING=5>
+<TR><TD><PRE>
+TTable=array[0..255] of byte
+</PRE></TD></TR></TABLE>
+<P>
+<P>
+<B>Optional transparency tables (256)</B>
+<P>
+<TABLE BORDER=3 BGCOLOR="#C0C0C0"CELLPADDING=5>
+<TR><TD><PRE>
+TTable=array[0..255] of byte
+</PRE></TD></TR></TABLE>
+<P>
+
+
+
+<BR>
+<HR SIZE=2>
+
+</body>
+</html>

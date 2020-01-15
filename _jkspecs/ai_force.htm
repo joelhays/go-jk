@@ -1,0 +1,62 @@
+<!DOCTYPE HTML PUBLIC "-//SoftQuad//DTD HTML 2.0 + extensions for HoTMetaL Light 3.0 19960703//EN"
+>
+<HTML>
+<HEAD>
+<TITLE>JediKnight Unofficial Specs</TITLE>
+<META NAME="DL" CONTENT="AI"></HEAD>
+<BODY
+TEXT="#000000" BGCOLOR="#FFFFFF" LINK="#0000EE" VLINK="#551A8B" ALINK="#FF0000">
+<H2>ForcePowers</H2>
+<P></P>
+<P><B>Number of arguments: 13</B></P>
+<P><I>Example:</I></P>
+<TABLE BORDER="1" BGCOLOR="#C0C0C0">
+<TR>
+<TD>
+<PRE>ForcePowers		4000.0, 0.0, 1.5, 1.0, 120.0, 0.0, 6.0, 0.35, 0.70, 1.00, 7000.0, 9000.0, 1000.0</PRE></TD></TR></TABLE>
+<P>The AI will trigger a character's COG to produce Force Power-like effect on
+different time intervals.</P>
+<P><I>Arguments:</I></P>
+<TABLE BORDER="1" BGCOLOR="#C0C0C0">
+<TR>
+<TD WIDTH="100" BGCOLOR="#808080"><FONT COLOR="#FFFFFF">Argument #</FONT></TD>
+<TD BGCOLOR="#808080"><FONT COLOR="#FFFFFF">Argument meaning</FONT></TD></TR>
+<TR>
+<TD>1</TD>
+<TD>Interval in milliseconds to check for possible FPs</TD></TR>
+<TR>
+<TD>2</TD>
+<TD>Min dist. from target to use FP 1</TD></TR>
+<TR>
+<TD>3</TD>
+<TD>Max dist. from target to use FP 1</TD></TR>
+<TR>
+<TD>4</TD>
+<TD>Min dist. from target to use FP 2</TD></TR>
+<TR>
+<TD>5</TD>
+<TD>Max dist. from target to use FP 2</TD></TR>
+<TR>
+<TD>6</TD>
+<TD>Min dist. from target to use FP 3</TD></TR>
+<TR>
+<TD>7</TD>
+<TD>Max dist. from target to use FP 3</TD></TR>
+<TR>
+<TD>8</TD>
+<TD>% on a given interval to use FP1 (0=never, 1=always)</TD></TR>
+<TR>
+<TD>9</TD>
+<TD>% on a given interval to use FP2 (checked only if prev. percentage fails)</TD></TR>
+<TR>
+<TD>10</TD>
+<TD>% on a given interval to use FP3 (checked only if prev. percentage fails)</TD></TR>
+<TR>
+<TD>11</TD>
+<TD>Recharge time for FP1 (msec)</TD></TR>
+<TR>
+<TD>12</TD>
+<TD>Recharge time for FP2 (msec)</TD></TR>
+<TR>
+<TD>13</TD>
+<TD>Recharge time for FP3 (msec)</TD></TR></TABLE></BODY></HTML>

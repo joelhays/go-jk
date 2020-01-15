@@ -1,0 +1,118 @@
+<html>
+<head>
+   <title>JediKnight Unofficial Specs</title>
+   <meta name="?" content="?"><!-- can fill in or leave out -->
+   </head>
+<body text="#000000" bgcolor="#FFFFFF" link="#0000EE" vlink="#551A8B" alink="#FF0000">
+
+<h1>KEY Files</h1>
+<HR SIZE=2 WIDTH=50%>
+<P>
+
+<STRONG><FONT SIZE="+1">KEY Files General</FONT></STRONG>
+<P>
+KEY files (or Keyframe files) are used to animate the various nodes of a 3DO in accordance to an action the 3DO is making.  Other uses of Keyframes include moving the camera around (such as at the start of each boss level when Rahn talks to you) and to create ships's flying sequences (such as the TIE Bomber, Crow and 8t88's Shuttle).
+<P>
+KEYs are broken into two sections, with a possible third.
+<P>
+
+<HR SIZE=2 WIDTH=200 Align=left> 
+<B>SECTION: HEADER</B>
+<P>
+<TABLE BORDER=3 BGCOLOR="#C0C0C0"CELLPADDING=5>
+<TR><TD><PRE>
+FLAGS      # 32-bit value specifying properties of this Keyframe
+TYPE       # 32-bit value specifying the type of Keyframe
+FRAMES     # The number of frames in the animation sequence
+FPS        # Frame rate, in frames per second
+JOINTS     # The number of 3DO nodes that are to be animated
+</PRE></TD></TR></TABLE>
+<P>
+
+<HR SIZE=2 WIDTH=200 Align=left> 
+<B>SECTION: MARKERS</B>
+<P>
+<TABLE BORDER=3 BGCOLOR="#C0C0C0"CELLPADDING=5>
+<TR><TD><PRE>
+MARKERS 2
+
+16.000000 9
+112.000000 8
+</PRE></TD></TR></TABLE>
+<P>
+This section is only present in some KEY files, and has an unknown purpose.
+<P>
+
+<HR SIZE=2 WIDTH=200 Align=left> 
+<B>SECTION: KEYFRAME NODES</B>
+<P>
+<TABLE BORDER=3 BGCOLOR="#C0C0C0"CELLPADDING=5>
+<TR><TD><PRE>
+NODES N
+</PRE></TD></TR></TABLE>
+<P>
+N is the number of nodes that are animated in this sequence.  Note: This number is <EM>usually</EM> equal to the number of nodes in the 3DO (each part moves, or, at least has an entry).
+<P>
+A Node has a simple header:
+<P>
+<TABLE BORDER=3 BGCOLOR="#C0C0C0"CELLPADDING=5>
+<TR><TD><PRE>
+NODE          # The index of this node
+MESH NAME     # The name of the Hierarchy node in the 3DO that it transforms
+ENTRIES       # The number of entries this node has
+</PRE></TD></TR></TABLE>
+<P>
+Note: Entries are in fact "waypoints" of sorts, and each entry does not actually represent a single frame of the animation. The game engine interpolates values to create additional frames of animation between two entries, to make the animations smoother.
+<P>
+The header is followed by the entries.  Each entry consists of these parts:
+<P>
+<TABLE BORDER=3 BGCOLOR="#C0C0C0"CELLPADDING=5>
+<TR><TD><PRE>
+num         The index of this entry
+frame       The number of the frame which this entry defines
+flags       32-bit value specifying the properties of this frame
+              0x0001 = position (x,y,z) changes between current frame and next
+              0x0002 = orientation (P,Y,R) changes between current frame and next
+
+x, y, z     Spatial coordinates by which to offset the Node
+p, y, r     Orientation (Pitch, Yaw and Roll) of node
+dx, dy, dz  Change in x / y / z value between current frame and the next
+dp, dy, dr  Change in pitch / yaw / roll between current frame and the next
+</PRE></TD></TR></TABLE>
+<P>
+Note: if frame definitions are skipped, the 'delta' values (dx, dy etc.) of the last entry are retained until the next frame is reached. See the example below :
+<P>
+<TABLE BORDER=3 BGCOLOR="#C0C0C0"CELLPADDING=5>
+<TR><TD><PRE>
+#num:  frame  flags 	  x    ...
+#                        dx    ...
+
+ 0:    0      0x0003     0.00  ...
+                         0.25
+ 1:    5      0x0003     1.25
+                         0.40
+ 2:    6      0x0003     1.65
+                         0.55
+...
+</PRE></TD></TR></TABLE>
+<P>
+Frames 1 - 4 are not defined, so the dx value of 0.25 (from frame 0) will be retained until frame 5.   i.e. the 3D object's X offset will move through 0.25, 0.50, 0.75 and 1.00 in frames 1 - 4.
+<P>
+
+
+<P><!-- include from here down at bottom of all pages -->
+<BR> 
+<P>
+
+<HR SIZE=2 WIDTH=200 Align=left> 
+<center><h2> Flag Values </h2></center>
+<P>
+<TABLE BORDER=3 BGCOLOR="#C0C0C0"CELLPADDING=5>
+<TR><TD><PRE>
+0x00  Looping
+0x14  Stops at last frame until another event occurs
+0x2c  Stops after reaching last frame
+</PRE></TD></TR></TABLE>
+<HR size=2>
+</body>
+</html>

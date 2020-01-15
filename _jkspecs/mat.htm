@@ -1,0 +1,115 @@
+<HTML>
+<HEAD>
+<TITLE>JediKnight Unofficial Specs</TITLE>
+<META NAME="DL+PK" CONTENT="Mat">
+<BODY TEXT="#000000" BGCOLOR="#FFFFFF" LINK="#0000EE" VLINK="#551A8B" ALINK="#FF0000">
+<H1>MAT Files</H1>
+<HR SIZE="2" WIDTH="70%">
+<P><A NAME="mat"></A>
+<STRONG><FONT SIZE="+1">MAT Files General</FONT></STRONG>
+
+<P>MAT files contain image information .This could be solid colors or textures,
+there could be several textures or colors in one file. The textures are of the
+mip-map type.That is one larger texture with several more smaller ones each with
+less detail. These are used to change the detail of the textures shown to the
+player by the engine.
+</P>
+<P>This is a function of distance as specified in the <A HREF="jkl.htm#s_head">JKL</A>
+<B>Section: Header /Mipmap Distances</B>.
+</P>
+<!-- <P>The same is used for 3DO detail  levels also found in the
+<A HREF="jkl.htm#s_head">JKL</A> <B>Section: Header /LOD Distances</B>.   
+</P> -->
+<P><B>The file is structured in 2 parts if the MAT is a color one, or 3 parts,
+if it is a texture one.</B>
+<P> 
+Color = Solid color value
+<P>
+<TABLE BORDER="3" BGCOLOR="#C0C0C0" CELLPADDING="5">
+<TR>
+<TD>
+<PRE><B>File structure:</B>
+{Color MAT}
+MATHeader
+ColorHeaders
+
+{Texture MAT}
+MATHeader
+TextureHeaders
+TextureDatas
+</PRE></TD></TR></TABLE>
+<P><B>The header for an Mat file is:</B>
+</P>
+<P></P>
+<TABLE BORDER="3" BGCOLOR="#C0C0C0" CELLPADDING="5">
+<TR>
+<TD>
+<PRE>Mat:
+
+<B>TMatHeader = record</B>
+array[0..3] of char;     {'MAT ' - notice space after MAT}
+ver:Longint;             {Apparently - version = 0x32 ('2')}
+Type:Longint;            {0 = colors(TColorHeader) , 1= ?, 2= texture(TTextureHeader)}
+NumOfTextures:Longint;   {number of textures or colors}
+NumOfTextures1: Longint; { In color MATs, it's 0, in TX ones, it's equal to numOfTextures }
+Longint;                 { = 0 }
+LongInt;                 { = 8 }
+array[0..11]of longint;  {unknown. Some pad?}
+end;
+</PRE></TD></TR></TABLE>
+<P><BR> Depending on the <B>Type</B> in <B>TMatHeader</B> there will be
+either <B>NumOfTextures</B>*<B>TColorHeader</B> or <B>NumOfTextures</B> *
+<B>TTextureHeader</B>
+</P>
+<P>
+<B>COLOR MAT:</B>
+</P>
+<TABLE BORDER="3" BGCOLOR="#C0C0C0" CELLPADDING="5">
+<TR>
+<TD>
+<PRE><B>TColorHeader = record</B>
+textype:longint;         {0 = color, 8= texture}
+colornum:longint;        {Color index from the CMP palette}
+array[0..3]of Longint;   {each = 0x3F800000 (check cmp header )}
+end;
+</PRE></TD></TR></TABLE>
+<P>The <B>TColorHeader</B> is repeated <B>NumOfTextures</B> times.
+</P>
+<P>
+<B>TEXTURE MAT:</B>
+<P>
+<TABLE BORDER="3" BGCOLOR="#C0C0C0" CELLPADDING="5">
+<TR>
+<TD>
+<PRE><B>TTextureHeader = record</B>
+textype:longint;         {0 = color, 8= texture}
+colornum:longint;        {unknown use}
+array[0..3]of Longint;   {each longint = 0x3F800000 (check cmp header )}
+array[0..1]of Longint;   {unknown}
+Longint;                 {=0xBFF78482}
+CurrentTXNum:Longint     {number of corresponding texture, beginning with 0, ranging to NumOfTextures-1}
+end;
+</PRE></TD></TR></TABLE>
+<P><BR>
+<B>The TTextureHeaders are followed by NumOfTextures * the mipmap 
+information(incl. actual textures).</B>
+</P>
+<P><BR>
+</P>
+<TABLE BORDER="3" BGCOLOR="#C0C0C0" CELLPADDING="5">
+<TR>
+<TD>
+<PRE><B>TTextureData = record</B>
+SizeX:Longint;             {horizontal size of first MipMap, must be divisable by 2}
+SizeY:Longint;             {Vertical size of first MipMap ,must be divisable by 2}
+Pad:array[0..2]of LongInt; {padding = 0 }
+NumMipMaps:LongInt;        {Number of mipmaps in texture largest one first.}
+end;
+</PRE></TD></TR></TABLE>
+<P>The <B>TTextureData</B> is followed by actual texture data. The graphics
+are uncompressed; the top left corner is the start; lines are read first. The
+main texture is directly followed by rest MipMaps (whole number is <B>NumMipMaps</B>).</P>
+<P>
+<BR>
+<HR SIZE="2">
+</BODY></HTML>

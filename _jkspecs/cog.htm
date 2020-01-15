@@ -1,0 +1,374 @@
+<html>
+<head>
+   <title>JediKnight Unofficial Specs</title>
+   <meta name="DL" content="cog">
+ </head>
+<body text="#000000" bgcolor="#FFFFFF" link="#0000EE" vlink="#551A8B" alink="#FF0000">
+<h1>Cog Files</h1>
+<HR SIZE=2 WIDTH=70%>
+<P>
+<FONT SIZE="+1" COLOR="#FF0000"><B>Please Note: </B></FONT> <B>Due to the amount of time it is taking to do the cog specs,we decided to release the specs before ,they are completed.
+So you will find somethings still blank and pieces missing here and there.There is quite abit of information available as they are however.
+We will try to have this section completed when we release the next version of specs 0.3.
+<P>PS: Please remember this is not meant to be a cog tutor. We`ll leave that for somebody else to write.
+<BR>
+Thanks</B> 
+<BR><P><HR>
+<A NAME="c_gen"></A>
+<STRONG><FONT SIZE="+1">Cog Files General</FONT></STRONG>
+<P>
+Cog Files control/manipulate many aspects in Jedi Knight, some  uses are weapons,force powers,animations,sound playing,doors elevators etc.
+<P>
+Cog files are written in a language specific to Jedi Knight. It is somewhat similar to "C".
+<P>
+There are a few conventions through out cog files.
+<P>
+First off is "<B>comment markers</B>".
+<ul><PRE>
+<li>"<B>#</B>"  This marker can be placed anywhere in the cog file, any characters following it on that line will be ignored by the game
+<LI>"<B>//</B>" These markers only appear in the code , they have the same function as above
+</PRE></UL>
+<P>
+<B>Example 1:</B> # Jedi Knight Cog Script
+<BR>
+<B>Example 2:</B> // Create the sphere
+<P>
+<HR SIZE=2 WIDTH=200 Align=left>
+<P> 
+Some common symbology found in Cog files
+<P>
+<TABLE BORDER=3 BGCOLOR="#C0C0C0"CELLPADDING=5>
+<TR><TD><PRE>
+<B> Common Operator Symbols</B>
+
+=     ( Assigment ,assigns right side parameter/value to left side parameter/value)  
+==    ( Left side equals Right side )
+!=    ( Left side is not equal Right side )
+>     ( Left side is greater than Right side )
+<     ( Left side is less than Right side ) 
+=>    ( Left side is greater than or equals Right side )
+<=    ( Left side is less than or equals Right side )
+|     ( Bitwise  OR )
+&     ( Bitwise AND )
+{     ( Begining of the body of the function )
+}     ( End of function body )
+;     ( End of statement )
+*     ( multiply )
+-     ( subtract or sign )
++     ( add )
+/     ( divide )
+!     ( Logical NOT )
+&&    ( Logical AND )
+||    ( Logical OR )
+</PRE></TD></TR></TABLE>
+<P>
+<HR SIZE=2 WIDTH=200 Align=left>
+<P>
+Cog files normaly have three main sections.
+<Ul>
+<LI> Main comments and general information of cog function
+<LI> Symbols section , Setup of parameters used in code
+<LI> Code section
+</UL>
+<P>
+The comment and information section will resemble the table below. This sections function is pretty self explanatory. No further detail will be provided.
+<P>
+<TABLE BORDER=3 BGCOLOR="#C0C0C0"CELLPADDING=5>
+<TR><TD><PRE>
+ <B>Main comment and information section</B>
+
+# Jedi Knight Cog Script           ( what type of file it is )
+#
+# FORCE_DESTRUCTION.COG            ( file name ) 
+#
+# FORCEPOWER Script - Destruction  (  decription of Cog )
+#  Bin 33                 
+#
+#
+# [YB]          ( Authors Initials ,this one is written by Yves Borckmans (well known by DF fans))
+#
+# (C) 1997 LucasArts Entertainment Co. All Rights Reserved   ( Copyright Info )
+# ========================================================================================
+</PRE></TD></TR></TABLE>
+<P>
+<HR SIZE=2 WIDTH=200 Align=left>
+<P>
+Next what follows is the  symbols section. This is where parameters are defined and values if any from the JKL <A HREF="jkl.htm#s_cogs">Section: COGS</A> are passed from the asociated cog line .
+<P>
+The symbols section is generaly broken up into 3 columns
+<P> 
+<TABLE BORDER=3 BGCOLOR="#C0C0C0"CELLPADDING=5>
+<TR><TD><PRE>
+<A HREF="#c_s_type">SymbolType</A>          SymbolName+Assignment         <A HREF="cog_sym_ex.htm#c_ex_symboluse">SymbolUse</A>
+</PRE></TD></TR></TABLE>
+<P>
+An example symbols section, of note it  normaly starts with the word "<B>symbols</B>" and ends with "<B>end</B>".Depending what the Cog is used for a Flag may be preceding the word symbols this is normaly in multiplayer cogs,and decides  how the cog is used.
+<p>
+A few of the lines are colored and are directly linked to the code section as you can see in the next table.
+<P>
+<TABLE BORDER=3 BGCOLOR="#C0C0C0"CELLPADDING=5>
+<TR><TD><PRE>
+flags=0x240 (Optional Flag)
+ 
+symbols
+
+<FONT COLOR="#800080">thing       player                           local</FONT>
+flex        cost=200.0                       local
+int         rank                             local
+sound       healingSound=ForceHealing01.WAV  local
+int         soundChannel=-1                  local
+template    sphere_tpl=+force_heal           local
+vector      position                         local
+<FONT COLOR="#FFFF00">message     startup</FONT>
+message     activated
+message     newplayer
+message     killed
+message     selected
+
+end
+</PRE></TD></TR></TABLE>
+<P>
+Check <A HREF="#c_symbol">Symbols</A> for more information on the preceding section. An explained example is at <A HREF="cog_sym_ex.htm">Symbol Example Explained</A> .
+<P>
+<HR SIZE=2 WIDTH=200 Align=left>
+<P>
+Finaly the Code section, this is where the actual functions reside.
+<p>
+The Code section starts with the word "<B>code</B>" and continues until "<B>end</B>". You will normaly find several modules of these code functions, the one shown is "<B>startup</B>"
+ normaly there is one of these code modules for each "<B>message</B>" in the symbols section. Each performing a different task.You will also find some "<B>Labels</B>" that are also functions.
+<P> 
+<TABLE BORDER=3 BGCOLOR="#C0C0C0"CELLPADDING=5>
+<TR><TD><PRE>
+code
+
+<FONT COLOR="#FFFF00">startup:</FONT>                                // some comment
+        <FONT COLOR="#800080">player</FONT> = GetLocalPlayerThing();
+        call stop_power;
+        Return;
+
+#........................................................................
+stop_power:                             // a label
+        SetPulse(0);
+        Return;
+end
+</PRE></TD></TR></TABLE>
+<P>
+<HR SIZE=2 WIDTH=70%>
+<P>
+<A Name="c_symbol"></A>
+<FONT SIZE="+2"><B>Section: Symbols</B></FONT>
+<P>
+<UL>
+<DT><A HREF="#c_s_flag">Flags</A>
+<DT><A HREF="#c_s_type">Symbol Types</A>
+<DT><A HREF="cog_sym_ex.htm#c_ex_symboluse">Symbols Uses and Masks</A>
+</UL>
+<P>
+<HR SIZE=2 WIDTH=200 Align=left>
+<P><A Name="c_s_flag"></A>
+<B>Flags</B>
+<P>
+The flags determine how the cog information is to be processed.These are normaly used in multiplayer cog files.
+<P> 
+<TABLE BORDER=3 BGCOLOR="#C0C0C0"CELLPADDING=5>
+<TR><TD><PRE>
+LOCAL    0x40    Cog runs on the client and server
+SERVER   0x80    Cog runs only on the server, client messages are forwarded to the server
+GLOBAL   0x100   Cog runs locally on all machines
+NOSYNC   0x200   COG results are not broadcast to the other machines.
+</PRE></TD></TR></TABLE>
+<P>
+<HR SIZE=2 WIDTH=200 Align=left>
+<P><A Name="c_s_type"></A>
+<B>Symbol Types</B>
+<P>
+Below is a list of the symbol types.
+<P>
+<TABLE BORDER=3 BGCOLOR="#C0C0C0"CELLPADDING=5>
+<TR><TD><PRE>
+<A HREF="#ai">ai</A>
+<A HREF="#cog">cog</A>
+<A HREF="#flex">flex</A>
+<A HREF="#float">float</A>
+<A HREF="#int">int</A>
+<A HREF="#keyframe">keyframe</A>
+<A HREF="#material">material</A>
+<A HREF="#message">message</A>
+<A HREF="#model">model</A>
+<A HREF="#sector">sector</A>
+<A HREF="#sound">sound</A>
+<A HREF="#surface">surface</A>
+<A HREF="#template">template</A>
+<A HREF="#thing">thing</A>
+<A HREF="#vector">vector</A>
+</PRE></TD></TR></TABLE>
+<P><A Name="ai"></A>
+<HR SIZE=2 WIDTH=200 Align=left>
+<P>
+<B>Ai</B>
+<P>
+The symbol value will be of type "AI" (artificial intellegence) "<B>.AI</B>" file used for pedestrians and enemies etc.
+<p>
+A typical assignment would be <B>ai  flee_ai=noweapon.ai </B>. The symbol "<B>flee_ai</B>" would be used in the code section where something would eventualy trigger the noweapon .ai file.
+<P><A Name="cog"></A>
+<HR SIZE=2 WIDTH=200 Align=left>
+<P>
+<B>Cog</B>
+<P>
+The symbol value will be of type cog file.
+<P>
+A typical assignment would be <B>cog		pipedoorc	nolink</B> The symbol "<B>pipedoorc</B>" Is a symbol for the cog reference passed to it from the Section : Cogs of the JKL file.  
+<P><A Name="flex"></A>
+<HR SIZE=2 WIDTH=200 Align=left>
+<P>
+<B>Flex</B>
+<P>
+The symbol value will be of type floating point number. It appears the <B>Float</B> type was abandoned in favor of the <B>Flex</B> judging by some of the cog file dates. Perhaps there was problems using Float.
+<P>
+A typical assignment would be <B>flex		movespeed=12</B> or <B>flex		animtime=3.92</B>.This assigns a value to the symbol "<B>animtime=3.92</B>" , in the code the symbol "<B>animtime</B>" would be the same as writing <B>3.92</B>
+<P><A Name="float"></A>
+<HR SIZE=2 WIDTH=200 Align=left>
+<P>
+<B>Float</B>
+<P>
+The symbol value will be of type floating point number. <B>SEE Flex</B> , float appears to be no longer used. Or has problems.
+<P>
+A typical assignment would be <B>float		patrolspeed=1.0</B>. Assigns the value "<B>1.0</B>" to the "<B>symbol patrolspeed</B>".
+<P><A Name="int"></A>
+<HR SIZE=2 WIDTH=200 Align=left>
+<P>
+<B>Int</B>
+<P>
+The symbol value will be of type signed Integer number. The range is  -2,147,483,648 to +2,147,483,648 signed 32 bit whole number.
+<P>
+A typical assignment would be <B>int	closed=1</B> or <B>int	closed=-1</B>. Assigns the value "<B> 1</B>" or "<B>-1</B>"  to the symbol "<B>closed</B>".As with other symbols they will be used in the code section.
+<P><A Name="keyframe"></A>
+<HR SIZE=2 WIDTH=200 Align=left>
+<P>
+<B>Keyframe</B>
+<P>
+The symbol value will be of type keyframe "<B>.Key</B>" file.
+<P>
+A typical assignment would be <B>keyframe    povBlockAnim0=SabVblk0.key </B>. Assigns the value "<B>SabVblk0.key</B>"  to the symbol "<B>povBlockAnim0</B>".This will be refered to in the code section.
+<P><A Name="materail"></A>
+<HR SIZE=2 WIDTH=200 Align=left>
+<P>
+<B>Material</B>
+<P>
+The symbol value will be of type Material "<B><A HREF="mat.htm">.Mat</A></B>" file.
+<P>
+A typical assignment would be <B>material    flashing=seq0mtp3.mat</B>.Assigns a material to be used with the symbol in code section.
+<P><A Name="message"></A>
+<HR SIZE=2 WIDTH=200 Align=left>
+<P>
+<B>Message</B>
+<P>
+ The symbol value will be of type Message. Most code modules start with the name of messages in the symbols section, in a few cases this is not so.        
+<P>
+The messages are sent by the "<B>system</B>" (<B>Jk.exe or  Sith engine </B>). There is a list of these plus their functions which will be covered in the <A HREF="cog_message.htm">Message</A> section.
+<p> 
+<B>Example :</B>
+<P> 
+<TABLE BORDER=3 BGCOLOR="#C0C0C0"CELLPADDING=5>
+<TR><TD><PRE>
+<B>symbols</B>          ( symbol section )
+
+message	startup
+message	activated
+.....
+<B>end</B>
+#--------------------
+<B>code</B>             ( code section )
+
+startup:
+.....
+activated:
+.....
+<B>end</B>
+</PRE></TD></TR></TABLE>
+<P><A Name="model"></A>
+<HR SIZE=2 WIDTH=200 Align=left>
+<P>
+<B>Model</B>
+<P>
+The symbol will be of type Model which is a "<A HREF="3do.htm">.3DO</A>" file
+<P>
+A typical assignment would look like "<B>model  povModel=seqv.3do</B>". This assigns the 3do file "<B>seqv.3do</B> " to the symbol "<B>povModel</B>" which is used in the code section.
+<P><A Name="sector"></A>
+<HR SIZE=2 WIDTH=200 Align=left>
+<P>
+<B>Sector</B>
+<P>
+The symbol will be of type sector from the JKL file<A HREF="jkl.htm#s_sec">Section: SECTORS</A>.The value for the sector to reference is passed to the cog by the <A HREF="jkl.htm#s_cogs">Section: COGS</A>
+<P>
+A typical assignment would look like "<B>sector	gosector	linkid=1</B>". This assigns the sector symbol "<B>gosector</B> " to the value passed from Section: Cogs and the appropriate cog line.
+<P><A Name="sound"></A>
+<HR SIZE=2 WIDTH=200 Align=left>
+<P>
+<B>Sound</B>
+<P>
+The symbol will be of type Sound which is a standard "<B>.WAV</B>" file.
+<P>
+A typical assignment would look like "<B>sound   wav0=lvrclik2.wav</B>". This assigns the sound symbol "<B>wav0</B> " the value "<B>lvrclik2.wav</B>".
+<P><A Name="surface"></A>
+<HR SIZE=2 WIDTH=200 Align=left>
+<P>
+<B>Surface</B>
+<P>
+The symbol will be of type surface which is a surface as defined in the JKl file <A HREF="jkl.htm#s_geo">Section: GEORESOURCE / World surfaces</A> the actual surface to use is passed to the cog from the <A HREF="jkl.htm#s_cogs">Section: COG</A> and the appropriate line.
+<P>
+A typical assignment would look like "<B>surface  lower_adjoin0  linkid=1</B>". This assigns the surface symbol "<B>lower_adjoin0</B> " the value "<B>Passed from section cog</B>" of note is the "<B>linkid=1</B>" , this tells the cog that the surface can be referenced in the code section with  either the symbol or the linkid value.
+<P><A Name="template"></A>
+<HR SIZE=2 WIDTH=200 Align=left>
+<P>
+<B>Template</B>
+<P>
+The symbol will be of type template which is found in the JKl <A HREF="jkl.htm#s_temp">Section: TEMPLATES</A>
+<P>
+A typical assignment would look like "<B>template    trail=+dest_trail    local</B>". This assigns the template symbol "<B>trail</B> " the values assigned to "<B>+dest_trail</B>" in the templates.
+<P><A Name="thing"></A>
+<HR SIZE=2 WIDTH=200 Align=left>
+<P>
+<B>Thing</B>
+<P>
+The symbol will be of type thing which is an object found in the Jkl <A HREF="jkl.htm#s_thg">Section: THINGS</A> the actual thing to make a refernce to is passed by the value in the <A HREF="jkl.htm#s_cogs">Section: COG</A> appropriate line.
+<P>
+A typical assignment would look like "<B>thing		door		linkid=10</B>". This assigns the thing symbol "<B>door</B> " the thing in world things passed to it from section: cog
+<P><A Name="vector"></A>
+<HR SIZE=2 WIDTH=200 Align=left>
+<P>
+<B>Vector</B>
+<P>
+The symbol will be of type math vector in the x,y,z axis, not all axis are used at all times.
+<P>
+A typical assignment would look like "<B>vector		updirection    local</B>". This defines the vector symbol as "<B>updirection</B> " it has no value at this point, that would be done in the code,
+<HR SIZE=2 WIDTH=70%>
+<P>
+<A Name="cog_code"></A>
+<FONT SIZE="+2"><B>Section: Code</B></FONT>
+<P> 
+Cog code has many predefined command verbs you may utilise in your code. To help sort them out They have been grouped together into reference lists.  
+<p>
+<TABLE BORDER=3 BGCOLOR="#C0C0C0"CELLPADDING=5>
+<TR><TD><PRE>
+<B>Reference Lists</B>
+
+<DD><A HREF="cog_actor.htm">Actor Ref</A>
+<DD><A HREF="cog_inventory.htm">Inventory Ref</A>
+<dd><A HREF="cog_keys.htm">Animation/Keys Ref</A>
+<DD><A HREF="cog_multi.htm">Multiplayer Ref</A>
+<DD><A HREF="cog_output.htm">Output Ref</A>
+<DD><A HREF="cog_player.htm">Player Ref</A>
+<DD><A HREF="cog_sector.htm">Sector Ref</A>
+<DD><A HREF="cog_sound.htm">Sound Ref</A>
+<DD><A HREF="cog_special_eff.htm">Special Effects Ref</A>
+<DD><A HREF="cog_surface.htm">Surface Ref</A>
+<DD><A HREF="cog_system.htm">System Ref</A>
+<DD><A HREF="cog_thing.htm">Thing Ref</A>
+<DD><A HREF="cog_vector.htm">Vector Ref</A>
+<DD><A HREF="cog_weapon.htm">Weapon Ref</A>
+<DD><A HREF="cog_world.htm">World Ref</A>
+</PRE></TD></TR></TABLE>
+<P>
+<BR>
+<HR SIZE=2></BODY></HTML>

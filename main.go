@@ -31,6 +31,12 @@ func main() {
 	runtime.LockOSThread()
 	defer runtime.UnlockOSThread()
 
+	//testPupParser()
+	//testKeyParser()
+	//testJklParser()
+	//test3doParser()
+	//return
+
 	sceneManager := scene.NewSceneManager()
 	defer sceneManager.Unload()
 	inputManager := NewInputManager(sceneManager)
@@ -49,13 +55,13 @@ func main() {
 	cam = camera.NewCamera(mgl32.Vec3{0, 0, 1}, mgl32.Vec3{0, 0, 1}, 0, -90)
 	cam.MovementSpeed = 2
 
-	for _, gobFileName := range jk.GetLoader().LoadJKLManifest() {
+	for _, gobFileName := range jk.GetLoader().LoadManifest("jkl") {
 		sceneManager.Add(gobFileName, scene.NewJklScene(gobFileName, window, &cam, shaderProgram))
 	}
-	for _, gobFileName := range jk.GetLoader().Load3DOManifest() {
+	for _, gobFileName := range jk.GetLoader().LoadManifest("3do") {
 		sceneManager.Add(gobFileName, scene.NewJk3doScene(gobFileName, window, &cam, shaderProgram))
 	}
-	for _, gobFileName := range jk.GetLoader().LoadBMManifest() {
+	for _, gobFileName := range jk.GetLoader().LoadManifest("bm") {
 		sceneManager.Add(gobFileName, scene.NewBMScene(gobFileName, window, &cam, guiShaderProgram))
 	}
 	sceneManager.Add("3do", scene.NewJk3doScene("rystr.3do", window, &cam, shaderProgram))

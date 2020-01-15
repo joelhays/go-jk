@@ -1,0 +1,273 @@
+<html>
+<head>
+   <title>JediKnight Unofficial Specs</title>
+   <meta name="DL" content="3do">
+  </head>
+<body text="#000000" bgcolor="#FFFFFF" link="#0000EE" vlink="#551A8B" alink="#FF0000">
+
+<h1>3DO Files</h1>
+<HR SIZE=2 WIDTH=70%>
+<P>
+<UL>
+<DT><A HREF="#3do">3do General</A>
+<DT><A HREF="#head">Section: Header</A>
+<DT><A HREF="#model">Section: ModelResource</A>
+<DT><A HREF="#geo">Section: GeometryDef</A>
+<DT><A HREF="#hier">Section: HeirarchyDef</A>
+</UL>
+<P>
+<HR SIZE=2 WIDTH=70%>
+<P>
+<A NAME="3do"></A>
+<STRONG><FONT SIZE="+1">3DO Files General</FONT></STRONG>
+<P>
+3DO Files contain 3D Objects that can be placed in a level.  Such objects can be characters, scenery, or structures (bridges, doors, lifts).
+<P>
+A 3DO File is a simple DOS text file.  Like JKL Files, comments are accepted - everything from the character '<B>#</B>' to the end of the line is ignored. 
+<P>
+For example:<BR> 
+# version and global constant settings 
+<P>
+A 3DO file is made up of sections.  The start of a section is marked by the "<B>SECTION:</B>" keyword at the beginning of a line, followed by the name of the section. 
+<P>
+<HR SIZE=2 WIDTH=200 Align=left>
+<P>
+
+<B>3DO General Structure</B>
+<P> 
+<TABLE BORDER=3 BGCOLOR="#C0C0C0"CELLPADDING=5>
+<TR><TD><PRE>
+Model
+   Materials
+   GeoSet
+      Mesh
+         Vertices
+         Texture Vertices
+         Vertex Normals
+         Faces
+         Face Normals
+   Hierarchy
+</PRE></TD></TR></TABLE>
+<P>
+These are the following sections (in the order they appear in 3DO files): 
+
+<P>
+<HR SIZE=2 WIDTH=200 Align=left>
+<P>
+<A NAME="head"></A><B>SECTION: HEADER </B>
+<P>
+This section contains version information.
+<P> 
+<TABLE BORDER=3 BGCOLOR="#C0C0C0"CELLPADDING=5>
+<TR><TD><PRE>
+3DO                    2.1              # 3DO version
+</PRE></TD></TR></TABLE>
+<P>
+<HR SIZE=2 WIDTH=200 Align=left>
+<P>
+<A NAME="model"></A><B>SECTION: MODELRESOURCE </B>
+<P>
+This section contains the global list of materials used in the 3DO. 
+<P>
+<B>MATERIALS N</B>
+<BR> 
+N is number of materials in the model.
+<P> 
+<TABLE BORDER=3 BGCOLOR="#C0C0C0"CELLPADDING=5>
+<TR><TD><PRE>
+0:     mx4arm.mat
+1:     mxarm.mat
+</PRE></TD></TR></TABLE>
+<P>
+<HR SIZE=2 WIDTH=200 Align=left>
+<P>
+<A NAME="geo"></A><B>SECTION: GEOMETRYDEF </B>
+<P>
+This section contains the information about all vertices, texture vertices, faces, and normals of the 3DO.  It contains multiple GeoSets, and each GeoSet can contain multiple Meshes.
+<P>
+It begins with general information:
+<P>
+<TABLE BORDER=3 BGCOLOR="#C0C0C0"CELLPADDING=5>
+<TR><TD><PRE>
+RADIUS   0.120330
+INSERT OFFSET   0.000000   0.000000   0.058420
+</PRE></TD></TR></TABLE>
+<P>
+The Radius is used to test if this object has collided with another object.  When an object's distance to this 3DO is less than this radius, JK will begin testing the Mesh radii to see if it collides with any of them.
+<P>
+The Insert Offset seems to be ignored.
+<P>
+<B>GEOSETS N </B>
+<BR>
+N is number of GeoSets in the model.
+<P>
+GeoSets create levels of detail for 3DOs.  There are usually 4.  Number 0 is used for closeups and #3 is used for distance views.  Only 1 GeoSet is needed.  The JKL file defines how many LODs are used.  Every GeoSet should contain the same number of meshes in the same order.
+<P>
+<B>MESHES N </B>
+<BR>
+N is the number of meshes in the GeoSet.
+<P>
+Each mesh contains this general info:
+<P>
+<TABLE BORDER=3 BGCOLOR="#C0C0C0"CELLPADDING=5>
+<TR><TD><PRE>
+MESH            0               # Mesh Index
+NAME            mx4arm          # Name of Mesh
+RADIUS          0.059488        # Spherical radius of Mesh
+GEOMETRYMODE    4               # Geometry Mode
+LIGHTINGMODE    3               # Lighting Mode
+TEXTUREMODE     0               # Texture Mode
+</PRE></TD></TR></TABLE>
+<P>
+The Geometry, Lighting, and Texture Modes tell JK how to draw the 3DO.
+<BR><B>Possible Geometry modes are:</B>
+0: Do not draw
+1: Draw only the vertices
+2: Draw only the edges (wireframe)
+3: Draw it with filled faces
+4: Draw it textured
+<BR><B>Possible Lighting modes are:</B>
+0: Fully lit
+1: Not lit
+2: "Good"
+3: "Better"
+<BR><B>Possible Texture modes are:</B>
+0: Linear (causes some distortion)
+1: Perspective Corrected (interpolates between projected points)
+2: Perspective
+<P>
+<B>VERTICES N </B>
+<BR>
+N is the number of vertices in the Mesh.
+<P>
+<TABLE BORDER=3 BGCOLOR="#C0C0C0"CELLPADDING=5>
+<TR><TD><PRE>
+# num:     x:         y:         z:         i: 
+    0:   0.000929   0.000000  -0.005314   0.000000
+    1:   0.005769  -0.000105   0.005595   0.000000
+....
+</PRE></TD></TR></TABLE>
+x, y, and z are the coordinates of the vertices.
+<BR>
+i is the intensity of the light at the vertices.  These are always 0.0.
+<P>
+<B>TEXTURE VERTICES N</B>
+<BR> 
+N is the number of texture vertices in the Mesh.
+<P>
+<TABLE BORDER=3 BGCOLOR="#C0C0C0"CELLPADDING=5>
+<TR><TD><PRE>
+    0:  14.603445  -9.554900	# Coordinate of Vertex
+    1:  12.314912 -31.749504
+....
+</PRE></TD></TR></TABLE>
+<P>
+The texture vertex coordinate system is based on "texels" where one unit can be thought of as one pixel.  The origin (0,0) is the top-left corner of the material file.  +U travels to the right, while +V travels downward.  -U travels to the left, while -V travels upward.
+<P>
+<B>VERTEX NORMALS</B>
+<P>
+There are the same number of Vertex Normals as there are Vertices.
+<P>
+Vertex Normals are found by averaging the Normals of each Face that references the Vertex.
+<P>
+<TABLE BORDER=3 BGCOLOR="#C0C0C0"CELLPADDING=5>
+<TR><TD><PRE>
+# num:     x:         y:         z:
+    0:   0.770196  -0.279341  -0.573382	# Normal
+    1:   0.913539  -0.008882  -0.406654
+....
+</PRE></TD></TR></TABLE>
+<P>
+x, y, and z can be thought of as the A, B, C coefficients in the plane equation.
+<P>
+<B>FACES N</B>
+<BR>
+N is the number of faces in the Mesh
+<P>
+<TABLE BORDER=3 BGCOLOR="#C0C0C0"CELLPADDING=5>
+<TR><TD><PRE>
+#  num:  material:   type:  geo:  light:   tex:  extralight:  verts:
+     0:         0  0x0000     4       3      0       0.0000       4 [vs]
+....
+</PRE></TD></TR></TABLE>
+
+<TABLE>
+<TR><TD>material</TD><TD>Index to the material to be used</TD></TR>
+<TR><TD>type</TD><TD>The properties of this face</TD></TR>
+<TR><TD>geo	</TD><TD>Geometry Mode</TD></TR>
+<TR><TD>light</TD><TD>Lighting Mode</TD></TR>
+<TR><TD>tex</TD><TD>Texture Mode</TD></TR>
+<TR><TD>verts</TD><TD>Number of vertices that make-up face</TD></TR>
+<TR><TD>extralight</TD><TD>	Float representing light intensity</TD></TR>
+<TR><TD>Vertices are defined as:</TD><TD> [vertex], [tex vertex]</TD></TR>
+</TABLE>
+<P> A Face can have any combination of these types:
+<BR><B>0x0000</B> Normal
+<BR><B>0x0001</B> Two-sided (this face will always be drawn no matter which way it points).
+<BR><B>0x0002</B> Translucent
+<BR><B>0x0004</B> Collides with other objects
+<BR>NOTE: 0x4 <I>might</I> be ignored or is superceded
+<P>
+The Geometry, Lighting, and Texture Modes are the same as their Mesh counterparts.
+<P>
+Extralight may also be ignored.
+<P>
+<B>FACE NORMALS</B>
+<P>
+There are the same number of Face Normals as there are Faces.
+<P>
+<TABLE BORDER=3 BGCOLOR="#C0C0C0"CELLPADDING=5>
+<TR><TD><PRE>
+# num:     x:         y:         z:
+    0:   0.668400   0.682697  -0.295238	# Normal
+    1:  -0.637082   0.676373   0.369657
+....
+</PRE></TD></TR></TABLE>
+<P>
+x, y, and z can be thought of as the A, B, C coefficients in the plane equation scaled to 1.0 length.
+<P>
+<HR SIZE=2 WIDTH=200 Align=left>
+<P>
+<A name="hier"></A><B>SECTION: HIERARCHYDEF</B>
+<P>
+This section organizes the 3DO into a hierarchy for use in animations.
+<P>
+<B>HIERARCHY NODES N</B>
+<BR>
+N is the number of nodes in the Hierarchy.
+<P>
+<TABLE BORDER=3 BGCOLOR="#C0C0C0"CELLPADDING=5>
+<TR><TD><PRE>
+flags           Hexadecimal Integer
+type            Hexadecimal Integer
+mesh            Reference to Mesh
+parent          Parent Node
+child           First Child Node
+sibling         Sibling Node
+numChildren     Number of Child Nodes
+x y z           Offset of this node from Parent node
+pitch           Starting Rotation
+yaw             Starting Rotation
+roll            Starting Rotation
+pivotx          Amount to offset node before rotating
+pivoty          Amount to offset node before rotating
+pivotz          Amount to offset node before rotating
+hnodename       Name of node referenced by animations
+</PRE></TD></TR></TABLE>
+<P><B>Types:</B>
+<BR>0x10 or 0x00010  This node is apart of the lower body (hip).
+<BR>0x1  or 0x00001  This node is apart of the upper body (torso).
+<BR>0x20 or 0x00020  This node is apart of the left leg (lcalf,lfoot,lthigh).
+<BR>0x2  or 0x00002  This node is apart of the left arm (lforearm,lhand,lshoulder).
+<BR>0x40 or 0x00040  This node is apart of the right leg (rcalf,rfoot,rthigh).
+<BR>0x4  or 0x00004  This node is apart of the right arm (rforearm,rhand,rshoulder).
+<BR>0x8  or 0x00008  This node is apart of the head (head,neck).
+<P>
+If you create a 3DO that is not "humanoid" then you should use 0x1 for each node.  I do not believe type 0x0 Nodes are supported.
+<P>Hierarchy Flags are always 0x0.
+<P>
+<BR>
+<HR SIZE=2>
+
+</body>
+</html>

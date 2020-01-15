@@ -1,0 +1,45 @@
+<!DOCTYPE HTML PUBLIC "-//SoftQuad//DTD HTML 2.0 + extensions for HoTMetaL Light 3.0 19960703//EN"
+>
+<HTML>
+<HEAD>
+<TITLE>JediKnight Unofficial Specs</TITLE>
+<META NAME="DL" CONTENT="AI"></HEAD>
+<BODY
+TEXT="#000000" BGCOLOR="#FFFFFF" LINK="#0000EE" VLINK="#551A8B" ALINK="#FF0000">
+<H2>BlindFire</H2>
+<P></P>
+<P><B>Number of arguments: 6</B></P>
+<P><I>Example:</I></P>
+<TABLE BORDER="1" BGCOLOR="#C0C0C0">
+<TR>
+<TD>
+<PRE>BlindFire       	1500.0, 0.50, 0, 0.8, 0.0, 0.20</PRE></TD></TR></TABLE>
+<P>BlindFire is an instinct which determines the behaviour of a character when
+the target he shoots at is outside the range of the PrimaryFire instinct. The
+blind fire is normally done from far away and should be less precise. Unless, of
+course, the character should use a telescope rifle at the far distance... then
+you can set the precision much higher.</P>
+<P><I>Arguments:</I></P>
+<TABLE BORDER="1" BGCOLOR="#C0C0C0">
+<TR>
+<TD WIDTH="100" BGCOLOR="#808080"><FONT COLOR="#FFFFFF">Argument #</FONT></TD>
+<TD BGCOLOR="#808080"><FONT COLOR="#FFFFFF">Argument meaning</FONT></TD></TR>
+<TR>
+<TD>1</TD>
+<TD>Interval between firing (milliseconds)</TD></TR>
+<TR>
+<TD>2</TD>
+<TD>Firing probability percent. 0=never, 1=always</TD></TR>
+<TR>
+<TD>3</TD>
+<TD>Weapon: 0 = primary, 1=secondary</TD></TR>
+<TR>
+<TD>4</TD>
+<TD>Min Fire dot. 1.0=must be facing exactly, 0.0=180 degrees arc, -1.0=full
+360 degrees arc.</TD></TR>
+<TR>
+<TD>5</TD>
+<TD>Minimal distance from the target to use this instinct</TD></TR>
+<TR>
+<TD>6</TD>
+<TD>Shot error percent. 0=perfect aim, 1=randomly</TD></TR></TABLE></BODY></HTML>

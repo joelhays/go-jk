@@ -1,0 +1,1 @@
+These files are an archive copy of https://www.massassi.net/jkspecs/ for reference and preservation purposes

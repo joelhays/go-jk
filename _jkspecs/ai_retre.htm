@@ -1,0 +1,35 @@
+<!DOCTYPE HTML PUBLIC "-//SoftQuad//DTD HTML 2.0 + extensions for HoTMetaL Light 3.0 19960703//EN"
+>
+<HTML>
+<HEAD>
+<TITLE>JediKnight Unofficial Specs</TITLE>
+<META NAME="DL" CONTENT="AI"></HEAD>
+<BODY
+TEXT="#000000" BGCOLOR="#FFFFFF" LINK="#0000EE" VLINK="#551A8B" ALINK="#FF0000">
+<H2>Retreat</H2>
+<P></P>
+<P><B>Number of arguments: 4</B></P>
+<P><I>Example:</I></P>
+<TABLE BORDER="1" BGCOLOR="#C0C0C0">
+<TR>
+<TD>
+<PRE>Retreat  0.25, 0.25, 2000.0, 1.0</PRE></TD></TR></TABLE>
+<P>Can also make character to <A HREF="ai_flee.htm">flee</A>. Should be used
+for attackers who lose their temper.</P>
+<P><I>Arguments:</I></P>
+<TABLE BORDER="1" BGCOLOR="#C0C0C0">
+<TR>
+<TD WIDTH="100" BGCOLOR="#808080"><FONT COLOR="#FFFFFF">Argument #</FONT></TD>
+<TD BGCOLOR="#808080"><FONT COLOR="#FFFFFF">Argument meaning</FONT></TD></TR>
+<TR>
+<TD>1</TD>
+<TD>Health percent (0 to 1). If below, CAN flee</TD></TR>
+<TR>
+<TD>2</TD>
+<TD>Moral fail percent. If below, WILL flee</TD></TR>
+<TR>
+<TD>3</TD>
+<TD>Time interval for moral checks (msec)</TD></TR>
+<TR>
+<TD>4</TD>
+<TD>Max number of times to retreat before not retreating any more</TD></TR></TABLE></BODY></HTML>
